@@ -162,6 +162,12 @@ html, body {
   margin-bottom: 20px;
 }
 .gem-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.gem-svg #gem-outline { animation: gem-idle-pulse 3s ease-in-out infinite; }
+.gem-svg.focusing #gem-outline { animation: none; }
+@keyframes gem-idle-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .55; }
+}
 .gem-timer-text {
   position: relative; z-index: 3;
   display: flex; flex-direction: column; align-items: center; gap: 2px;
@@ -327,86 +333,107 @@ html, body {
               <clipPath id="gem-prog">
                 <rect id="gem-prog-rect" x="0" y="200" width="200" height="0"/>
               </clipPath>
-              <!-- Dark base gradient -->
-              <linearGradient id="g-dark" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#1a1a32"/>
-                <stop offset="100%" stop-color="#08080e"/>
+
+              <!-- Base: deep indigo with subtle shimmer -->
+              <linearGradient id="g-dark" x1=".3" y1="0" x2=".7" y2="1">
+                <stop offset="0%"   stop-color="#2a1f52"/>
+                <stop offset="40%"  stop-color="#16103a"/>
+                <stop offset="100%" stop-color="#0a0818"/>
               </linearGradient>
-              <!-- Bright charged gradient -->
-              <linearGradient id="g-bright" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#ff9f0a" stop-opacity=".95"/>
-                <stop offset="45%" stop-color="#ff6200" stop-opacity=".8"/>
-                <stop offset="100%" stop-color="#38bdf8" stop-opacity=".9"/>
+
+              <!-- Highlight facets (upper left) — bright -->
+              <linearGradient id="g-hi" x1="0" y1="0" x2="1" y2=".8">
+                <stop offset="0%"  stop-color="rgba(255,255,255,.38)"/>
+                <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
               </linearGradient>
-              <!-- Glow filter -->
-              <filter id="gem-glow" x="-30%" y="-30%" width="160%" height="160%">
-                <feGaussianBlur stdDeviation="5" result="blur"/>
-                <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+
+              <!-- Bright progress gradient: amber→electric blue -->
+              <linearGradient id="g-bright" x1=".1" y1="1" x2=".9" y2="0">
+                <stop offset="0%"   stop-color="#ff6200"/>
+                <stop offset="40%"  stop-color="#ff9f0a"/>
+                <stop offset="80%"  stop-color="#c084fc"/>
+                <stop offset="100%" stop-color="#38bdf8"/>
+              </linearGradient>
+
+              <!-- Subtle idle glow filter -->
+              <filter id="gem-glow" x="-40%" y="-40%" width="180%" height="180%">
+                <feGaussianBlur stdDeviation="6" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
               </filter>
-              <filter id="gem-glow-intense" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="10" result="blur"/>
-                <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+              <!-- Intense completion glow -->
+              <filter id="gem-glow-intense" x="-60%" y="-60%" width="220%" height="220%">
+                <feGaussianBlur stdDeviation="14" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <!-- Drop shadow for outline -->
+              <filter id="outline-glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#ff9f0a" flood-opacity=".7"/>
               </filter>
             </defs>
 
             <!-- Hex gem: (100,4) (196,55) (196,145) (100,196) (4,145) (4,55) -->
 
-            <!-- Outer ambient glow (hidden until focus) -->
+            <!-- Outer ambient glow pulse (idle) -->
             <polygon id="gem-aura" points="100,4 196,55 196,145 100,196 4,145 4,55"
-              fill="rgba(255,159,10,.0)" stroke="none"
+              fill="rgba(180,130,255,.06)" stroke="none"
               filter="url(#gem-glow-intense)"
-              style="transition: fill .5s"/>
+              style="transition: fill .6s"/>
 
-            <!-- Dark base fill -->
+            <!-- Base fill — deep indigo -->
             <polygon id="gem-base"
               points="100,4 196,55 196,145 100,196 4,145 4,55"
               fill="url(#g-dark)"/>
 
-            <!-- Bright fill — clipped to reveal from bottom -->
+            <!-- Bright fill — clipped to reveal from bottom as progress -->
             <polygon id="gem-bright"
               points="100,4 196,55 196,145 100,196 4,145 4,55"
               fill="url(#g-bright)"
               clip-path="url(#gem-prog)"
               filter="url(#gem-glow)"/>
 
-            <!-- Facet lines — symmetrical gem cut -->
-            <!-- Outer top edges -->
-            <line x1="100" y1="4" x2="196" y2="55"   stroke="rgba(255,255,255,.12)" stroke-width=".8"/>
-            <line x1="100" y1="4" x2="4"   y2="55"   stroke="rgba(255,255,255,.12)" stroke-width=".8"/>
-            <!-- Outer bottom edges -->
-            <line x1="196" y1="145" x2="100" y2="196" stroke="rgba(255,255,255,.1)" stroke-width=".8"/>
-            <line x1="4"   y1="145" x2="100" y2="196" stroke="rgba(255,255,255,.1)" stroke-width=".8"/>
-            <!-- Side edges -->
-            <line x1="196" y1="55" x2="196" y2="145" stroke="rgba(255,255,255,.1)" stroke-width=".8"/>
-            <line x1="4"   y1="55" x2="4"   y2="145" stroke="rgba(255,255,255,.1)" stroke-width=".8"/>
-            <!-- Girdle line (equator) -->
-            <line x1="4" y1="100" x2="196" y2="100" stroke="rgba(255,255,255,.07)" stroke-width=".8"/>
-            <!-- Crown diagonals (from top to girdle) -->
-            <line x1="100" y1="4" x2="4"   y2="100"  stroke="rgba(255,255,255,.06)" stroke-width=".6"/>
-            <line x1="100" y1="4" x2="196" y2="100"  stroke="rgba(255,255,255,.06)" stroke-width=".6"/>
-            <!-- Pavilion diagonals (from girdle to bottom) -->
-            <line x1="4"   y1="100" x2="100" y2="196" stroke="rgba(255,255,255,.06)" stroke-width=".6"/>
-            <line x1="196" y1="100" x2="100" y2="196" stroke="rgba(255,255,255,.06)" stroke-width=".6"/>
-            <!-- Cross diagonals (full) -->
-            <line x1="4"   y1="55"  x2="196" y2="145" stroke="rgba(255,255,255,.04)" stroke-width=".5"/>
-            <line x1="196" y1="55"  x2="4"   y2="145" stroke="rgba(255,255,255,.04)" stroke-width=".5"/>
-            <!-- Table (inner hexagon) -->
+            <!-- Highlight: upper-left facet sheen (always visible) -->
+            <polygon points="100,4 4,55 52,72 100,45"
+              fill="url(#g-hi)" opacity=".9"/>
+            <!-- Secondary crown highlight -->
+            <polygon points="100,4 196,55 148,72 100,45"
+              fill="url(#g-hi)" opacity=".4"/>
+
+            <!-- Facet lines — gem cut, clearly visible -->
+            <!-- Outer edges -->
+            <line x1="100" y1="4"   x2="196" y2="55"  stroke="rgba(255,255,255,.32)" stroke-width="1"/>
+            <line x1="100" y1="4"   x2="4"   y2="55"  stroke="rgba(255,255,255,.32)" stroke-width="1"/>
+            <line x1="196" y1="145" x2="100" y2="196" stroke="rgba(255,255,255,.22)" stroke-width="1"/>
+            <line x1="4"   y1="145" x2="100" y2="196" stroke="rgba(255,255,255,.22)" stroke-width="1"/>
+            <line x1="196" y1="55"  x2="196" y2="145" stroke="rgba(255,255,255,.22)" stroke-width="1"/>
+            <line x1="4"   y1="55"  x2="4"   y2="145" stroke="rgba(255,255,255,.22)" stroke-width="1"/>
+            <!-- Girdle (equator) -->
+            <line x1="4" y1="100" x2="196" y2="100"   stroke="rgba(255,255,255,.18)" stroke-width=".8"/>
+            <!-- Crown facets -->
+            <line x1="100" y1="4"   x2="4"   y2="100" stroke="rgba(255,255,255,.14)" stroke-width=".8"/>
+            <line x1="100" y1="4"   x2="196" y2="100" stroke="rgba(255,255,255,.14)" stroke-width=".8"/>
+            <!-- Pavilion facets -->
+            <line x1="4"   y1="100" x2="100" y2="196" stroke="rgba(255,255,255,.12)" stroke-width=".8"/>
+            <line x1="196" y1="100" x2="100" y2="196" stroke="rgba(255,255,255,.12)" stroke-width=".8"/>
+            <!-- Cross diagonals -->
+            <line x1="4"   y1="55"  x2="196" y2="145" stroke="rgba(255,255,255,.08)" stroke-width=".6"/>
+            <line x1="196" y1="55"  x2="4"   y2="145" stroke="rgba(255,255,255,.08)" stroke-width=".6"/>
+            <!-- Table hexagon (inner) -->
             <polygon id="gem-table"
               points="100,45 148,72 148,128 100,155 52,128 52,72"
-              fill="none" stroke="rgba(255,255,255,.08)" stroke-width=".8"/>
-            <!-- Table to top/bottom -->
-            <line x1="100" y1="4"   x2="100" y2="45"  stroke="rgba(255,255,255,.08)" stroke-width=".6"/>
-            <line x1="100" y1="155" x2="100" y2="196" stroke="rgba(255,255,255,.08)" stroke-width=".6"/>
-            <!-- Table to side vertices -->
-            <line x1="4"   y1="55"  x2="52"  y2="72"  stroke="rgba(255,255,255,.06)" stroke-width=".5"/>
-            <line x1="196" y1="55"  x2="148" y2="72"  stroke="rgba(255,255,255,.06)" stroke-width=".5"/>
-            <line x1="4"   y1="145" x2="52"  y2="128" stroke="rgba(255,255,255,.06)" stroke-width=".5"/>
-            <line x1="196" y1="145" x2="148" y2="128" stroke="rgba(255,255,255,.06)" stroke-width=".5"/>
+              fill="none" stroke="rgba(255,255,255,.2)" stroke-width="1"/>
+            <!-- Table connectors -->
+            <line x1="100" y1="4"   x2="100" y2="45"  stroke="rgba(255,255,255,.16)" stroke-width=".8"/>
+            <line x1="100" y1="155" x2="100" y2="196" stroke="rgba(255,255,255,.14)" stroke-width=".8"/>
+            <line x1="4"   y1="55"  x2="52"  y2="72"  stroke="rgba(255,255,255,.12)" stroke-width=".7"/>
+            <line x1="196" y1="55"  x2="148" y2="72"  stroke="rgba(255,255,255,.12)" stroke-width=".7"/>
+            <line x1="4"   y1="145" x2="52"  y2="128" stroke="rgba(255,255,255,.10)" stroke-width=".7"/>
+            <line x1="196" y1="145" x2="148" y2="128" stroke="rgba(255,255,255,.10)" stroke-width=".7"/>
 
-            <!-- Outer stroke + glow ring -->
+            <!-- Outer stroke with golden glow (always on) -->
             <polygon id="gem-outline"
               points="100,4 196,55 196,145 100,196 4,145 4,55"
-              fill="none" stroke="rgba(255,159,10,.2)" stroke-width="1.5"/>
+              fill="none" stroke="rgba(255,159,10,.75)" stroke-width="1.8"
+              filter="url(#outline-glow)"/>
           </svg>
 
           <!-- Timer digits centered over gem -->
@@ -734,24 +761,25 @@ let focusStart=0, focusElapsed=0;
 const GEM_H = 200;
 
 function gemProgress(pct) {
-  // Fill gem from bottom up
   const fillH = pct * GEM_H;
   const rect = document.getElementById('gem-prog-rect');
   rect.setAttribute('y', GEM_H - fillH);
   rect.setAttribute('height', fillH);
-  // Intensify outline
+  // Outline gets brighter and thicker as progress grows
   const outline = document.getElementById('gem-outline');
-  const op = 0.15 + pct * 0.65;
-  const blur = 1 + pct * 4;
-  outline.style.stroke = `rgba(255,159,10,${op})`;
-  outline.style.strokeWidth = 1 + pct * 1.5;
-  outline.style.filter = `drop-shadow(0 0 ${blur}px rgba(255,159,10,${op}))`;
-  // Aura glow
+  const op = 0.75 + pct * 0.25;
+  const sw = 1.8 + pct * 2;
+  const blur = 4 + pct * 10;
+  outline.style.stroke = `rgba(255,${Math.round(159 - pct*40)},${Math.round(10 + pct*100)},${op})`;
+  outline.style.strokeWidth = sw;
+  outline.style.filter = `drop-shadow(0 0 ${blur}px rgba(255,159,10,${0.6 + pct*0.4}))`;
+  // Aura: from purple (idle) to amber (focus)
   const aura = document.getElementById('gem-aura');
-  aura.style.fill = `rgba(255,159,10,${pct * 0.06})`;
-  // Table intensity
+  const r = Math.round(180 + pct*75), g = Math.round(130 - pct*80), b = Math.round(255 - pct*200);
+  aura.style.fill = `rgba(${r},${g},${b},${0.06 + pct*0.1})`;
+  // Table glows more intensely
   const table = document.getElementById('gem-table');
-  table.style.stroke = `rgba(255,255,255,${0.06 + pct * 0.25})`;
+  table.style.stroke = `rgba(255,255,255,${0.2 + pct*0.55})`;
 }
 
 function setDuration(min){
@@ -815,9 +843,11 @@ function stopFocus(completed){
 
 function resetTimer(){
   gemProgress(0);
-  document.getElementById('gem-outline').style.stroke='rgba(255,159,10,.2)';
-  document.getElementById('gem-outline').style.filter='';
-  document.getElementById('gem-outline').style.strokeWidth='1.5';
+  // Restore idle glow (bright, pulsing via CSS animation)
+  const outline = document.getElementById('gem-outline');
+  outline.style.stroke='rgba(255,159,10,.75)';
+  outline.style.strokeWidth='1.8';
+  outline.style.filter='';
   document.getElementById('gem-bright').setAttribute('filter','url(#gem-glow)');
   document.getElementById('timer-label').textContent='READY';
   document.getElementById('timer-digits').textContent=focusDuration+':00';
