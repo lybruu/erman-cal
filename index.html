@@ -183,6 +183,13 @@ html, body {
   transition: stroke-dashoffset 1s linear;
   filter: drop-shadow(0 0 12px var(--glow-accent));
 }
+.timer-ring-fg.focusing circle {
+  animation: ringPulse 3s ease-in-out infinite;
+}
+@keyframes ringPulse {
+  0%, 100% { filter: drop-shadow(0 0 10px var(--glow-accent)); stroke-width: 5; }
+  50% { filter: drop-shadow(0 0 20px rgba(255,159,10,.4)) drop-shadow(0 0 40px rgba(56,189,248,.15)); stroke-width: 6; }
+}
 .timer-ring-fg.done circle {
   stroke: var(--green);
   filter: drop-shadow(0 0 16px rgba(52,211,153,.4));
@@ -452,7 +459,7 @@ html, body {
   const c = document.getElementById('particles');
   const ctx = c.getContext('2d');
   let W, H, pts = [];
-  const COUNT = 60;
+  const COUNT = 80;
 
   function resize() {
     W = c.width = window.innerWidth;
@@ -667,11 +674,15 @@ function startFocus() {
   btn.textContent = 'Stop';
   document.getElementById('timer-label').textContent = 'FOCUSING';
   document.getElementById('timer-ring').classList.remove('done','cancelled');
+  document.getElementById('timer-ring').classList.add('focusing');
 
   // Crystal
   const crystal = document.getElementById('crystal');
   crystal.className = 'crystal growing';
   crystal.style.setProperty('--grow-dur', totalSec + 's');
+
+  // Burst particles on start
+  burstParticles();
 
   // Timer tick
   focusTimer = setInterval(() => {
@@ -724,7 +735,7 @@ function resetTimer() {
   crystal.className = 'crystal';
   crystal.style.removeProperty('--grow-dur');
   const ring = document.getElementById('timer-ring');
-  ring.classList.remove('done','cancelled');
+  ring.classList.remove('done','cancelled','focusing');
   document.getElementById('timer-label').textContent = 'READY';
   document.getElementById('timer-digits').textContent = focusDuration + ':00';
   document.querySelector('#timer-ring circle').style.strokeDashoffset = 0;
@@ -744,6 +755,55 @@ function renderFocusStats() {
   document.getElementById('collection-row').innerHTML = (FOCUS.collection || []).slice(-20).map(c =>
     `<span class="mini-crystal">${crystalEmojis[c.type] || '💎'}</span>`
   ).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// BURST — cosmic particles on focus start
+// ══════════════════════════════════════════════════════════════════════
+function burstParticles() {
+  const canvas = document.getElementById('confetti');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const cx = canvas.width / 2, cy = canvas.height * 0.2;
+  const particles = [];
+  const colors = ['#ff9f0a','#ff6b00','#38bdf8','#22d3ee','#fff'];
+  for (let i = 0; i < 40; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = Math.random() * 3 + 1;
+    particles.push({
+      x: cx, y: cy,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      r: Math.random() * 2 + 0.5,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      life: 1,
+    });
+  }
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+    particles.forEach(p => {
+      if (p.life <= 0) return;
+      alive = true;
+      p.x += p.vx; p.y += p.vy;
+      p.vx *= 0.98; p.vy *= 0.98;
+      p.life -= 0.02;
+      ctx.globalAlpha = p.life * 0.8;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.shadowColor = p.color;
+      ctx.shadowBlur = 10;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+    ctx.globalAlpha = 1;
+    if (alive && frame < 80) { frame++; requestAnimationFrame(draw); }
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  requestAnimationFrame(draw);
 }
 
 // ══════════════════════════════════════════════════════════════════════
