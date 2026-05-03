@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Эрман</title>
+<title>erMan</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -12,6 +12,7 @@
   --bg: #1c1c1e; --bg2: #2c2c2e; --bg3: #3a3a3c;
   --text: #fff; --sub: #8e8e93; --dim: #48484a;
   --accent: #ff9f0a; --danger: #ff453a; --green: #30d158;
+  --blue: #0a84ff; --purple: #bf5af2;
 }
 
 html, body {
@@ -21,21 +22,34 @@ html, body {
   max-width: 430px; margin: 0 auto;
 }
 
-/* ═══ SCENES ═══ */
-.scene-wrap {
-  display: flex; width: 200%; height: 100%;
-  transition: transform .38s cubic-bezier(.32,.72,0,1);
-  will-change: transform;
-}
-.scene-wrap.show-chat { transform: translateX(-50%); }
-
-.scene {
-  width: 50%; height: 100%;
+/* ═══ TAB LAYOUT ═══ */
+.app { display: flex; flex-direction: column; height: 100%; }
+.tab-content { flex: 1; overflow: hidden; position: relative; }
+.tab-pane {
+  position: absolute; inset: 0;
   display: flex; flex-direction: column; overflow: hidden;
-  flex-shrink: 0; position: relative;
+  opacity: 0; pointer-events: none;
+  transition: opacity .25s ease;
 }
+.tab-pane.active { opacity: 1; pointer-events: auto; }
 
-/* ═══ SCENE 1: CALENDAR ═══ */
+/* Tab bar */
+.tab-bar {
+  display: flex; flex-shrink: 0;
+  border-top: 1px solid var(--bg2);
+  padding: 6px 0 env(safe-area-inset-bottom, 8px);
+  background: var(--bg);
+}
+.tab-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  gap: 2px; padding: 6px 0; cursor: pointer;
+  color: var(--sub); font-size: 10px; font-weight: 500;
+  border: none; background: none; -webkit-tap-highlight-color: transparent;
+}
+.tab-item.active { color: var(--accent); }
+.tab-icon { font-size: 22px; line-height: 1; }
+
+/* ═══ CALENDAR TAB ═══ */
 .cal-header {
   display: flex; align-items: center; gap: 6px;
   padding: 14px 14px 6px; flex-shrink: 0;
@@ -87,9 +101,7 @@ html, body {
 .dot.overdue { background: var(--danger); }
 .divider { height: 1px; background: var(--bg2); margin: 6px 14px; flex-shrink: 0; }
 
-.events-area {
-  flex: 1; overflow-y: auto; padding: 8px 14px 72px;
-}
+.events-area { flex: 1; overflow-y: auto; padding: 8px 14px 14px; }
 .events-date {
   font-size: 11px; color: #636366; font-weight: 600;
   text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px;
@@ -123,24 +135,155 @@ html, body {
   border-radius: 14px; padding: 10px 22px; font-size: 13px; cursor: pointer;
 }
 
-/* FAB */
-.fab {
-  position: absolute; bottom: 14px; right: 14px;
-  width: 52px; height: 52px; border-radius: 50%;
-  background: var(--accent); color: #000; font-size: 22px;
-  border: none; cursor: pointer;
-  box-shadow: 0 4px 18px rgba(255,159,10,.5);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 20;
-  animation: fabPulse 2s ease-in-out 1s 1;
+/* ═══ FOCUS TAB ═══ */
+.focus-wrap {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  padding: 20px 20px 14px; overflow-y: auto;
 }
-.fab:active { transform: scale(.92); }
-@keyframes fabPulse {
-  0%, 100% { box-shadow: 0 4px 18px rgba(255,159,10,.5); }
-  50% { box-shadow: 0 4px 28px rgba(255,159,10,.8), 0 0 0 6px rgba(255,159,10,.15); }
+.focus-header {
+  font-size: 13px; color: var(--sub); font-weight: 600;
+  text-transform: uppercase; letter-spacing: .5px; margin-bottom: 20px;
 }
 
-/* ═══ SCENE 2: CHAT ═══ */
+/* Timer ring */
+.timer-container {
+  position: relative; width: 200px; height: 200px; margin-bottom: 24px;
+}
+.timer-ring-bg, .timer-ring-fg {
+  position: absolute; inset: 0;
+}
+.timer-ring-bg circle { fill: none; stroke: var(--bg2); stroke-width: 6; }
+.timer-ring-fg circle {
+  fill: none; stroke: var(--accent); stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 565.48; /* 2*PI*90 */
+  stroke-dashoffset: 0;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  transition: stroke-dashoffset 1s linear;
+}
+.timer-ring-fg.done circle { stroke: var(--green); }
+.timer-ring-fg.cancelled circle { stroke: var(--danger); }
+.timer-text {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.timer-digits {
+  font-size: 42px; font-weight: 200; font-variant-numeric: tabular-nums;
+  letter-spacing: -1px;
+}
+.timer-label {
+  font-size: 12px; color: var(--sub); margin-top: 2px;
+}
+
+/* Crystal */
+.crystal-area {
+  width: 80px; height: 80px; margin-bottom: 20px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.crystal {
+  font-size: 48px; opacity: 0.2; transform: scale(0.3);
+  transition: all 1s cubic-bezier(.34,1.56,.64,1);
+  filter: brightness(0.5);
+}
+.crystal.growing {
+  animation: crystalGrow 1500s linear forwards;
+}
+@keyframes crystalGrow {
+  0%   { opacity: 0.25; transform: scale(0.3); filter: brightness(0.5) saturate(0.5); }
+  50%  { opacity: 0.65; transform: scale(0.65); filter: brightness(0.8) saturate(0.8); }
+  100% { opacity: 1.0; transform: scale(1.0); filter: brightness(1.2) saturate(1.2); }
+}
+.crystal.done {
+  opacity: 1; transform: scale(1.1); filter: brightness(1.3) saturate(1.2);
+  animation: crystalShine 1.5s ease-in-out infinite alternate;
+}
+@keyframes crystalShine {
+  0% { filter: brightness(1.1) saturate(1.1); }
+  100% { filter: brightness(1.4) saturate(1.3); }
+}
+.crystal.shatter {
+  animation: crystalShatter .6s ease-out forwards;
+}
+@keyframes crystalShatter {
+  0%  { transform: scale(1); opacity: 0.8; }
+  20% { transform: scale(1.1) rotate(5deg); }
+  40% { transform: scale(0.8) rotate(-3deg); opacity: 0.6; }
+  100% { transform: scale(0) rotate(15deg); opacity: 0; }
+}
+
+/* Stats row */
+.focus-stats {
+  display: flex; gap: 16px; margin-bottom: 20px;
+}
+.focus-stat {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.focus-stat .val { font-size: 20px; font-weight: 700; }
+.focus-stat .lbl { font-size: 11px; color: var(--sub); }
+
+/* Level bar */
+.level-bar {
+  width: 100%; max-width: 260px; margin-bottom: 24px;
+}
+.level-info {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px; margin-bottom: 6px;
+}
+.level-name { font-weight: 600; }
+.level-next { color: var(--sub); }
+.level-track {
+  height: 6px; background: var(--bg2); border-radius: 3px; overflow: hidden;
+}
+.level-fill {
+  height: 100%; background: linear-gradient(90deg, var(--accent), #ff6b00);
+  border-radius: 3px; transition: width .5s ease;
+}
+
+/* Collection mini */
+.collection-row {
+  display: flex; flex-wrap: wrap; gap: 4px; justify-content: center;
+  max-width: 280px; margin-bottom: 24px; max-height: 60px; overflow: hidden;
+}
+.collection-row .mini-crystal { font-size: 16px; opacity: 0.8; }
+
+/* Focus button */
+.focus-btn {
+  width: 100%; max-width: 280px; padding: 16px; border: none; border-radius: 16px;
+  font-size: 17px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.focus-btn.start {
+  background: var(--accent); color: #000;
+  box-shadow: 0 4px 20px rgba(255,159,10,.4);
+}
+.focus-btn.start:active { transform: scale(0.97); }
+.focus-btn.stop {
+  background: var(--bg2); color: var(--danger);
+}
+.focus-btn.stop:active { background: var(--bg3); }
+
+/* Duration select */
+.duration-row {
+  display: flex; gap: 8px; margin-bottom: 16px;
+}
+.dur-chip {
+  padding: 6px 14px; border-radius: 12px;
+  font-size: 13px; font-weight: 600; border: 1.5px solid var(--bg3);
+  background: transparent; color: var(--sub); cursor: pointer;
+}
+.dur-chip.active { border-color: var(--accent); color: var(--accent); background: rgba(255,159,10,.1); }
+
+/* ═══ CHAT OVERLAY ═══ */
+.chat-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: var(--bg); transform: translateY(100%);
+  transition: transform .35s cubic-bezier(.32,.72,0,1);
+  display: flex; flex-direction: column;
+  max-width: 430px; margin: 0 auto;
+}
+.chat-overlay.show { transform: translateY(0); }
 .chat-nav {
   display: flex; align-items: center; gap: 10px;
   padding: 12px 14px 10px; border-bottom: 1px solid var(--bg2); flex-shrink: 0;
@@ -166,18 +309,9 @@ html, body {
   max-width: 78%; padding: 9px 13px; border-radius: 18px;
   font-size: 14px; line-height: 1.45; word-break: break-word;
 }
-.bubble.bot {
-  background: var(--bg2); color: var(--text);
-  align-self: flex-start; border-bottom-left-radius: 5px;
-}
-.bubble.user {
-  background: var(--accent); color: #000; font-weight: 500;
-  align-self: flex-end; border-bottom-right-radius: 5px;
-}
-.bubble.system {
-  background: none; color: #636366; font-size: 12px;
-  align-self: center; text-align: center; padding: 2px 8px;
-}
+.bubble.bot { background: var(--bg2); align-self: flex-start; border-bottom-left-radius: 5px; }
+.bubble.user { background: var(--accent); color: #000; font-weight: 500; align-self: flex-end; border-bottom-right-radius: 5px; }
+.bubble.system { background: none; color: #636366; font-size: 12px; align-self: center; text-align: center; padding: 2px 8px; }
 .chat-input-row {
   display: flex; gap: 8px; align-items: flex-end;
   padding: 10px 14px 16px; border-top: 1px solid var(--bg2); flex-shrink: 0;
@@ -185,8 +319,7 @@ html, body {
 .chat-input-row textarea {
   flex: 1; background: var(--bg2); border: none; border-radius: 18px;
   padding: 9px 14px; color: var(--text); font-size: 14px; outline: none;
-  font-family: inherit; resize: none; max-height: 120px; min-height: 38px;
-  line-height: 1.4;
+  font-family: inherit; resize: none; max-height: 120px; min-height: 38px; line-height: 1.4;
 }
 .chat-input-row textarea::placeholder { color: #636366; }
 .send-btn {
@@ -194,65 +327,172 @@ html, body {
   border: none; color: #000; font-size: 20px; cursor: pointer; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
 }
-.send-btn:active { background: #e08e00; }
+
+/* FAB */
+.fab {
+  position: fixed; bottom: 64px; right: 14px;
+  width: 52px; height: 52px; border-radius: 50%;
+  background: var(--accent); color: #000; font-size: 22px;
+  border: none; cursor: pointer;
+  box-shadow: 0 4px 18px rgba(255,159,10,.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 20; max-width: 430px;
+  animation: fabPulse 2s ease-in-out 1s 1;
+}
+.fab:active { transform: scale(.92); }
+@keyframes fabPulse {
+  0%, 100% { box-shadow: 0 4px 18px rgba(255,159,10,.5); }
+  50% { box-shadow: 0 4px 28px rgba(255,159,10,.8), 0 0 0 6px rgba(255,159,10,.15); }
+}
+
+/* Confetti canvas */
+#confetti { position: fixed; inset: 0; z-index: 50; pointer-events: none; }
 </style>
 </head>
 <body>
 
-<div class="scene-wrap" id="wrap">
+<div class="app">
+  <div class="tab-content">
 
-<!-- ═══ SCENE 1: CALENDAR ═══ -->
-<div class="scene" id="s-calendar">
-  <div class="cal-header">
-    <button class="nav-btn" onclick="prevMonth()">‹</button>
-    <h2 id="month-label">…</h2>
-    <button class="nav-btn" onclick="nextMonth()">›</button>
-    <button class="today-btn" onclick="goToday()">Сегодня</button>
-  </div>
-  <div class="weekdays">
-    <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span>
-    <span>Пт</span><span>Сб</span><span>Вс</span>
-  </div>
-  <div class="grid" id="grid"></div>
-  <div class="divider"></div>
-  <div class="events-area" id="events-area">
-    <div class="empty-state" id="empty-state">
-      <p>Нажми «Загрузить» или напиши<br>Эрману <b>«открой календарь»</b></p>
-      <button class="refresh-btn" id="refresh-btn" onclick="requestRefresh()">🔄 Загрузить события</button>
-      <button class="close-btn-empty" onclick="closeApp()">← Вернуться в чат</button>
-      <div class="hint" id="empty-hint"></div>
+    <!-- ═══ CALENDAR TAB ═══ -->
+    <div class="tab-pane active" id="tab-calendar">
+      <div class="cal-header">
+        <button class="nav-btn" onclick="prevMonth()">&#8249;</button>
+        <h2 id="month-label"></h2>
+        <button class="nav-btn" onclick="nextMonth()">&#8250;</button>
+        <button class="today-btn" onclick="goToday()">Сегодня</button>
+      </div>
+      <div class="weekdays">
+        <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span>
+        <span>Пт</span><span>Сб</span><span>Вс</span>
+      </div>
+      <div class="grid" id="grid"></div>
+      <div class="divider"></div>
+      <div class="events-area" id="events-area">
+        <div class="empty-state" id="empty-state">
+          <p>Напиши Эрману<br><b>«открой календарь»</b></p>
+          <button class="refresh-btn" id="refresh-btn" onclick="requestRefresh()">Загрузить события</button>
+          <button class="close-btn-empty" onclick="closeApp()">&#8592; Вернуться в чат</button>
+          <div class="hint" id="empty-hint"></div>
+        </div>
+      </div>
     </div>
+
+    <!-- ═══ FOCUS TAB ═══ -->
+    <div class="tab-pane" id="tab-focus">
+      <div class="focus-wrap">
+        <div class="focus-header" id="focus-header">Фокус</div>
+
+        <!-- Timer -->
+        <div class="timer-container">
+          <svg class="timer-ring-bg" viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="90"/>
+          </svg>
+          <svg class="timer-ring-fg" id="timer-ring" viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="90"/>
+          </svg>
+          <div class="timer-text">
+            <div class="timer-digits" id="timer-digits">25:00</div>
+            <div class="timer-label" id="timer-label">Готов к фокусу</div>
+          </div>
+        </div>
+
+        <!-- Crystal -->
+        <div class="crystal-area">
+          <div class="crystal" id="crystal">&#x1F48E;</div>
+        </div>
+
+        <!-- Duration chips -->
+        <div class="duration-row" id="dur-row">
+          <button class="dur-chip" data-min="15" onclick="setDuration(15)">15 мин</button>
+          <button class="dur-chip active" data-min="25" onclick="setDuration(25)">25 мин</button>
+          <button class="dur-chip" data-min="45" onclick="setDuration(45)">45 мин</button>
+        </div>
+
+        <!-- Action button -->
+        <button class="focus-btn start" id="focus-btn" onclick="toggleFocus()">
+          &#9654; Начать фокус
+        </button>
+
+        <!-- Stats -->
+        <div class="focus-stats" id="focus-stats" style="margin-top:20px;">
+          <div class="focus-stat">
+            <div class="val" id="stat-streak">0</div>
+            <div class="lbl">streak</div>
+          </div>
+          <div class="focus-stat">
+            <div class="val" id="stat-crystals">0</div>
+            <div class="lbl">кристаллов</div>
+          </div>
+          <div class="focus-stat">
+            <div class="val" id="stat-today">0</div>
+            <div class="lbl">сегодня</div>
+          </div>
+        </div>
+
+        <!-- Level -->
+        <div class="level-bar" id="level-bar">
+          <div class="level-info">
+            <span class="level-name" id="level-name">&#127793; Новичок</span>
+            <span class="level-next" id="level-next"></span>
+          </div>
+          <div class="level-track">
+            <div class="level-fill" id="level-fill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <!-- Mini collection -->
+        <div class="collection-row" id="collection-row"></div>
+      </div>
+    </div>
+
   </div>
-  <button class="fab" onclick="showChat()">💬</button>
+
+  <!-- Tab bar -->
+  <div class="tab-bar">
+    <button class="tab-item active" data-tab="calendar" onclick="switchTab('calendar')">
+      <span class="tab-icon">&#128197;</span>
+      <span>Календарь</span>
+    </button>
+    <button class="tab-item" data-tab="focus" onclick="switchTab('focus')">
+      <span class="tab-icon">&#128293;</span>
+      <span>Фокус</span>
+    </button>
+  </div>
 </div>
 
-<!-- ═══ SCENE 2: CHAT ═══ -->
-<div class="scene" id="s-chat">
+<!-- FAB -->
+<button class="fab" id="fab" onclick="showChat()">&#128172;</button>
+
+<!-- Chat overlay -->
+<div class="chat-overlay" id="chat-overlay">
   <div class="chat-nav">
-    <button class="back-btn" onclick="showCal()">‹ Назад</button>
-    <div class="avatar">🤖</div>
+    <button class="back-btn" onclick="hideChat()">&#8249; Назад</button>
+    <div class="avatar">&#129302;</div>
     <div class="info">
       <div class="name">Эрман</div>
-      <div class="status">● онлайн</div>
+      <div class="status">&#9679; онлайн</div>
     </div>
   </div>
   <div class="chat-msgs" id="chat-msgs">
-    <div class="bubble bot">Привет! Напиши что добавить, спроси что угодно — я отвечу в Telegram-чате.</div>
+    <div class="bubble bot">Привет! Напиши что-нибудь — я отвечу в Telegram-чате.</div>
   </div>
   <div class="chat-input-row">
-    <textarea id="msg-input" rows="1" placeholder="Сообщение…"
+    <textarea id="msg-input" rows="1" placeholder="Сообщение..."
       oninput="autoResize(this)"
       onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg();}">
     </textarea>
-    <button class="send-btn" onclick="sendMsg()">↑</button>
+    <button class="send-btn" onclick="sendMsg()">&#8593;</button>
   </div>
 </div>
 
-</div>
+<canvas id="confetti"></canvas>
 
 <script>
-// ── Data ──────────────────────────────────────────────────────────────
+// ══ Data ══════════════════════════════════════════════════════════════
 let EVENTS = [], TODAY = new Date().toISOString().slice(0,10), hasData = false;
+let FOCUS = { collection: [], streak: 0, total_minutes: 0, today_sessions: 0, level: null };
+let initTab = 'calendar';
 
 function loadData() {
   try {
@@ -264,50 +504,58 @@ function loadData() {
     const d = JSON.parse(json);
     EVENTS = d.events || [];
     TODAY  = d.today  || TODAY;
+    if (d.focus) FOCUS = { ...FOCUS, ...d.focus };
+    if (d.tab) initTab = d.tab;
     hasData = true;
   } catch(e) { console.warn('loadData:', e); }
 }
 
-// ── Telegram WebApp ───────────────────────────────────────────────────
+// ══ Telegram ══════════════════════════════════════════════════════════
 const twa = window.Telegram && window.Telegram.WebApp;
 if (twa) { twa.ready(); twa.expand(); }
 
-// Detect if sendData will work (only from KeyboardButton web_app)
-function canSendData() {
-  // sendData works only when opened via ReplyKeyboard web_app button
-  // If opened from MenuButton or InlineKeyboard — it won't work
-  // Heuristic: if we have hash data, we were likely opened from /cal (ReplyKeyboard)
-  return hasData && !!twa;
+function canSendData() { return hasData && !!twa; }
+function closeApp() { if (twa) twa.close(); }
+
+// ══ Tabs ══════════════════════════════════════════════════════════════
+let activeTab = 'calendar';
+
+function switchTab(name) {
+  activeTab = name;
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-item').forEach(b => b.classList.remove('active'));
+  const pane = document.getElementById('tab-' + name);
+  if (pane) pane.classList.add('active');
+  const btn = document.querySelector(`.tab-item[data-tab="${name}"]`);
+  if (btn) btn.classList.add('active');
 }
 
-function closeApp() {
-  if (twa) twa.close();
-}
-
-// ── Scenes ────────────────────────────────────────────────────────────
-let onChat = false;
+// ══ Chat overlay ═════════════════════════════════════════════════════
+let chatOpen = false;
 
 function showChat() {
-  onChat = true;
-  document.getElementById('wrap').classList.add('show-chat');
+  chatOpen = true;
+  document.getElementById('chat-overlay').classList.add('show');
+  document.getElementById('fab').style.display = 'none';
   if (twa) {
     twa.BackButton.show();
     twa.BackButton.offClick(closeApp);
-    twa.BackButton.onClick(showCal);
+    twa.BackButton.onClick(hideChat);
   }
-  setTimeout(() => document.getElementById('msg-input').focus(), 380);
+  setTimeout(() => document.getElementById('msg-input').focus(), 350);
 }
 
-function showCal() {
-  onChat = false;
-  document.getElementById('wrap').classList.remove('show-chat');
+function hideChat() {
+  chatOpen = false;
+  document.getElementById('chat-overlay').classList.remove('show');
+  document.getElementById('fab').style.display = '';
   if (twa) {
-    twa.BackButton.offClick(showCal);
+    twa.BackButton.offClick(hideChat);
     twa.BackButton.onClick(closeApp);
   }
 }
 
-// ── Calendar ──────────────────────────────────────────────────────────
+// ══ Calendar ═════════════════════════════════════════════════════════
 const MONTHS = ['январь','февраль','март','апрель','май','июнь',
                 'июль','август','сентябрь','октябрь','ноябрь','декабрь'];
 const MSHORT = ['','янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
@@ -315,43 +563,32 @@ const DSHORT = ['вс','пн','вт','ср','чт','пт','сб'];
 
 let curY, curM, selDate;
 
-function iso(y,m,d) {
-  return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-}
+function iso(y,m,d) { return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
 function evFor(d) { return EVENTS.filter(e => e.date === d); }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-function init() {
-  loadData();
+function initCal() {
   const t = new Date(TODAY + 'T12:00:00');
   curY = t.getFullYear(); curM = t.getMonth(); selDate = TODAY;
-
   if (!hasData) {
     document.getElementById('empty-state').classList.add('show');
     if (!twa) {
-      document.getElementById('empty-hint').textContent = 'Открой через Telegram для полного функционала';
+      document.getElementById('empty-hint').textContent = 'Открой через Telegram';
     } else if (!canSendData()) {
-      document.getElementById('empty-hint').textContent = 'Или напиши «календарь» в чат';
+      document.getElementById('empty-hint').textContent = 'Или напиши "календарь" в чат';
       document.getElementById('refresh-btn').textContent = '← В чат к Эрману';
       document.getElementById('refresh-btn').onclick = closeApp;
     }
   }
-
-  if (twa) {
-    twa.BackButton.show();
-    twa.BackButton.onClick(closeApp);
-  }
-
-  render();
+  renderCal();
 }
 
-function render() {
+function renderCal() {
   document.getElementById('month-label').textContent = MONTHS[curM] + ' ' + curY;
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
   const first = new Date(curY, curM, 1);
-  let start = first.getDay();
-  start = start === 0 ? 6 : start - 1;
+  let start = first.getDay(); start = start === 0 ? 6 : start - 1;
   const dim  = new Date(curY, curM+1, 0).getDate();
   const dimp = new Date(curY, curM, 0).getDate();
 
@@ -371,7 +608,7 @@ function render() {
 function mkDay(num, dateStr, other) {
   const div = document.createElement('div');
   div.className = 'day'+(other?' other-month':'')+(dateStr===TODAY?' today':'')+(dateStr===selDate?' selected':'');
-  div.onclick = () => { selDate=dateStr; render(); };
+  div.onclick = () => { selDate=dateStr; renderCal(); };
   const n = document.createElement('div'); n.className='day-num'; n.textContent=num;
   div.appendChild(n);
   const evs = evFor(dateStr);
@@ -394,7 +631,7 @@ function renderEvents(dateStr) {
   const label = DSHORT[d.getDay()]+' '+d.getDate()+' '+MSHORT[d.getMonth()+1];
   let html = `<div class="events-date">${label}</div>`;
   if (!evs.length) {
-    html += `<div class="no-events">Событий нет<br><span style="font-size:11px;color:var(--accent)">Нажми 💬 чтобы добавить</span></div>`;
+    html += `<div class="no-events">Событий нет</div>`;
   } else {
     [...evs].sort((a,b)=>(a.time||'99').localeCompare(b.time||'99')).forEach(e => {
       const col = e.overdue?'var(--danger)':e.source==='erman'?'var(--accent)':'#ebebf5cc';
@@ -404,25 +641,209 @@ function renderEvents(dateStr) {
   area.innerHTML = html;
 }
 
-function prevMonth() { curM--; if(curM<0){curM=11;curY--;} render(); }
-function nextMonth() { curM++; if(curM>11){curM=0;curY++;} render(); }
-function goToday() {
-  const t=new Date(TODAY+'T12:00:00');
-  curY=t.getFullYear(); curM=t.getMonth(); selDate=TODAY; render();
+function prevMonth() { curM--; if(curM<0){curM=11;curY--;} renderCal(); }
+function nextMonth() { curM++; if(curM>11){curM=0;curY++;} renderCal(); }
+function goToday() { const t=new Date(TODAY+'T12:00:00'); curY=t.getFullYear(); curM=t.getMonth(); selDate=TODAY; renderCal(); }
+function requestRefresh() { if (!twa) return; try { twa.sendData(JSON.stringify({type:'cal_request'})); } catch(e) { twa.close(); } }
+
+// ══ Focus / Pomodoro ═════════════════════════════════════════════════
+let focusDuration = 25; // minutes
+let focusRunning = false, focusTimer = null;
+let focusStart = 0, focusElapsed = 0;
+const DASH_TOTAL = 565.48; // 2*PI*90
+
+function setDuration(min) {
+  if (focusRunning) return;
+  focusDuration = min;
+  document.querySelectorAll('.dur-chip').forEach(c =>
+    c.classList.toggle('active', parseInt(c.dataset.min) === min));
+  document.getElementById('timer-digits').textContent = min + ':00';
 }
 
-// ── Refresh (empty state) ─────────────────────────────────────────────
-function requestRefresh() {
-  if (!twa) return;
-  try {
-    twa.sendData(JSON.stringify({type:'cal_request'}));
-  } catch(e) {
-    // sendData not available — go back to chat
-    twa.close();
+function toggleFocus() {
+  if (focusRunning) stopFocus(false); else startFocus();
+}
+
+function startFocus() {
+  focusRunning = true;
+  focusStart = Date.now();
+  focusElapsed = 0;
+  const totalSec = focusDuration * 60;
+
+  // UI
+  document.getElementById('dur-row').style.opacity = '0.3';
+  document.getElementById('dur-row').style.pointerEvents = 'none';
+  const btn = document.getElementById('focus-btn');
+  btn.className = 'focus-btn stop';
+  btn.innerHTML = '&#9632; Остановить';
+  document.getElementById('timer-label').textContent = 'Фокус...';
+  document.getElementById('timer-ring').classList.remove('done','cancelled');
+
+  // Crystal start growing
+  const crystal = document.getElementById('crystal');
+  crystal.className = 'crystal growing';
+  crystal.style.animationDuration = totalSec + 's';
+
+  // Timer tick
+  focusTimer = setInterval(() => {
+    focusElapsed = Math.floor((Date.now() - focusStart) / 1000);
+    const remain = Math.max(0, totalSec - focusElapsed);
+    const m = Math.floor(remain / 60), s = remain % 60;
+    document.getElementById('timer-digits').textContent =
+      String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+
+    // Ring progress
+    const pct = focusElapsed / totalSec;
+    const offset = DASH_TOTAL * (1 - pct);
+    document.querySelector('#timer-ring circle').style.strokeDashoffset = Math.max(0, offset);
+
+    if (remain <= 0) {
+      stopFocus(true);
+    }
+  }, 1000);
+}
+
+function stopFocus(completed) {
+  clearInterval(focusTimer);
+  focusRunning = false;
+
+  document.getElementById('dur-row').style.opacity = '';
+  document.getElementById('dur-row').style.pointerEvents = '';
+  const btn = document.getElementById('focus-btn');
+  btn.className = 'focus-btn start';
+  btn.innerHTML = '&#9654; Начать фокус';
+
+  const crystal = document.getElementById('crystal');
+  const ring = document.getElementById('timer-ring');
+
+  if (completed) {
+    // Success!
+    crystal.className = 'crystal done';
+    ring.classList.add('done');
+    document.getElementById('timer-label').textContent = 'Готово!';
+    document.getElementById('timer-digits').textContent = '00:00';
+    celebrate();
+
+    // Update local stats
+    FOCUS.today_sessions = (FOCUS.today_sessions || 0) + 1;
+    FOCUS.total_minutes = (FOCUS.total_minutes || 0) + focusDuration;
+    FOCUS.collection.push({ type: 'amber', date: TODAY, duration: focusDuration });
+    renderFocusStats();
+
+    // Send to bot
+    if (twa) {
+      try {
+        twa.sendData(JSON.stringify({ type: 'focus_complete', duration: focusDuration }));
+      } catch(e) {
+        console.warn('sendData failed:', e);
+      }
+    }
+
+    // Reset after 3s
+    setTimeout(() => {
+      crystal.className = 'crystal';
+      crystal.style.animationDuration = '';
+      ring.classList.remove('done');
+      document.getElementById('timer-label').textContent = 'Готов к фокусу';
+      document.getElementById('timer-digits').textContent = focusDuration + ':00';
+      document.querySelector('#timer-ring circle').style.strokeDashoffset = 0;
+    }, 3000);
+  } else {
+    // Cancelled
+    crystal.className = 'crystal shatter';
+    ring.classList.add('cancelled');
+    document.getElementById('timer-label').textContent = 'Прервано';
+
+    if (twa && focusElapsed > 60) {
+      try {
+        twa.sendData(JSON.stringify({ type: 'focus_cancel', elapsed_seconds: focusElapsed }));
+      } catch(e) {}
+    }
+
+    setTimeout(() => {
+      crystal.className = 'crystal';
+      crystal.style.animationDuration = '';
+      ring.classList.remove('cancelled');
+      document.getElementById('timer-label').textContent = 'Готов к фокусу';
+      document.getElementById('timer-digits').textContent = focusDuration + ':00';
+      document.querySelector('#timer-ring circle').style.strokeDashoffset = 0;
+    }, 1500);
   }
 }
 
-// ── Chat ──────────────────────────────────────────────────────────────
+function renderFocusStats() {
+  document.getElementById('stat-streak').textContent = FOCUS.streak || 0;
+  document.getElementById('stat-crystals').textContent = (FOCUS.collection || []).length;
+  document.getElementById('stat-today').textContent = FOCUS.today_sessions || 0;
+
+  // Level
+  const lvl = FOCUS.level;
+  if (lvl) {
+    document.getElementById('level-name').textContent = (lvl.emoji || '') + ' ' + (lvl.name || 'Новичок');
+    if (lvl.next_name) {
+      document.getElementById('level-next').textContent = lvl.next_emoji + ' ' + lvl.next_name;
+    }
+    document.getElementById('level-fill').style.width = (lvl.progress || 0) + '%';
+  }
+
+  // Mini collection
+  const row = document.getElementById('collection-row');
+  const crystalEmojis = { amber: '🔶', sapphire: '💎', prismatic: '🌈', emerald: '💚' };
+  row.innerHTML = (FOCUS.collection || []).slice(-20).map(c =>
+    `<span class="mini-crystal">${crystalEmojis[c.type] || '💎'}</span>`
+  ).join('');
+}
+
+// ══ Confetti ═════════════════════════════════════════════════════════
+function celebrate() {
+  const canvas = document.getElementById('confetti');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const particles = [];
+  const colors = ['#ff9f0a','#ff6b00','#30d158','#0a84ff','#bf5af2','#ff453a','#ffd60a'];
+  for (let i = 0; i < 60; i++) {
+    particles.push({
+      x: canvas.width / 2 + (Math.random() - 0.5) * 60,
+      y: canvas.height / 2,
+      vx: (Math.random() - 0.5) * 12,
+      vy: -Math.random() * 14 - 4,
+      size: Math.random() * 6 + 3,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      life: 1,
+      rot: Math.random() * 360,
+      rotV: (Math.random() - 0.5) * 10,
+    });
+  }
+
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+    particles.forEach(p => {
+      if (p.life <= 0) return;
+      alive = true;
+      p.x += p.vx;
+      p.vy += 0.3; // gravity
+      p.y += p.vy;
+      p.life -= 0.015;
+      p.rot += p.rotV;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot * Math.PI / 180);
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+      ctx.restore();
+    });
+    if (alive && frame < 120) { frame++; requestAnimationFrame(draw); }
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  requestAnimationFrame(draw);
+}
+
+// ══ Chat ═════════════════════════════════════════════════════════════
 function addBubble(text, cls) {
   const box = document.getElementById('chat-msgs');
   const div = document.createElement('div');
@@ -443,16 +864,14 @@ function sendMsg() {
   const text = inp.value.trim();
   if (!text) return;
   inp.value = ''; inp.style.height = '';
-
   addBubble(text, 'user');
-
   if (twa) {
-    const note = addBubble('Отправляю…', 'system');
+    const note = addBubble('Отправляю...', 'system');
     setTimeout(() => {
       try {
         twa.sendData(JSON.stringify({type:'message', text}));
       } catch(e) {
-        note.textContent = 'Не удалось отправить — напиши в чат напрямую';
+        note.textContent = 'Напиши в чат напрямую';
         setTimeout(() => twa.close(), 1200);
       }
     }, 300);
@@ -461,7 +880,17 @@ function sendMsg() {
   }
 }
 
-init();
+// ══ Init ═════════════════════════════════════════════════════════════
+loadData();
+initCal();
+renderFocusStats();
+
+if (initTab === 'focus') switchTab('focus');
+
+if (twa) {
+  twa.BackButton.show();
+  twa.BackButton.onClick(closeApp);
+}
 </script>
 </body>
 </html>
