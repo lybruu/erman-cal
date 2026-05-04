@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>erMan</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -14,22 +14,23 @@
   position: fixed; inset: 0; z-index: 999;
   background: #050508;
   display: flex; align-items: center; justify-content: center;
-  transition: opacity .4s ease;
+  transition: opacity .6s ease;
 }
 .splash.gone { opacity: 0; pointer-events: none; }
 .splash-logo {
-  font-family: 'Playfair Display', serif; font-size: 38px; font-weight: 300;
-  letter-spacing: 6px; color: #fff; opacity: 0;
-  animation: logo-in .6s ease .15s forwards;
+  font-family: 'Bebas Neue', Impact, sans-serif; font-size: 52px;
+  letter-spacing: 12px; color: #fff; opacity: 0;
+  animation: logo-in .8s ease .2s forwards;
 }
 .splash-logo span { color: var(--accent); }
 @keyframes logo-in {
-  0%   { opacity: 0; transform: scale(.85); filter: blur(4px); }
-  100% { opacity: 1; transform: scale(1);   filter: blur(0); }
+  0%   { opacity: 0; transform: scale(.7) translateY(10px); filter: blur(6px); }
+  60%  { opacity: .8; transform: scale(1.02); filter: blur(1px); }
+  100% { opacity: 1; transform: scale(1); filter: blur(0); }
 }
 @keyframes logo-out {
-  0%   { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-24px); }
+  0%   { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-30px) scale(.9); }
 }
 .splash-stars {
   position: absolute; inset: 0; overflow: hidden;
@@ -40,17 +41,17 @@
 }
 
 /* App hidden during splash, then slides in */
-.app { display: flex; flex-direction: column; height: 100%; opacity: 0; transform: translateY(16px); }
+.app { display: flex; flex-direction: column; height: 100%; opacity: 0; transform: translateY(20px); }
 .app.revealed {
-  animation: app-reveal .5s ease forwards;
+  animation: app-reveal .7s cubic-bezier(.16,1,.3,1) forwards;
 }
 @keyframes app-reveal {
-  0%   { opacity: 0; transform: translateY(16px); }
+  0%   { opacity: 0; transform: translateY(20px); }
   100% { opacity: 1; transform: translateY(0); }
 }
 .tab-bar { transform: translateY(20px); opacity: 0; }
 .app.revealed .tab-bar {
-  animation: bar-slide .4s ease .15s forwards;
+  animation: bar-slide .5s ease .2s forwards;
 }
 @keyframes bar-slide {
   0%   { transform: translateY(20px); opacity: 0; }
@@ -63,11 +64,13 @@
   --accent: #ff9f0a; --accent2: #ff6200;
   --blue: #38bdf8; --cyan: #22d3ee; --green: #34d399; --danger: #ff453a;
   --glow: rgba(255,159,10,.28); --glow-b: rgba(56,189,248,.2);
+  --font-display: 'Bebas Neue', Impact, sans-serif;
+  --font-body: 'Cormorant Garamond', Georgia, serif;
 }
 
 html, body {
   background: var(--bg); color: var(--text);
-  font-family: 'Space Grotesk', -apple-system, sans-serif;
+  font-family: var(--font-body);
   height: 100%; overflow: hidden; overscroll-behavior: none;
   max-width: 430px; margin: 0 auto;
   position: fixed; width: 100%;
@@ -107,8 +110,8 @@ html, body {
 .tab-item {
   flex: 1; display: flex; flex-direction: column; align-items: center;
   gap: 2px; padding: 5px 2px; cursor: pointer;
-  color: var(--sub); font-size: 10px; font-weight: 400; letter-spacing: 1.5px;
-  font-family: 'Space Grotesk', sans-serif;
+  color: var(--sub); font-size: 10px; font-weight: 400; letter-spacing: 2px;
+  font-family: var(--font-display);
   border: none; background: none; transition: color .2s;
   text-transform: uppercase;
 }
@@ -118,9 +121,9 @@ html, body {
 
 /* ── SHARED COMPONENTS ── */
 .section-header {
-  font-size: 13px; font-weight: 400; color: var(--sub);
-  text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px; font-weight: 400; color: var(--sub);
+  text-transform: uppercase; letter-spacing: 4px; margin-bottom: 12px;
+  font-family: var(--font-display);
 }
 .scroll-area { flex: 1; overflow-y: auto; padding: 16px 16px 12px; position: relative; z-index: 2; }
 .send-row {
@@ -132,7 +135,7 @@ html, body {
 .send-row textarea {
   flex: 1; background: var(--bg2); border: 1.5px solid rgba(255,255,255,.08);
   border-radius: 16px; padding: 10px 14px; color: var(--text);
-  font-size: 14px; font-family: inherit; outline: none; resize: none;
+  font-size: 15px; font-family: var(--font-body); outline: none; resize: none;
   max-height: 100px; min-height: 40px; line-height: 1.4;
   transition: border-color .2s;
 }
@@ -152,7 +155,7 @@ html, body {
   display: flex; align-items: center; gap: 8px;
   padding: 14px 16px 6px; flex-shrink: 0; position: relative; z-index: 2;
 }
-.cal-header h2 { flex: 1; text-align: center; font-size: 22px; font-weight: 400; letter-spacing: 2px; font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; }
+.cal-header h2 { flex: 1; text-align: center; font-size: 28px; font-weight: 400; letter-spacing: 4px; font-family: var(--font-display); text-transform: uppercase; }
 .nav-btn {
   background: rgba(255,255,255,.06); border: none; color: var(--text);
   border-radius: 50%; width: 32px; height: 32px; font-size: 18px;
@@ -161,15 +164,15 @@ html, body {
 .nav-btn:active { background: rgba(255,255,255,.12); }
 .today-btn {
   background: transparent; border: 1.5px solid var(--accent); color: var(--accent);
-  border-radius: 10px; padding: 4px 14px; font-size: 12px; font-weight: 400;
-  cursor: pointer; white-space: nowrap; letter-spacing: 1.5px;
-  font-family: 'Space Grotesk', sans-serif; text-transform: uppercase;
+  border-radius: 10px; padding: 4px 14px; font-size: 13px; font-weight: 400;
+  cursor: pointer; white-space: nowrap; letter-spacing: 2px;
+  font-family: var(--font-display); text-transform: uppercase;
 }
 .weekdays {
   display: grid; grid-template-columns: repeat(7,1fr);
   padding: 4px 10px; text-align: center; flex-shrink: 0; position: relative; z-index: 2;
 }
-.weekdays span { font-size: 12px; color: var(--sub); padding: 3px 0; font-weight: 400; letter-spacing: 1.5px; font-family: 'Space Grotesk', sans-serif; }
+.weekdays span { font-size: 12px; color: var(--sub); padding: 3px 0; font-weight: 400; letter-spacing: 2px; font-family: var(--font-display); }
 .grid {
   display: grid; grid-template-columns: repeat(7,1fr);
   padding: 0 10px; flex-shrink: 0; position: relative; z-index: 2;
@@ -186,7 +189,7 @@ html, body {
   background: rgba(255,255,255,.08); border-radius: 50%;
   width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
 }
-.day-num { font-size: 15px; min-width: 28px; text-align: center; line-height: 28px; font-weight: 400; font-family: 'Playfair Display', Georgia, serif; }
+.day-num { font-size: 16px; min-width: 28px; text-align: center; line-height: 28px; font-weight: 400; font-family: var(--font-display); letter-spacing: 1px; }
 .dots { display: flex; gap: 2px; justify-content: center; margin-top: 2px; }
 .dot { width: 4px; height: 4px; border-radius: 50%; }
 .dot.calendar { background: rgba(255,255,255,.35); }
@@ -194,28 +197,90 @@ html, body {
 .dot.overdue { background: var(--danger); }
 .divider { height: 1px; background: rgba(255,255,255,.04); margin: 6px 16px; flex-shrink: 0; }
 .events-area { flex: 1; overflow-y: auto; padding: 8px 16px 12px; position: relative; z-index: 2; }
-.events-date { font-size: 13px; color: var(--sub); font-weight: 400; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; font-family: 'Space Grotesk', sans-serif; }
+.events-date { font-size: 14px; color: var(--sub); font-weight: 400; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; font-family: var(--font-display); }
 .event-item { display: flex; gap: 10px; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,.04); }
 .event-item:last-child { border-bottom: none; }
 .event-dot { width: 7px; height: 7px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
-.event-title { font-size: 15px; font-weight: 400; letter-spacing: .2px; font-family: 'Playfair Display', Georgia, serif; }
-.event-time { font-size: 11px; color: var(--sub); margin-top: 2px; }
-.no-events { color: var(--sub); font-size: 13px; padding: 14px 0; text-align: center; font-weight: 300; }
+.event-title { font-size: 16px; font-weight: 400; letter-spacing: .3px; font-family: var(--font-body); }
+.event-time { font-size: 12px; color: var(--sub); margin-top: 2px; font-family: var(--font-display); letter-spacing: 1px; }
+.no-events { color: var(--sub); font-size: 14px; padding: 14px 0; text-align: center; font-weight: 300; font-family: var(--font-body); font-style: italic; }
 .empty-state {
   display: none; flex-direction: column; align-items: center;
   padding: 36px 24px; gap: 14px; text-align: center;
 }
 .empty-state.show { display: flex; }
-.empty-state p { font-size: 16px; color: var(--sub); line-height: 1.7; font-weight: 400; font-family: 'Playfair Display', Georgia, serif; }
+.empty-state p { font-size: 17px; color: var(--sub); line-height: 1.7; font-weight: 400; font-family: var(--font-body); }
 .action-btn {
   background: linear-gradient(135deg, var(--accent), var(--accent2));
   color: #000; font-weight: 400; border: none;
   border-radius: 14px; padding: 14px 28px; font-size: 16px; cursor: pointer;
-  font-family: 'Space Grotesk', sans-serif; letter-spacing: 1.5px; text-transform: uppercase;
+  font-family: var(--font-display); letter-spacing: 3px; text-transform: uppercase;
   box-shadow: 0 4px 22px var(--glow);
   transition: transform .1s;
 }
 .action-btn:active { transform: scale(.96); }
+
+/* ── ADD EVENT MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,.7);
+  backdrop-filter: blur(8px);
+  display: none; align-items: flex-end; justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal-sheet {
+  background: var(--bg2); border-radius: 20px 20px 0 0;
+  padding: 20px 20px 28px; width: 100%; max-width: 430px;
+  animation: sheet-up .3s ease forwards;
+}
+@keyframes sheet-up {
+  0% { transform: translateY(100%); }
+  100% { transform: translateY(0); }
+}
+.modal-title {
+  font-family: var(--font-display); font-size: 22px; letter-spacing: 3px;
+  text-transform: uppercase; text-align: center; margin-bottom: 18px;
+}
+.modal-field {
+  margin-bottom: 14px;
+}
+.modal-field label {
+  font-family: var(--font-display); font-size: 13px; letter-spacing: 2px;
+  color: var(--sub); text-transform: uppercase; display: block; margin-bottom: 6px;
+}
+.modal-field input {
+  width: 100%; background: var(--bg); border: 1.5px solid rgba(255,255,255,.08);
+  border-radius: 12px; padding: 12px 14px; color: var(--text);
+  font-size: 15px; font-family: var(--font-body); outline: none;
+  transition: border-color .2s;
+}
+.modal-field input:focus { border-color: rgba(255,159,10,.3); }
+.modal-field input::placeholder { color: var(--dim); }
+.modal-btns {
+  display: flex; gap: 10px; margin-top: 18px;
+}
+.modal-btns button {
+  flex: 1; padding: 14px; border-radius: 14px; font-size: 15px;
+  font-family: var(--font-display); letter-spacing: 2px; cursor: pointer;
+  text-transform: uppercase; border: none;
+}
+.modal-cancel { background: rgba(255,255,255,.05); color: var(--sub); }
+.modal-save {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #000; box-shadow: 0 2px 14px var(--glow);
+}
+.modal-save:active { transform: scale(.96); }
+
+/* ── FAB (add event) ── */
+.fab-add {
+  position: absolute; bottom: 16px; right: 16px; z-index: 5;
+  width: 48px; height: 48px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border: none; color: #000; font-size: 26px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px var(--glow);
+  transition: transform .1s;
+}
+.fab-add:active { transform: scale(.9); }
 
 /* ── FOCUS / TREE TIMER ── */
 .focus-wrap {
@@ -223,15 +288,15 @@ html, body {
   padding: 6px 20px 10px; overflow-y: auto; position: relative; z-index: 2;
 }
 .timer-digits {
-  font-family: 'Playfair Display', Georgia, serif; font-size: 52px; font-weight: 300;
-  font-variant-numeric: tabular-nums; letter-spacing: 4px;
+  font-family: var(--font-display); font-size: 56px;
+  font-variant-numeric: tabular-nums; letter-spacing: 6px;
   background: linear-gradient(180deg, #fff 20%, rgba(255,200,120,.7));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
 .timer-label {
-  font-size: 12px; color: var(--sub); font-weight: 400;
-  letter-spacing: 3px; text-transform: uppercase;
-  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px; color: var(--sub); font-weight: 400;
+  letter-spacing: 4px; text-transform: uppercase;
+  font-family: var(--font-display);
 }
 .tree-container {
   position: relative; width: 260px; height: 280px;
@@ -265,16 +330,16 @@ html, body {
 .dur-row { display: flex; gap: 8px; margin-bottom: 14px; }
 .dur-chip {
   padding: 7px 20px; border-radius: 20px;
-  font-size: 14px; font-weight: 400; letter-spacing: 1.5px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px; font-weight: 400; letter-spacing: 2px;
+  font-family: var(--font-display);
   border: 1.5px solid rgba(255,255,255,.07);
   background: transparent; color: var(--sub); cursor: pointer; transition: all .2s;
 }
 .dur-chip.active { border-color: var(--accent); color: var(--accent); background: rgba(255,159,10,.08); }
 .focus-btn {
   width: 100%; max-width: 260px; padding: 16px; border: none; border-radius: 20px;
-  font-size: 18px; font-weight: 400; cursor: pointer; letter-spacing: 2px;
-  font-family: 'Space Grotesk', sans-serif; text-transform: uppercase;
+  font-size: 20px; font-weight: 400; cursor: pointer; letter-spacing: 3px;
+  font-family: var(--font-display); text-transform: uppercase;
   display: flex; align-items: center; justify-content: center; gap: 8px;
   transition: all .15s;
 }
@@ -288,15 +353,15 @@ html, body {
 .focus-stats { display: flex; gap: 32px; margin-top: 16px; margin-bottom: 14px; }
 .focus-stat { display: flex; flex-direction: column; align-items: center; gap: 3px; }
 .focus-stat .val {
-  font-family: 'Playfair Display', Georgia, serif; font-size: 28px; font-weight: 300;
+  font-family: var(--font-display); font-size: 32px;
   background: linear-gradient(180deg, #fff, rgba(255,200,120,.6));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
-.focus-stat .lbl { font-size: 11px; color: var(--sub); text-transform: uppercase; letter-spacing: 2px; font-family: 'Space Grotesk', sans-serif; }
+.focus-stat .lbl { font-size: 12px; color: var(--sub); text-transform: uppercase; letter-spacing: 2px; font-family: var(--font-display); }
 .level-bar { width: 100%; max-width: 240px; margin-bottom: 14px; }
 .level-info { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 6px; }
-.level-name { font-weight: 400; font-family: 'Space Grotesk', sans-serif; letter-spacing: 1px; font-size: 13px; }
-.level-next { color: var(--sub); font-weight: 400; font-family: 'Space Grotesk', sans-serif; letter-spacing: 1px; font-size: 13px; }
+.level-name { font-weight: 400; font-family: var(--font-display); letter-spacing: 2px; font-size: 14px; }
+.level-next { color: var(--sub); font-weight: 400; font-family: var(--font-display); letter-spacing: 2px; font-size: 14px; }
 .level-track { height: 3px; background: rgba(255,255,255,.06); border-radius: 2px; overflow: hidden; }
 .level-fill {
   height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2));
@@ -317,29 +382,30 @@ html, body {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
   background: linear-gradient(90deg, rgba(255,159,10,.3), transparent);
 }
-.insight-text { font-size: 15px; font-weight: 400; line-height: 1.55; color: var(--text); font-family: 'Playfair Display', Georgia, serif; }
-.insight-meta { font-size: 11px; color: var(--sub); margin-top: 6px; font-weight: 400; font-family: 'Space Grotesk', sans-serif; letter-spacing: 1px; }
+.insight-text { font-size: 16px; font-weight: 400; line-height: 1.55; color: var(--text); font-family: var(--font-body); }
+.insight-meta { font-size: 12px; color: var(--sub); margin-top: 6px; font-weight: 400; font-family: var(--font-display); letter-spacing: 2px; }
 
 .done-section { margin-top: 4px; margin-bottom: 14px; }
 .done-item {
   display: flex; align-items: center; gap: 8px; padding: 8px 0;
-  border-bottom: 1px solid rgba(255,255,255,.04); font-size: 13px; font-weight: 300;
+  border-bottom: 1px solid rgba(255,255,255,.04); font-size: 14px; font-weight: 300;
+  font-family: var(--font-body);
 }
 .done-item:last-child { border-bottom: none; }
 .done-check { color: var(--green); font-size: 14px; flex-shrink: 0; }
-.done-plan { font-size: 10px; color: var(--sub); margin-left: auto; }
+.done-plan { font-size: 11px; color: var(--sub); margin-left: auto; font-family: var(--font-display); letter-spacing: 1px; }
 .empty-chat {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   flex: 1; gap: 10px; text-align: center; padding: 30px 24px;
 }
-.empty-chat p { font-size: 16px; color: var(--sub); line-height: 1.6; font-weight: 400; font-family: 'Playfair Display', Georgia, serif; }
+.empty-chat p { font-size: 17px; color: var(--sub); line-height: 1.6; font-weight: 400; font-family: var(--font-body); font-style: italic; }
 .empty-chat .big { font-size: 40px; }
 .toast {
   position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
   background: rgba(30,30,46,.95); border: 1px solid rgba(255,255,255,.1);
   border-radius: 12px; padding: 10px 18px;
   font-size: 14px; color: var(--text); z-index: 100;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--font-body);
   opacity: 0; transition: opacity .3s;
   backdrop-filter: blur(12px);
   pointer-events: none; white-space: nowrap;
@@ -352,14 +418,12 @@ html, body {
 .profile-section:last-child { padding-bottom: 0; }
 .model-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
 .model-chip {
-  padding: 8px 18px; border-radius: 20px; font-size: 14px; font-weight: 400;
-  font-family: 'Space Grotesk', sans-serif; letter-spacing: 1.5px;
+  padding: 8px 18px; border-radius: 20px; font-size: 15px; font-weight: 400;
+  font-family: var(--font-display); letter-spacing: 2px;
   border: 1.5px solid rgba(255,255,255,.07);
   background: transparent; color: var(--sub); cursor: pointer; transition: all .2s;
 }
 .model-chip.active { border-color: var(--accent); color: var(--accent); background: rgba(255,159,10,.08); }
-.model-chip.opus { }
-.model-chip.haiku { }
 .stats-grid {
   display: grid; grid-template-columns: repeat(2, 1fr);
   gap: 8px; margin-top: 10px;
@@ -368,14 +432,40 @@ html, body {
   background: var(--bg2); border-radius: 14px; padding: 14px;
   display: flex; flex-direction: column; gap: 4px;
 }
-.stat-card .val { font-size: 32px; font-weight: 300; letter-spacing: 1px; font-family: 'Playfair Display', Georgia, serif; }
-.stat-card .lbl { font-size: 11px; color: var(--sub); text-transform: uppercase; letter-spacing: 2px; font-family: 'Space Grotesk', sans-serif; }
+.stat-card .val { font-size: 36px; letter-spacing: 2px; font-family: var(--font-display); }
+.stat-card .lbl { font-size: 12px; color: var(--sub); text-transform: uppercase; letter-spacing: 2px; font-family: var(--font-display); }
 .config-intro {
-  font-size: 15px; color: var(--sub); line-height: 1.5; margin-top: 10px;
-  font-weight: 400; font-family: 'Playfair Display', Georgia, serif;
+  font-size: 16px; color: var(--sub); line-height: 1.5; margin-top: 10px;
+  font-weight: 400; font-family: var(--font-body); font-style: italic;
 }
 .profile-chat { padding: 12px 16px 14px; }
 .p-divider { height: 1px; background: rgba(255,255,255,.04); margin: 14px 16px; }
+
+/* ── SETTINGS TOGGLES ── */
+.setting-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.setting-row:last-child { border-bottom: none; }
+.setting-label {
+  font-family: var(--font-body); font-size: 16px; color: var(--text);
+}
+.setting-desc {
+  font-family: var(--font-display); font-size: 11px; color: var(--sub);
+  letter-spacing: 1px; margin-top: 2px;
+}
+.toggle {
+  position: relative; width: 44px; height: 24px; border-radius: 12px;
+  background: rgba(255,255,255,.08); border: none; cursor: pointer;
+  transition: background .2s;
+}
+.toggle.on { background: var(--accent); }
+.toggle::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; transition: transform .2s;
+}
+.toggle.on::after { transform: translateX(20px); }
 </style>
 </head>
 <body>
@@ -383,6 +473,25 @@ html, body {
 <div class="splash" id="splash">
   <div class="splash-stars" id="splash-stars"></div>
   <div class="splash-logo" id="splash-logo">er<span>Man</span></div>
+</div>
+
+<!-- Add Event Modal -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal-sheet">
+    <div class="modal-title">New Event</div>
+    <div class="modal-field">
+      <label>Title</label>
+      <input type="text" id="modal-title-input" placeholder="Meeting, reminder..." autocomplete="off">
+    </div>
+    <div class="modal-field">
+      <label>Time</label>
+      <input type="time" id="modal-time-input">
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeAddModal()">Cancel</button>
+      <button class="modal-save" onclick="saveEvent()">Save</button>
+    </div>
+  </div>
 </div>
 
 <canvas id="particles"></canvas>
@@ -395,20 +504,21 @@ html, body {
         <button class="nav-btn" onclick="prevMonth()">&#8249;</button>
         <h2 id="month-label"></h2>
         <button class="nav-btn" onclick="nextMonth()">&#8250;</button>
-        <button class="today-btn" onclick="goToday()">Сегодня</button>
+        <button class="today-btn" onclick="goToday()">Today</button>
       </div>
       <div class="weekdays">
-        <span>ПН</span><span>ВТ</span><span>СР</span><span>ЧТ</span>
-        <span>ПТ</span><span>СБ</span><span>ВС</span>
+        <span>MO</span><span>TU</span><span>WE</span><span>TH</span>
+        <span>FR</span><span>SA</span><span>SU</span>
       </div>
       <div class="grid" id="grid"></div>
       <div class="divider"></div>
       <div class="events-area" id="events-area">
         <div class="empty-state" id="empty-state">
-          <p>Напиши Эрману<br><b>«открой календарь»</b></p>
-          <button class="action-btn" onclick="goBack()">&#8592; В чат к Эрману</button>
+          <p>Tell erMan<br><b>"open calendar"</b></p>
+          <button class="action-btn" onclick="goBack()">&#8592; Back to Chat</button>
         </div>
       </div>
+      <button class="fab-add" onclick="openAddModal()">+</button>
     </div>
 
     <!-- ══ FOCUS ══ -->
@@ -511,9 +621,9 @@ html, body {
         </div>
 
         <div class="dur-row" id="dur-row">
-          <button class="dur-chip" data-min="15" onclick="setDuration(15)">15 min</button>
-          <button class="dur-chip active" data-min="25" onclick="setDuration(25)">25 min</button>
-          <button class="dur-chip" data-min="45" onclick="setDuration(45)">45 min</button>
+          <button class="dur-chip" data-min="15" onclick="setDuration(15)">15 MIN</button>
+          <button class="dur-chip active" data-min="25" onclick="setDuration(25)">25 MIN</button>
+          <button class="dur-chip" data-min="45" onclick="setDuration(45)">45 MIN</button>
         </div>
 
         <button class="focus-btn start" id="focus-btn" onclick="toggleFocus()">
@@ -541,21 +651,21 @@ html, body {
     <!-- ══ CHAT — Key Insights ══ -->
     <div class="tab-pane" id="tab-chat">
       <div class="scroll-area" id="chat-scroll">
-        <div class="section-header">&#10022; Ключевые мысли</div>
+        <div class="section-header">&#10022; Key Insights</div>
         <div class="insights-list" id="insights-list">
           <!-- filled by JS from DATA.memory -->
         </div>
         <div id="done-section" style="display:none">
-          <div class="section-header">&#10003; Сделано сегодня</div>
+          <div class="section-header">&#10003; Done Today</div>
           <div class="done-section" id="done-list"></div>
         </div>
         <div class="empty-chat" id="chat-empty" style="display:none">
           <div class="big">&#129504;</div>
-          <p>Поговори с Эрманом —<br>ключевые мысли появятся здесь</p>
+          <p>Talk to erMan —<br>key insights will appear here</p>
         </div>
       </div>
       <div class="send-row" id="chat-send-row">
-        <textarea id="chat-input" rows="1" placeholder="Написать Эрману..."
+        <textarea id="chat-input" rows="1" placeholder="Message erMan..."
           oninput="autoResize(this)"
           onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendToBot('chat');}">
         </textarea>
@@ -568,7 +678,7 @@ html, body {
       <div class="profile-wrap">
 
         <div class="profile-section">
-          <div class="section-header">&#129302; Модель</div>
+          <div class="section-header">&#129302; Model</div>
           <div class="model-chips">
             <button class="model-chip haiku" data-model="haiku" onclick="switchModel('haiku')">Haiku</button>
             <button class="model-chip sonnet active" data-model="sonnet" onclick="switchModel('sonnet')">Sonnet</button>
@@ -579,7 +689,41 @@ html, body {
         <div class="p-divider"></div>
 
         <div class="profile-section">
-          <div class="section-header">&#128202; Статистика</div>
+          <div class="section-header">&#9881;&#65039; Settings</div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Morning Brief</div>
+              <div class="setting-desc">DAILY SUMMARY AT 9 AM</div>
+            </div>
+            <button class="toggle on" data-key="morning_brief" onclick="toggleSetting(this)"></button>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Proactive Nudges</div>
+              <div class="setting-desc">SMART TASK REMINDERS</div>
+            </div>
+            <button class="toggle on" data-key="proactive" onclick="toggleSetting(this)"></button>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Dark Theme</div>
+              <div class="setting-desc">ALWAYS DARK MODE</div>
+            </div>
+            <button class="toggle on" data-key="dark_theme" onclick="toggleSetting(this)"></button>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-label">Focus Sounds</div>
+              <div class="setting-desc">COMPLETION HAPTICS</div>
+            </div>
+            <button class="toggle on" data-key="focus_sounds" onclick="toggleSetting(this)"></button>
+          </div>
+        </div>
+
+        <div class="p-divider"></div>
+
+        <div class="profile-section">
+          <div class="section-header">&#128202; Statistics</div>
           <div class="stats-grid">
             <div class="stat-card">
               <div class="val" id="p-streak">0</div>
@@ -591,7 +735,7 @@ html, body {
             </div>
             <div class="stat-card">
               <div class="val" id="p-mins">0</div>
-              <div class="lbl">&#9203; Focus min</div>
+              <div class="lbl">&#9203; Focus Min</div>
             </div>
             <div class="stat-card">
               <div class="val" id="p-insights">0</div>
@@ -603,13 +747,13 @@ html, body {
         <div class="p-divider"></div>
 
         <div class="profile-section">
-          <div class="section-header">&#9881;&#65039; Настроить Эрмана</div>
-          <p class="config-intro">Напиши что изменить — Эрман сделает сам. Например: «включи краткие ответы», «напоминай каждые 2 часа», «переключи на Opus».</p>
+          <div class="section-header">&#128488; Custom Request</div>
+          <p class="config-intro">Tell erMan what to change — brief answers, reminder frequency, personality, anything.</p>
         </div>
 
         <div class="profile-chat">
           <div class="send-row" style="padding: 0; border: none;">
-            <textarea id="profile-input" rows="1" placeholder="Настроить..."
+            <textarea id="profile-input" rows="1" placeholder="Configure erMan..."
               oninput="autoResize(this)"
               onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendToBot('profile');}">
             </textarea>
@@ -688,6 +832,8 @@ let EVENTS=[], TODAY=new Date().toISOString().slice(0,10), hasData=false;
 let FOCUS={collection:[],streak:0,total_minutes:0,today_sessions:0,level:null};
 let MEMORY=[], DONE=[];
 let initTab='calendar', currentModel='sonnet';
+// Local events (user-created in Mini App)
+let LOCAL_EVENTS = JSON.parse(localStorage.getItem('erman_local_events')||'[]');
 
 function loadData() {
   try {
@@ -706,6 +852,10 @@ function loadData() {
   } catch(e) { console.warn('loadData:',e); }
 }
 
+function allEvents() {
+  return [...EVENTS, ...LOCAL_EVENTS];
+}
+
 // ══════════════════════════════════════════════════════════
 // TELEGRAM
 // ══════════════════════════════════════════════════════════
@@ -720,7 +870,7 @@ function sendToBot(source) {
   if(!text) return;
   el.value = ''; el.style.height = '';
 
-  if(!twa){ showToast('Открой через Telegram'); return; }
+  if(!twa){ showToast('Open via Telegram'); return; }
 
   // 1) sendData — works from ReplyKeyboard web_app button
   try {
@@ -746,11 +896,10 @@ function sendToBot(source) {
   }
 
   copyToClip(text).then(()=>{
-    showToast('📋 Скопировано — вставь в чат');
+    showToast('Copied — paste in chat');
     setTimeout(()=>{ if(twa) twa.close(); },1500);
   }).catch(()=>{
-    // Last resort: just close and let user type manually
-    showToast('Напиши Эрману напрямую в чат');
+    showToast('Message erMan directly in chat');
     setTimeout(()=>{ if(twa) twa.close(); },1400);
   });
 }
@@ -769,11 +918,31 @@ function switchModel(m) {
   let sent = false;
   if(twa) try { twa.sendData(JSON.stringify({type:'setting', key:'model', value:m})); sent=true; } catch(e){}
   if(!sent) {
-    // Save model preference to send next time
     localStorage.setItem('erman_model', m);
     const names = {haiku:'⚡ Haiku', sonnet:'💬 Sonnet', opus:'🧠 Opus'};
-    showToast((names[m]||m) + ' — напиши /'+m+' в чате');
+    showToast((names[m]||m) + ' — type /'+m+' in chat');
   }
+}
+
+function toggleSetting(btn) {
+  btn.classList.toggle('on');
+  const key = btn.dataset.key;
+  const val = btn.classList.contains('on');
+  localStorage.setItem('erman_'+key, val);
+  // Try to send to bot
+  if(twa) try { twa.sendData(JSON.stringify({type:'setting', key, value:val})); } catch(e){}
+  showToast(key.replace(/_/g,' ') + ': ' + (val ? 'ON' : 'OFF'));
+}
+
+// Load saved settings
+function loadSettings() {
+  document.querySelectorAll('.toggle').forEach(btn => {
+    const key = btn.dataset.key;
+    const saved = localStorage.getItem('erman_'+key);
+    if(saved !== null) {
+      btn.classList.toggle('on', saved === 'true');
+    }
+  });
 }
 
 // ══════════════════════════════════════════════════════════
@@ -797,19 +966,19 @@ function switchTab(name) {
 // ══════════════════════════════════════════════════════════
 // CALENDAR
 // ══════════════════════════════════════════════════════════
-const MONTHS=['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
-const MSHORT=['','янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
-const DSHORT=['вс','пн','вт','ср','чт','пт','сб'];
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MSHORT=['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DSHORT=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 let curY,curM,selDate;
 
 function iso(y,m,d){return`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
-function evFor(d){return EVENTS.filter(e=>e.date===d);}
+function evFor(d){return allEvents().filter(e=>e.date===d);}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 function initCal(){
   const t=new Date(TODAY+'T12:00:00');
   curY=t.getFullYear(); curM=t.getMonth(); selDate=TODAY;
-  if(!hasData) document.getElementById('empty-state').classList.add('show');
+  if(!hasData && LOCAL_EVENTS.length===0) document.getElementById('empty-state').classList.add('show');
   renderCal();
 }
 
@@ -823,7 +992,7 @@ function renderCal(){
   for(let d=1;d<=dim;d++) grid.appendChild(mkDay(d,iso(curY,curM+1,d),false));
   const total=start+dim, rem=total%7===0?0:7-(total%7);
   for(let d=1;d<=rem;d++){const nm=curM===11?0:curM+1,ny=curM===11?curY+1:curY; grid.appendChild(mkDay(d,iso(ny,nm+1,d),true));}
-  if(hasData) renderEvents(selDate);
+  renderEvents(selDate);
 }
 function mkDay(num,dateStr,other){
   const div=document.createElement('div');
@@ -838,15 +1007,56 @@ function renderEvents(dateStr){
   const area=document.getElementById('events-area');
   const evs=evFor(dateStr);
   const d=new Date(dateStr+'T12:00:00');
-  const label=DSHORT[d.getDay()]+', '+d.getDate()+' '+MSHORT[d.getMonth()+1];
+  const label=DSHORT[d.getDay()]+', '+MSHORT[d.getMonth()+1]+' '+d.getDate();
   let html=`<div class="events-date">${label}</div>`;
-  if(!evs.length){html+=`<div class="no-events">Событий нет</div>`;}
+  if(!evs.length){html+=`<div class="no-events">No events</div>`;}
   else{[...evs].sort((a,b)=>(a.time||'99').localeCompare(b.time||'99')).forEach(e=>{const col=e.overdue?'var(--danger)':e.source==='erman'?'var(--accent)':'rgba(255,255,255,.35)'; html+=`<div class="event-item"><div class="event-dot" style="background:${col};${e.source==='erman'?'box-shadow:0 0 6px var(--glow)':''}"></div><div><div class="event-title">${esc(e.title)}</div>${e.time?`<div class="event-time">${e.time}</div>`:''}</div></div>`;});}
   area.innerHTML=html;
 }
 function prevMonth(){curM--;if(curM<0){curM=11;curY--;}renderCal();}
 function nextMonth(){curM++;if(curM>11){curM=0;curY++;}renderCal();}
 function goToday(){const t=new Date(TODAY+'T12:00:00');curY=t.getFullYear();curM=t.getMonth();selDate=TODAY;renderCal();}
+
+// ══════════════════════════════════════════════════════════
+// ADD EVENT MODAL
+// ══════════════════════════════════════════════════════════
+function openAddModal() {
+  document.getElementById('add-modal').classList.add('show');
+  document.getElementById('modal-title-input').value = '';
+  document.getElementById('modal-time-input').value = '';
+  setTimeout(() => document.getElementById('modal-title-input').focus(), 300);
+}
+function closeAddModal() {
+  document.getElementById('add-modal').classList.remove('show');
+}
+function saveEvent() {
+  const title = document.getElementById('modal-title-input').value.trim();
+  const time = document.getElementById('modal-time-input').value;
+  if(!title) { showToast('Enter a title'); return; }
+
+  const ev = { title, date: selDate, time: time || null, source: 'local' };
+  LOCAL_EVENTS.push(ev);
+  localStorage.setItem('erman_local_events', JSON.stringify(LOCAL_EVENTS));
+
+  // Try to send to bot as reminder
+  if(twa) {
+    try {
+      twa.sendData(JSON.stringify({type:'cal_request', action:'add', title, date:selDate, time:time||null}));
+    } catch(e) {}
+  }
+
+  closeAddModal();
+  document.getElementById('empty-state').classList.remove('show');
+  renderCal();
+  showToast('Event added');
+  // Haptic
+  if(twa && twa.HapticFeedback) twa.HapticFeedback.impactOccurred('light');
+}
+
+// Close modal on overlay click
+document.getElementById('add-modal').addEventListener('click', function(e) {
+  if(e.target === this) closeAddModal();
+});
 
 // ══════════════════════════════════════════════════════════
 // TREE TIMER
@@ -898,7 +1108,6 @@ function treeProgress(pct){
   // Trunk draws from 0→40% of timer
   const trunkPct=Math.min(1,pct/0.4);
   trunk.style.strokeDashoffset=String(trunkLen*(1-trunkPct));
-  // Trunk thickens slightly
   trunk.style.strokeWidth=String(6+trunkPct*2);
 
   // Branches reveal at their thresholds
@@ -921,7 +1130,7 @@ function treeProgress(pct){
     const maxR=parseFloat(l.dataset.r);
     if(pct>=thresh){
       const lPct=Math.min(1,(pct-thresh)/0.15);
-      const eased=1-Math.pow(1-lPct,3); // ease-out cubic
+      const eased=1-Math.pow(1-lPct,3);
       l.setAttribute('r',String(maxR*eased));
       l.style.opacity=String(0.6+eased*0.4);
     } else {
@@ -984,7 +1193,6 @@ function stopFocus(completed){
   if(completed){
     document.getElementById('timer-label').textContent='COMPLETE';
     document.getElementById('timer-digits').textContent='00:00';
-    // Tree fully bloomed — intensify crown glow
     const cg=document.getElementById('tree-crown-glow');
     cg.style.opacity='1';
     cg.style.transition='opacity .5s';
@@ -996,7 +1204,7 @@ function stopFocus(completed){
     if(twa){try{twa.sendData(JSON.stringify({type:'focus_complete',duration:focusDuration}));}catch(e){}}
     setTimeout(resetTimer,3500);
   } else {
-    // Cancelled — leaves wither (fade to reddish)
+    // Cancelled — leaves wither
     document.querySelectorAll('.tree-leaf').forEach(l=>{
       l.style.fill='rgba(255,69,58,.4)';
       l.style.transition='fill .4s, opacity .6s';
@@ -1009,12 +1217,10 @@ function stopFocus(completed){
 }
 
 function resetTimer(){
-  // Reset leaf colors back to normal
   document.querySelectorAll('.tree-leaf').forEach(l=>{
     l.style.fill='';
     l.style.transition='';
   });
-  // Reset ring
   const ring=document.getElementById('progress-ring-fg');
   if(ring) ring.setAttribute('stroke-dashoffset','911');
   initTree();
@@ -1051,14 +1257,12 @@ function renderChat(){
     empty.style.display='flex'; list.innerHTML=''; return;
   }
   empty.style.display='none';
-  // Memory cards
   list.innerHTML = MEMORY.map((text,i)=>`
     <div class="insight-card">
       <div class="insight-text">${esc(text)}</div>
-      <div class="insight-meta">&#10022; Сохранено Эрманом</div>
+      <div class="insight-meta">&#10022; Saved by erMan</div>
     </div>`
   ).join('');
-  // Done tasks
   if(DONE.length>0){
     document.getElementById('done-section').style.display='block';
     document.getElementById('done-list').innerHTML=DONE.map(t=>`
@@ -1133,7 +1337,7 @@ function celebrate(){
 function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,100)+'px';}
 
 // ══════════════════════════════════════════════════════════
-// SPLASH ANIMATION
+// SPLASH ANIMATION — smooth spiral fractal stars
 // ══════════════════════════════════════════════════════════
 function runSplash() {
   const splash = document.getElementById('splash');
@@ -1145,83 +1349,106 @@ function runSplash() {
   if(twa && twa.HapticFeedback) {
     twa.HapticFeedback.impactOccurred('medium');
   } else if(navigator.vibrate) {
-    navigator.vibrate(30);
+    navigator.vibrate([20, 40, 20]);
   }
 
-  // Create 60 stars at center, spiral outward
+  // Create 80 stars at center — golden spiral pattern
   const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
   const stars = [];
-  for(let i = 0; i < 60; i++) {
+  const PHI = (1 + Math.sqrt(5)) / 2; // golden ratio
+  for(let i = 0; i < 80; i++) {
     const el = document.createElement('div');
     el.className = 'splash-star';
     el.style.left = cx + 'px';
     el.style.top = cy + 'px';
-    const angle = (i / 60) * Math.PI * 2 + Math.random() * 0.3;
-    const speed = 2.5 + Math.random() * 4;
-    const spin = (Math.random() - 0.5) * 0.08; // spiral spin
-    const size = 1.5 + Math.random() * 2.5;
+    // Golden angle spiral distribution
+    const goldenAngle = i * 2.399963; // 2π/φ²
+    const baseRadius = Math.sqrt(i) * 3;
+    const speed = 1.5 + (i / 80) * 3.5;
+    const spinRate = 0.04 + Math.random() * 0.03; // gentle spiral
+    const size = 1.5 + Math.random() * 3;
     el.style.width = size + 'px';
     el.style.height = size + 'px';
-    const hue = Math.random() > 0.3 ? '255,180,40' : '255,255,255';
+    // Warm golden palette with occasional white
+    const r = Math.random();
+    const hue = r > 0.8 ? '255,255,240' : r > 0.5 ? '255,200,60' : r > 0.2 ? '255,160,20' : '255,120,0';
     el.style.background = `rgba(${hue},1)`;
-    el.style.boxShadow = `0 0 ${size*3}px rgba(${hue},.6)`;
+    el.style.boxShadow = `0 0 ${size*4}px rgba(${hue},.7), 0 0 ${size*8}px rgba(${hue},.3)`;
     starsEl.appendChild(el);
-    stars.push({ el, x: cx, y: cy, angle, speed, spin, life: 1 });
+    stars.push({ el, x: cx, y: cy, angle: goldenAngle, speed, spinRate, life: 1, size, delay: i * 8 });
   }
 
-  // Animate stars spiraling outward
-  let frame = 0;
-  const maxEdge = Math.max(window.innerWidth, window.innerHeight) * 0.7;
-  function animateStars() {
-    frame++;
-    let allDead = true;
-    stars.forEach(s => {
+  // Smooth spiral animation — longer duration
+  let startTime = performance.now();
+  const DURATION = 1800; // ms total animation
+
+  function animateStars(now) {
+    const elapsed = now - startTime;
+    let allDone = true;
+
+    stars.forEach((s, i) => {
       if(s.life <= 0) return;
-      allDead = false;
-      s.angle += s.spin;
-      s.x += Math.cos(s.angle) * s.speed;
-      s.y += Math.sin(s.angle) * s.speed;
-      s.speed *= 1.02; // accelerate
-      s.life -= 0.018;
-      s.el.style.left = s.x + 'px';
-      s.el.style.top = s.y + 'px';
-      s.el.style.opacity = Math.max(0, s.life * 0.9);
-      // Scale down as they fly
-      const sc = 0.3 + s.life * 0.7;
-      s.el.style.transform = `scale(${sc})`;
+      const t = Math.max(0, elapsed - s.delay);
+      if(t <= 0) { allDone = false; return; }
+
+      allDone = false;
+      const progress = Math.min(1, t / (DURATION - s.delay));
+      // Ease-out exponential for smooth deceleration
+      const eased = 1 - Math.pow(1 - progress, 2.5);
+
+      // Spiral outward with rotation
+      const dist = eased * s.speed * 60;
+      const angle = s.angle + eased * s.spinRate * 40;
+      s.el.style.left = (cx + Math.cos(angle) * dist) + 'px';
+      s.el.style.top = (cy + Math.sin(angle) * dist) + 'px';
+
+      // Fade: appear quickly, then fade out gently
+      const fadeIn = Math.min(1, progress * 5);
+      const fadeOut = progress > 0.5 ? 1 - (progress - 0.5) * 2 : 1;
+      s.el.style.opacity = String(Math.max(0, fadeIn * fadeOut * 0.9));
+
+      // Scale: grow then shrink
+      const scale = progress < 0.3 ? progress / 0.3 : 1 - (progress - 0.3) * 0.7;
+      s.el.style.transform = `scale(${Math.max(0, scale)})`;
+
+      if(progress >= 1) s.life = 0;
     });
-    if(!allDead && frame < 80) requestAnimationFrame(animateStars);
+
+    if(!allDone) requestAnimationFrame(animateStars);
   }
 
-  // Timeline
-  // 0ms: stars appear from center
-  setTimeout(() => animateStars(), 100);
+  // Timeline — slower, more elegant
+  setTimeout(() => requestAnimationFrame(animateStars), 50);
 
-  // 600ms: logo starts fading out
+  // Second gentle vibration pulse mid-animation
   setTimeout(() => {
-    logo.style.animation = 'logo-out .35s ease forwards';
-  }, 650);
+    if(twa && twa.HapticFeedback) twa.HapticFeedback.impactOccurred('light');
+    else if(navigator.vibrate) navigator.vibrate(15);
+  }, 600);
 
-  // 900ms: splash fades, app reveals
+  // 1200ms: logo starts fading out
+  setTimeout(() => {
+    logo.style.animation = 'logo-out .5s ease forwards';
+  }, 1200);
+
+  // 1600ms: splash fades, app reveals
   setTimeout(() => {
     splash.classList.add('gone');
     app.classList.add('revealed');
-    // Second vibration on load
-    if(twa && twa.HapticFeedback) {
-      twa.HapticFeedback.impactOccurred('light');
-    }
-  }, 950);
+    if(twa && twa.HapticFeedback) twa.HapticFeedback.impactOccurred('light');
+  }, 1600);
 
-  // 1400ms: remove splash from DOM
+  // 2200ms: remove splash from DOM
   setTimeout(() => {
     splash.remove();
-  }, 1400);
+  }, 2200);
 }
 
 // ══════════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════════
 loadData();
+loadSettings();
 initCal();
 initTree();
 renderFocusStats();
