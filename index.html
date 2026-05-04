@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>erMan</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@200;300;400;500;600&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -20,8 +20,9 @@
 html, body {
   background: var(--bg); color: var(--text);
   font-family: 'Inter', -apple-system, sans-serif;
-  height: 100%; overflow: hidden;
+  height: 100%; overflow: hidden; overscroll-behavior: none;
   max-width: 430px; margin: 0 auto;
+  position: fixed; width: 100%;
 }
 
 /* ── LAYOUT ── */
@@ -46,8 +47,10 @@ html, body {
 .tab-item {
   flex: 1; display: flex; flex-direction: column; align-items: center;
   gap: 2px; padding: 5px 2px; cursor: pointer;
-  color: var(--sub); font-size: 9px; font-weight: 500; letter-spacing: .4px;
+  color: var(--sub); font-size: 10px; font-weight: 400; letter-spacing: 1.5px;
+  font-family: 'Bebas Neue', Impact, sans-serif;
   border: none; background: none; transition: color .2s;
+  text-transform: uppercase;
 }
 .tab-item.active { color: var(--accent); }
 .tab-icon { font-size: 18px; line-height: 1.2; }
@@ -55,8 +58,9 @@ html, body {
 
 /* ── SHARED COMPONENTS ── */
 .section-header {
-  font-size: 10px; font-weight: 600; color: var(--sub);
-  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;
+  font-size: 13px; font-weight: 400; color: var(--sub);
+  text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px;
+  font-family: 'Bebas Neue', Impact, sans-serif;
 }
 .scroll-area { flex: 1; overflow-y: auto; padding: 16px 16px 12px; position: relative; z-index: 2; }
 .send-row {
@@ -88,7 +92,7 @@ html, body {
   display: flex; align-items: center; gap: 8px;
   padding: 14px 16px 6px; flex-shrink: 0; position: relative; z-index: 2;
 }
-.cal-header h2 { flex: 1; text-align: center; font-size: 17px; font-weight: 500; letter-spacing: -.2px; }
+.cal-header h2 { flex: 1; text-align: center; font-size: 22px; font-weight: 400; letter-spacing: 2px; font-family: 'Bebas Neue', Impact, sans-serif; text-transform: uppercase; }
 .nav-btn {
   background: rgba(255,255,255,.06); border: none; color: var(--text);
   border-radius: 50%; width: 32px; height: 32px; font-size: 18px;
@@ -97,14 +101,15 @@ html, body {
 .nav-btn:active { background: rgba(255,255,255,.12); }
 .today-btn {
   background: transparent; border: 1.5px solid var(--accent); color: var(--accent);
-  border-radius: 10px; padding: 4px 12px; font-size: 11px; font-weight: 600;
-  cursor: pointer; white-space: nowrap; letter-spacing: .2px;
+  border-radius: 10px; padding: 4px 14px; font-size: 12px; font-weight: 400;
+  cursor: pointer; white-space: nowrap; letter-spacing: 1.5px;
+  font-family: 'Bebas Neue', Impact, sans-serif; text-transform: uppercase;
 }
 .weekdays {
   display: grid; grid-template-columns: repeat(7,1fr);
   padding: 4px 10px; text-align: center; flex-shrink: 0; position: relative; z-index: 2;
 }
-.weekdays span { font-size: 10px; color: var(--sub); padding: 3px 0; font-weight: 500; letter-spacing: .6px; }
+.weekdays span { font-size: 12px; color: var(--sub); padding: 3px 0; font-weight: 400; letter-spacing: 1.5px; font-family: 'Bebas Neue', Impact, sans-serif; }
 .grid {
   display: grid; grid-template-columns: repeat(7,1fr);
   padding: 0 10px; flex-shrink: 0; position: relative; z-index: 2;
@@ -129,11 +134,11 @@ html, body {
 .dot.overdue { background: var(--danger); }
 .divider { height: 1px; background: rgba(255,255,255,.04); margin: 6px 16px; flex-shrink: 0; }
 .events-area { flex: 1; overflow-y: auto; padding: 8px 16px 12px; position: relative; z-index: 2; }
-.events-date { font-size: 10px; color: var(--sub); font-weight: 600; text-transform: uppercase; letter-spacing: .8px; margin-bottom: 10px; }
+.events-date { font-size: 13px; color: var(--sub); font-weight: 400; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; font-family: 'Bebas Neue', Impact, sans-serif; }
 .event-item { display: flex; gap: 10px; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,.04); }
 .event-item:last-child { border-bottom: none; }
 .event-dot { width: 7px; height: 7px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
-.event-title { font-size: 14px; font-weight: 400; letter-spacing: -.1px; }
+.event-title { font-size: 15px; font-weight: 400; letter-spacing: .2px; font-family: 'Cormorant Garamond', Georgia, serif; }
 .event-time { font-size: 11px; color: var(--sub); margin-top: 2px; }
 .no-events { color: var(--sub); font-size: 13px; padding: 14px 0; text-align: center; font-weight: 300; }
 .empty-state {
@@ -141,11 +146,12 @@ html, body {
   padding: 36px 24px; gap: 14px; text-align: center;
 }
 .empty-state.show { display: flex; }
-.empty-state p { font-size: 14px; color: var(--sub); line-height: 1.7; font-weight: 300; }
+.empty-state p { font-size: 16px; color: var(--sub); line-height: 1.7; font-weight: 400; font-family: 'Cormorant Garamond', Georgia, serif; }
 .action-btn {
   background: linear-gradient(135deg, var(--accent), var(--accent2));
-  color: #000; font-weight: 700; border: none;
-  border-radius: 14px; padding: 13px 28px; font-size: 14px; cursor: pointer;
+  color: #000; font-weight: 400; border: none;
+  border-radius: 14px; padding: 14px 28px; font-size: 16px; cursor: pointer;
+  font-family: 'Bebas Neue', Impact, sans-serif; letter-spacing: 1.5px; text-transform: uppercase;
   box-shadow: 0 4px 22px var(--glow);
   transition: transform .1s;
 }
@@ -157,14 +163,15 @@ html, body {
   padding: 6px 20px 10px; overflow-y: auto; position: relative; z-index: 2;
 }
 .timer-digits {
-  font-family: 'Lora', Georgia, serif; font-size: 46px; font-weight: 400;
-  font-variant-numeric: tabular-nums; letter-spacing: 2px;
+  font-family: 'Cormorant Garamond', Georgia, serif; font-size: 52px; font-weight: 300;
+  font-variant-numeric: tabular-nums; letter-spacing: 4px;
   background: linear-gradient(180deg, #fff 20%, rgba(255,200,120,.7));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
 .timer-label {
-  font-size: 9px; color: var(--sub); font-weight: 500;
-  letter-spacing: 2px; text-transform: uppercase;
+  font-size: 12px; color: var(--sub); font-weight: 400;
+  letter-spacing: 3px; text-transform: uppercase;
+  font-family: 'Bebas Neue', Impact, sans-serif;
 }
 .tree-container {
   position: relative; width: 260px; height: 280px;
@@ -182,15 +189,17 @@ html, body {
 
 .dur-row { display: flex; gap: 8px; margin-bottom: 14px; }
 .dur-chip {
-  padding: 6px 18px; border-radius: 20px;
-  font-size: 12px; font-weight: 500; letter-spacing: .2px;
+  padding: 7px 20px; border-radius: 20px;
+  font-size: 14px; font-weight: 400; letter-spacing: 1.5px;
+  font-family: 'Bebas Neue', Impact, sans-serif;
   border: 1.5px solid rgba(255,255,255,.07);
   background: transparent; color: var(--sub); cursor: pointer; transition: all .2s;
 }
 .dur-chip.active { border-color: var(--accent); color: var(--accent); background: rgba(255,159,10,.08); }
 .focus-btn {
-  width: 100%; max-width: 260px; padding: 15px; border: none; border-radius: 20px;
-  font-size: 15px; font-weight: 600; cursor: pointer; letter-spacing: .3px;
+  width: 100%; max-width: 260px; padding: 16px; border: none; border-radius: 20px;
+  font-size: 18px; font-weight: 400; cursor: pointer; letter-spacing: 2px;
+  font-family: 'Bebas Neue', Impact, sans-serif; text-transform: uppercase;
   display: flex; align-items: center; justify-content: center; gap: 8px;
   transition: all .15s;
 }
@@ -204,15 +213,15 @@ html, body {
 .focus-stats { display: flex; gap: 32px; margin-top: 16px; margin-bottom: 14px; }
 .focus-stat { display: flex; flex-direction: column; align-items: center; gap: 3px; }
 .focus-stat .val {
-  font-family: 'Lora', serif; font-size: 24px; font-weight: 400;
+  font-family: 'Cormorant Garamond', Georgia, serif; font-size: 28px; font-weight: 300;
   background: linear-gradient(180deg, #fff, rgba(255,200,120,.6));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
-.focus-stat .lbl { font-size: 9px; color: var(--sub); text-transform: uppercase; letter-spacing: 1px; }
+.focus-stat .lbl { font-size: 11px; color: var(--sub); text-transform: uppercase; letter-spacing: 2px; font-family: 'Bebas Neue', Impact, sans-serif; }
 .level-bar { width: 100%; max-width: 240px; margin-bottom: 14px; }
 .level-info { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 6px; }
-.level-name { font-weight: 500; }
-.level-next { color: var(--sub); font-weight: 300; }
+.level-name { font-weight: 400; font-family: 'Bebas Neue', Impact, sans-serif; letter-spacing: 1px; font-size: 13px; }
+.level-next { color: var(--sub); font-weight: 400; font-family: 'Bebas Neue', Impact, sans-serif; letter-spacing: 1px; font-size: 13px; }
 .level-track { height: 3px; background: rgba(255,255,255,.06); border-radius: 2px; overflow: hidden; }
 .level-fill {
   height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2));
@@ -233,8 +242,8 @@ html, body {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
   background: linear-gradient(90deg, rgba(255,159,10,.3), transparent);
 }
-.insight-text { font-size: 13px; font-weight: 400; line-height: 1.55; color: var(--text); }
-.insight-meta { font-size: 10px; color: var(--sub); margin-top: 6px; font-weight: 300; }
+.insight-text { font-size: 15px; font-weight: 400; line-height: 1.55; color: var(--text); font-family: 'Cormorant Garamond', Georgia, serif; }
+.insight-meta { font-size: 11px; color: var(--sub); margin-top: 6px; font-weight: 400; font-family: 'Bebas Neue', Impact, sans-serif; letter-spacing: 1px; }
 
 .done-section { margin-top: 4px; margin-bottom: 14px; }
 .done-item {
@@ -248,13 +257,14 @@ html, body {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   flex: 1; gap: 10px; text-align: center; padding: 30px 24px;
 }
-.empty-chat p { font-size: 14px; color: var(--sub); line-height: 1.6; font-weight: 300; }
+.empty-chat p { font-size: 16px; color: var(--sub); line-height: 1.6; font-weight: 400; font-family: 'Cormorant Garamond', Georgia, serif; }
 .empty-chat .big { font-size: 40px; }
 .toast {
   position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
   background: rgba(30,30,46,.95); border: 1px solid rgba(255,255,255,.1);
   border-radius: 12px; padding: 10px 18px;
-  font-size: 13px; color: var(--text); z-index: 100;
+  font-size: 14px; color: var(--text); z-index: 100;
+  font-family: 'Cormorant Garamond', Georgia, serif;
   opacity: 0; transition: opacity .3s;
   backdrop-filter: blur(12px);
   pointer-events: none; white-space: nowrap;
@@ -267,7 +277,8 @@ html, body {
 .profile-section:last-child { padding-bottom: 0; }
 .model-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
 .model-chip {
-  padding: 7px 16px; border-radius: 20px; font-size: 12px; font-weight: 500;
+  padding: 8px 18px; border-radius: 20px; font-size: 14px; font-weight: 400;
+  font-family: 'Bebas Neue', Impact, sans-serif; letter-spacing: 1.5px;
   border: 1.5px solid rgba(255,255,255,.07);
   background: transparent; color: var(--sub); cursor: pointer; transition: all .2s;
 }
@@ -282,11 +293,11 @@ html, body {
   background: var(--bg2); border-radius: 14px; padding: 14px;
   display: flex; flex-direction: column; gap: 4px;
 }
-.stat-card .val { font-size: 28px; font-weight: 200; letter-spacing: -1px; }
-.stat-card .lbl { font-size: 10px; color: var(--sub); text-transform: uppercase; letter-spacing: .8px; }
+.stat-card .val { font-size: 32px; font-weight: 300; letter-spacing: 1px; font-family: 'Cormorant Garamond', Georgia, serif; }
+.stat-card .lbl { font-size: 11px; color: var(--sub); text-transform: uppercase; letter-spacing: 2px; font-family: 'Bebas Neue', Impact, sans-serif; }
 .config-intro {
-  font-size: 13px; color: var(--sub); line-height: 1.5; margin-top: 10px;
-  font-weight: 300;
+  font-size: 15px; color: var(--sub); line-height: 1.5; margin-top: 10px;
+  font-weight: 400; font-family: 'Cormorant Garamond', Georgia, serif;
 }
 .profile-chat { padding: 12px 16px 14px; }
 .p-divider { height: 1px; background: rgba(255,255,255,.04); margin: 14px 16px; }
@@ -618,35 +629,36 @@ function sendToBot(source) {
 
   if(!twa){ showToast('Открой через Telegram'); return; }
 
-  // 1) sendData — работает ТОЛЬКО из ReplyKeyboard web_app кнопки
+  // 1) sendData — works from ReplyKeyboard web_app button
   try {
     twa.sendData(JSON.stringify({type:'message', text,
       context: source === 'profile' ? 'settings' : 'chat'}));
-    return;
-  } catch(e) {}
+    return; // Mini App closes automatically after sendData
+  } catch(e) {
+    // sendData not available (opened via MenuButton) — fall through
+  }
 
-  // 2) clipboard fallback (robust — textarea method for iOS compat)
+  // 2) Clipboard + close — reliable cross-platform fallback
   function copyToClip(str){
-    // Modern API
     if(navigator.clipboard && navigator.clipboard.writeText){
       return navigator.clipboard.writeText(str);
     }
-    // Fallback: textarea + execCommand
     return new Promise((resolve,reject)=>{
       const ta=document.createElement('textarea');
       ta.value=str; ta.style.cssText='position:fixed;left:-9999px;top:-9999px;opacity:0';
-      document.body.appendChild(ta); ta.select();
+      document.body.appendChild(ta); ta.focus(); ta.select();
       try{document.execCommand('copy');resolve();}catch(e){reject(e);}
       finally{document.body.removeChild(ta);}
     });
   }
 
   copyToClip(text).then(()=>{
-    showToast('📋 Скопировано — вставь в чат с Эрманом');
-    setTimeout(()=>twa.close(),1600);
+    showToast('📋 Скопировано — вставь в чат');
+    setTimeout(()=>{ if(twa) twa.close(); },1500);
   }).catch(()=>{
-    showToast('Напиши в чат с Эрманом напрямую');
-    setTimeout(()=>twa.close(),1400);
+    // Last resort: just close and let user type manually
+    showToast('Напиши Эрману напрямую в чат');
+    setTimeout(()=>{ if(twa) twa.close(); },1400);
   });
 }
 
@@ -660,8 +672,15 @@ function switchModel(m) {
   currentModel = m;
   document.querySelectorAll('.model-chip').forEach(c =>
     c.classList.toggle('active', c.dataset.model === m));
-  if(twa) try { twa.sendData(JSON.stringify({type:'setting', key:'model', value:m})); } catch(e){}
-  showToast('Модель: ' + m);
+  // Try sendData (works only from ReplyKeyboard web_app button)
+  let sent = false;
+  if(twa) try { twa.sendData(JSON.stringify({type:'setting', key:'model', value:m})); sent=true; } catch(e){}
+  if(!sent) {
+    // Save model preference to send next time
+    localStorage.setItem('erman_model', m);
+    const names = {haiku:'⚡ Haiku', sonnet:'💬 Sonnet', opus:'🧠 Opus'};
+    showToast((names[m]||m) + ' — напиши /'+m+' в чате');
+  }
 }
 
 // ══════════════════════════════════════════════════════════
@@ -676,6 +695,10 @@ function switchTab(name) {
   if(pane) pane.classList.add('active');
   const btn = document.querySelector(`.tab-item[data-tab="${name}"]`);
   if(btn) btn.classList.add('active');
+  // Fix body scroll leak
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+  window.scrollTo(0, 0);
 }
 
 // ══════════════════════════════════════════════════════════
