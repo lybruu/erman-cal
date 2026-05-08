@@ -11,7 +11,7 @@
 
 :root {
   --bg: #060609; --bg2: #0d0d18; --bg3: #16162a;
-  --sub: #7a7490; --dim: #1e1e2e;
+  --sub: #9e99b8; --dim: #2a2a3e;
   --accent: #ff9f0a; --accent2: #ff6200;
   --green: #34d399; --danger: #ff453a;
   --glow: rgba(255,159,10,.25);
@@ -124,7 +124,7 @@ html, body {
 
 /* ── SHARED ── */
 .section-header {
-  font-size: 14px; color: var(--sub);
+  font-size: 14px; color: rgba(253,248,240,.55);
   text-transform: uppercase; letter-spacing: 4px; margin-bottom: 14px;
   font-family: var(--font-display);
 }
@@ -219,9 +219,9 @@ html, body {
 .divider { height: 1px; background: rgba(253,248,240,.04); margin: 6px 16px; flex-shrink: 0; }
 .events-area { flex: 1; overflow-y: auto; padding: 10px 18px 14px; position: relative; z-index: 2; }
 .events-date {
-  font-size: 14px; color: var(--sub);
+  font-size: 15px; color: var(--ivory);
   text-transform: uppercase; letter-spacing: 3px; margin-bottom: 12px;
-  font-family: var(--font-display);
+  font-family: var(--font-display); opacity: .7;
 }
 .event-item {
   display: flex; gap: 12px; align-items: flex-start;
@@ -231,7 +231,7 @@ html, body {
 .event-dot { width: 7px; height: 7px; border-radius: 50%; margin-top: 7px; flex-shrink: 0; }
 .event-title { font-size: 18px; color: var(--ivory); font-family: var(--font-body); line-height: 1.3; }
 .event-time { font-size: 13px; color: var(--sub); margin-top: 2px; font-family: var(--font-display); letter-spacing: 1px; }
-.no-events { color: var(--sub); font-size: 17px; padding: 20px 0; text-align: center; font-family: var(--font-body); font-style: italic; }
+.no-events { color: rgba(253,248,240,.45); font-size: 19px; padding: 24px 0; text-align: center; font-family: var(--font-body); font-style: italic; }
 .empty-state {
   display: none; flex-direction: column; align-items: center;
   padding: 40px 24px; gap: 16px; text-align: center;
@@ -413,7 +413,7 @@ html, body {
   flex: 1; gap: 14px; text-align: center; padding: 40px 24px;
 }
 .empty-chat p {
-  font-size: 20px; color: var(--ivory-dim); line-height: 1.6;
+  font-size: 21px; color: rgba(253,248,240,.6); line-height: 1.6;
   font-family: var(--font-body); font-style: italic;
 }
 .toast {
@@ -877,8 +877,23 @@ function toggleSetting(btn) {
   btn.classList.toggle('on');
   const key = btn.dataset.key, val = btn.classList.contains('on');
   localStorage.setItem('erman_'+key, val);
-  if(twa) try { twa.sendData(JSON.stringify({type:'setting', key, value:val})); } catch(e){}
-  showToast(key.replace(/_/g,' ') + ': ' + (val ? 'ON' : 'OFF'));
+  // Try sendData (ReplyKeyboard), else send command via deep link
+  let sent = false;
+  if(twa) try { twa.sendData(JSON.stringify({type:'setting', key, value:val})); sent=true; } catch(e){}
+  if(!sent && twa) {
+    // Map key to bot command
+    const cmds = {
+      morning_brief: val ? '/brief on' : '/brief off',
+      proactive: val ? '/nudge on' : '/nudge off',
+      focus_sounds: null, // local only
+    };
+    const cmd = cmds[key];
+    if(cmd) {
+      try { twa.openTelegramLink('https://t.me/'+BOT_USERNAME+'?text='+encodeURIComponent(cmd)); return; } catch(e){}
+    }
+  }
+  const labels = {morning_brief:'Morning brief',proactive:'Nudges',focus_sounds:'Focus sounds'};
+  showToast((labels[key]||key) + ': ' + (val ? 'ON' : 'OFF'));
 }
 
 function setTimezone(tz) {
@@ -1087,15 +1102,53 @@ function resetTimer(){
   document.getElementById('timer-label').textContent='READY';
   document.getElementById('timer-digits').textContent=focusDuration+':00';
 }
+// Level definitions — based on total completed sessions
+const LEVELS = [
+  {min:0,   name:'Seedling',  next:'Sprout',    color:'#9e99b8'},
+  {min:3,   name:'Sprout',    next:'Sapling',   color:'#34d399'},
+  {min:8,   name:'Sapling',   next:'Tree',      color:'#38bdf8'},
+  {min:16,  name:'Tree',      next:'Grove',     color:'#ff9f0a'},
+  {min:30,  name:'Grove',     next:'Forest',    color:'#a78bfa'},
+  {min:50,  name:'Forest',    next:'Ancient',   color:'#f472b6'},
+  {min:80,  name:'Ancient',   next:'Legend',    color:'#fbbf24'},
+  {min:120, name:'Legend',    next:null,        color:'#fdf8f0'},
+];
+function computeLevel(total) {
+  let lvl = LEVELS[0], nextLvl = LEVELS[1];
+  for(let i=0;i<LEVELS.length;i++) {
+    if(total >= LEVELS[i].min) { lvl=LEVELS[i]; nextLvl=LEVELS[i+1]||null; }
+    else break;
+  }
+  const progress = nextLvl ? Math.round(((total-lvl.min)/(nextLvl.min-lvl.min))*100) : 100;
+  return {name:lvl.name, next_name:nextLvl?nextLvl.name:null, color:lvl.color, progress};
+}
 function renderFocusStats(){
+  const col = FOCUS.collection||[];
+  const total = col.length;
   document.getElementById('stat-streak').textContent=FOCUS.streak||0;
-  document.getElementById('stat-crystals').textContent=(FOCUS.collection||[]).length;
+  document.getElementById('stat-crystals').textContent=total;
   document.getElementById('stat-today').textContent=FOCUS.today_sessions||0;
-  const lvl=FOCUS.level;
-  if(lvl){ document.getElementById('level-name').textContent=(lvl.name||''); if(lvl.next_name) document.getElementById('level-next').textContent=lvl.next_name; document.getElementById('level-fill').style.width=(lvl.progress||0)+'%'; }
-  document.getElementById('collection-row').innerHTML=(FOCUS.collection||[]).slice(-18).map(c=>'<span class="mini-crystal">'+(c.type==='sapphire'?'&#9670;':c.type==='prismatic'?'&#9733;':'&#9672;')+'</span>').join('');
+
+  // Use server-provided level if available, else compute client-side
+  const lvl = FOCUS.level || computeLevel(total);
+  const lvlColor = lvl.color || 'var(--ivory)';
+  const nameEl = document.getElementById('level-name');
+  nameEl.textContent = lvl.name||'Seedling';
+  nameEl.style.color = lvlColor;
+  if(lvl.next_name) {
+    document.getElementById('level-next').textContent = '→ '+lvl.next_name;
+  }
+  document.getElementById('level-fill').style.width=(lvl.progress||0)+'%';
+  document.getElementById('level-fill').style.background='linear-gradient(90deg,'+lvlColor+',rgba(255,159,10,.4))';
+
+  // Crystal symbols (no emojis)
+  const syms={amber:'◆',sapphire:'◇',prismatic:'★',emerald:'◈'};
+  document.getElementById('collection-row').innerHTML=col.slice(-18).map(c=>
+    '<span class="mini-crystal" style="color:'+(c.type==='sapphire'?'#38bdf8':c.type==='prismatic'?'#a78bfa':c.type==='emerald'?'#34d399':'#ff9f0a')+'">'+(syms[c.type]||'◆')+'</span>'
+  ).join('');
+
   document.getElementById('p-streak').textContent=FOCUS.streak||0;
-  document.getElementById('p-gems').textContent=(FOCUS.collection||[]).length;
+  document.getElementById('p-gems').textContent=total;
   document.getElementById('p-mins').textContent=FOCUS.total_minutes||0;
   document.getElementById('p-insights').textContent=MEMORY.length;
 }
