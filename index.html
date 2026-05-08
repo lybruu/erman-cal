@@ -835,16 +835,11 @@ async function sendToBot(source) {
   if(!twa){ showToast('Open via Telegram'); return; }
 
   addChatBubble(text, 'user');
+  showToast('Sending…');
 
-  // sendData — only from ReplyKeyboard (probably won't work here, future-proof)
-  try {
-    twa.sendData(JSON.stringify({type:'message', text,
-      context: source === 'profile' ? 'settings' : 'chat'}));
-    return;
-  } catch(e) {}
-
-  // HTTP backend via ngrok
+  // HTTP backend via ngrok — прямо, без sendData (sendData ломает на MenuButton)
   const sendTs = Date.now() / 1000;
+  let sent = false;
   try {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), 8000);
@@ -854,24 +849,28 @@ async function sendToBot(source) {
         text,
         context: source === 'profile' ? 'settings' : 'chat',
         initData: twa.initData || '',
-        user_id: twa.initDataUnsafe?.user?.id || null
+        user_id: (twa.initDataUnsafe && twa.initDataUnsafe.user)
+                   ? twa.initDataUnsafe.user.id : null
       })
     });
     clearTimeout(timer);
     if(resp.ok) {
-      // Start polling for bot reply
+      sent = true;
+      showToast('✓ Sent');
       _lastMsgTs = sendTs;
       _startReplyPoll();
-      return;
     }
-  } catch(e) {}
-
-  // Fallback: clipboard + close
-  showToast('No connection — copied');
-  try { twa.setClipboardText(text); } catch(e) {
-    try { await navigator.clipboard.writeText(text); } catch(e2) {}
+  } catch(e) {
+    showToast('Error: ' + (e.message || 'network'));
   }
-  setTimeout(() => twa.close(), 1000);
+
+  if(!sent) {
+    showToast('No connection — copied');
+    try { twa.setClipboardText(text); } catch(e) {
+      try { await navigator.clipboard.writeText(text); } catch(e2) {}
+    }
+    setTimeout(() => twa.close(), 1000);
+  }
 }
 
 function _startReplyPoll() {
