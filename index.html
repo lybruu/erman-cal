@@ -628,13 +628,9 @@ html, body {
           <div class="focus-stat"><div class="val" id="stat-crystals">0</div><div class="lbl">Gems</div></div>
           <div class="focus-stat"><div class="val" id="stat-today">0</div><div class="lbl">Today</div></div>
         </div>
-        <div class="level-bar">
-          <div class="level-info">
-            <span class="level-name" id="level-name">Beginner</span>
-            <span class="level-next" id="level-next"></span>
-          </div>
-          <div class="level-track"><div class="level-fill" id="level-fill" style="width:0%"></div></div>
-        </div>
+        <div id="level-name" style="display:none"></div>
+        <div id="level-next" style="display:none"></div>
+        <div id="level-fill" style="display:none"></div>
         <div class="collection-row" id="collection-row"></div>
       </div>
     </div>
@@ -653,7 +649,7 @@ html, body {
         </div>
       </div>
       <div class="send-row" id="chat-send-row">
-        <textarea id="chat-input" rows="1" placeholder="Message erMan..."
+        <textarea id="chat-input" rows="1" placeholder="Message erMan — copies to chat..."
           oninput="autoResize(this)"
           onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendToBot('chat');}"></textarea>
         <button class="send-btn" onclick="sendToBot('chat')">&#8593;</button>
@@ -828,30 +824,35 @@ function sendToBot(source) {
   const el = document.getElementById(id);
   const text = el.value.trim();
   if(!text) return;
-  el.value = ''; el.style.height = '';
+
   if(!twa){ showToast('Open via Telegram'); return; }
 
-  // Try sendData first (works from ReplyKeyboard web_app button)
+  // sendData works ONLY when Mini App is opened via ReplyKeyboard button
+  // (not MenuButton — Telegram limitation). Try it anyway for future-proofing.
   try {
     twa.sendData(JSON.stringify({type:'message', text,
       context: source === 'profile' ? 'settings' : 'chat'}));
+    el.value = ''; el.style.height = '';
     return;
-  } catch(e) {}
+  } catch(e) { /* MenuButton context — expected */ }
 
-  // Fallback: open Telegram deep link — pre-fills message, user taps send
-  try {
-    const encoded = encodeURIComponent(text);
-    twa.openTelegramLink('https://t.me/' + BOT_USERNAME + '?text=' + encoded);
-    showToast('Tap send in chat');
-    return;
-  } catch(e) {}
+  // Reliable path: copy to clipboard via Telegram's native API, then close.
+  // User lands in Telegram chat with text ready to paste.
+  el.value = ''; el.style.height = '';
 
-  // Last fallback: clipboard
-  if(navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).then(()=>{
-      showToast('Copied — paste in chat');
-      setTimeout(()=>{ if(twa) twa.close(); },1200);
-    });
+  function _doClose() {
+    showToast('✓ Paste in chat ↓');
+    setTimeout(() => twa.close(), 950);
+  }
+
+  // twa.setClipboardText is available in Bot API 6.4+ (most Telegram clients)
+  if(twa.setClipboardText) {
+    twa.setClipboardText(text);
+    _doClose();
+  } else if(navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(_doClose).catch(_doClose);
+  } else {
+    _doClose(); // close anyway — user can retype in chat
   }
 }
 
@@ -865,34 +866,21 @@ function switchModel(m) {
   currentModel = m;
   document.querySelectorAll('.model-chip').forEach(c =>
     c.classList.toggle('active', c.dataset.model === m));
-  let sent = false;
-  if(twa) try { twa.sendData(JSON.stringify({type:'setting', key:'model', value:m})); sent=true; } catch(e){}
-  if(!sent) {
-    localStorage.setItem('erman_model', m);
-    showToast(m.charAt(0).toUpperCase()+m.slice(1) + ' — type /'+m);
-  }
+  localStorage.setItem('erman_model', m);
+  if(twa) try { twa.sendData(JSON.stringify({type:'setting', key:'model', value:m})); return; } catch(e){}
+  showToast(m.charAt(0).toUpperCase()+m.slice(1) + ' — type /' + m);
 }
 
 function toggleSetting(btn) {
   btn.classList.toggle('on');
   const key = btn.dataset.key, val = btn.classList.contains('on');
   localStorage.setItem('erman_'+key, val);
-  // Try sendData (ReplyKeyboard), else send command via deep link
-  let sent = false;
-  if(twa) try { twa.sendData(JSON.stringify({type:'setting', key, value:val})); sent=true; } catch(e){}
-  if(!sent && twa) {
-    // Map key to bot command
-    const cmds = {
-      morning_brief: val ? '/brief on' : '/brief off',
-      proactive: val ? '/nudge on' : '/nudge off',
-      focus_sounds: null, // local only
-    };
-    const cmd = cmds[key];
-    if(cmd) {
-      try { twa.openTelegramLink('https://t.me/'+BOT_USERNAME+'?text='+encodeURIComponent(cmd)); return; } catch(e){}
-    }
-  }
-  const labels = {morning_brief:'Morning brief',proactive:'Nudges',focus_sounds:'Focus sounds'};
+
+  // Try sendData (works when opened via ReplyKeyboard button)
+  if(twa) try { twa.sendData(JSON.stringify({type:'setting', key, value:val})); return; } catch(e){}
+
+  // Saved locally — bot will read it on next interaction
+  const labels = {morning_brief:'Morning Brief', proactive:'Nudges', focus_sounds:'Focus Sounds'};
   showToast((labels[key]||key) + ': ' + (val ? 'ON' : 'OFF'));
 }
 
