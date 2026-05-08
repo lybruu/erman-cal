@@ -818,8 +818,11 @@ if(twa){ twa.ready(); twa.expand(); }
 function goBack() { if(twa) twa.close(); }
 
 const BOT_USERNAME = 'erman_tg_bot';
+// ngrok static domain — set after `ngrok config add-authtoken` + domain assigned
+// Replace PLACEHOLDER with your domain from ngrok.com/dashboard/domains
+const BACKEND_URL = localStorage.getItem('erman_backend_url') || 'https://nervy-thickness-tacking.ngrok-free.dev';
 
-function sendToBot(source) {
+async function sendToBot(source) {
   const id = source === 'chat' ? 'chat-input' : 'profile-input';
   const el = document.getElementById(id);
   const text = el.value.trim();
@@ -827,33 +830,68 @@ function sendToBot(source) {
 
   if(!twa){ showToast('Open via Telegram'); return; }
 
-  // sendData works ONLY when Mini App is opened via ReplyKeyboard button
-  // (not MenuButton — Telegram limitation). Try it anyway for future-proofing.
+  // Method 1: sendData — only when opened via ReplyKeyboard web_app button
   try {
     twa.sendData(JSON.stringify({type:'message', text,
       context: source === 'profile' ? 'settings' : 'chat'}));
     el.value = ''; el.style.height = '';
     return;
-  } catch(e) { /* MenuButton context — expected */ }
+  } catch(e) {}
 
-  // Reliable path: copy to clipboard via Telegram's native API, then close.
-  // User lands in Telegram chat with text ready to paste.
+  // Method 2: HTTP POST to local/ngrok backend — no Mini App close needed
+  if(BACKEND_URL) {
+    el.value = ''; el.style.height = '';
+    showToast('Sending…');
+    try {
+      const resp = await fetch(BACKEND_URL + '/api/message', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': '1'
+        },
+        body: JSON.stringify({
+          text,
+          context: source === 'profile' ? 'settings' : 'chat',
+          initData: twa.initData || '',
+          user_id: (twa.initDataUnsafe && twa.initDataUnsafe.user)
+                     ? twa.initDataUnsafe.user.id : null
+        })
+      });
+      if(resp.ok) {
+        showToast('✓ Sent to erMan');
+        addChatBubble(text, 'user');
+        return;
+      }
+    } catch(e) {
+      showToast('No connection — copied ↓');
+    }
+  }
+
+  // Fallback: copy to clipboard + close → user pastes in Telegram chat
   el.value = ''; el.style.height = '';
-
-  function _doClose() {
+  function _copyClose() {
     showToast('✓ Paste in chat ↓');
     setTimeout(() => twa.close(), 950);
   }
+  if(twa.setClipboardText) { twa.setClipboardText(text); _copyClose(); }
+  else if(navigator.clipboard) { navigator.clipboard.writeText(text).then(_copyClose).catch(_copyClose); }
+  else _copyClose();
+}
 
-  // twa.setClipboardText is available in Bot API 6.4+ (most Telegram clients)
-  if(twa.setClipboardText) {
-    twa.setClipboardText(text);
-    _doClose();
-  } else if(navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).then(_doClose).catch(_doClose);
+// Show sent bubble in chat scroll area
+function addChatBubble(text, who) {
+  const area = document.getElementById('chat-scroll');
+  if(!area) return;
+  const b = document.createElement('div');
+  b.style.cssText = 'margin:8px 0;padding:8px 12px;border-radius:14px;max-width:80%;word-wrap:break-word;font-family:var(--font-body);font-size:15px;';
+  if(who === 'user') {
+    b.style.cssText += 'background:var(--accent);color:#000;margin-left:auto;border-bottom-right-radius:4px;';
   } else {
-    _doClose(); // close anyway — user can retype in chat
+    b.style.cssText += 'background:var(--bg3);color:var(--ivory);border-bottom-left-radius:4px;';
   }
+  b.textContent = text;
+  area.appendChild(b);
+  area.scrollTop = area.scrollHeight;
 }
 
 function showToast(msg) {
