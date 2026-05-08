@@ -819,6 +819,11 @@ function goBack() { if(twa) twa.close(); }
 
 const BOT_USERNAME = 'erman_tg_bot';
 const BACKEND_URL = 'https://nervy-thickness-tacking.ngrok-free.dev';
+const NGROK_H = {'Content-Type':'application/json','ngrok-skip-browser-warning':'1'};
+
+// Track poll state — don't overlap polls
+let _pollTimer = null;
+let _lastMsgTs = Date.now() / 1000;
 
 async function sendToBot(source) {
   const id = source === 'chat' ? 'chat-input' : 'profile-input';
@@ -829,58 +834,99 @@ async function sendToBot(source) {
 
   if(!twa){ showToast('Open via Telegram'); return; }
 
-  // Show bubble immediately so user sees their message
   addChatBubble(text, 'user');
 
-  // 1) sendData — works only from ReplyKeyboard button
+  // sendData — only from ReplyKeyboard (probably won't work here, future-proof)
   try {
     twa.sendData(JSON.stringify({type:'message', text,
       context: source === 'profile' ? 'settings' : 'chat'}));
     return;
   } catch(e) {}
 
-  // 2) HTTP backend (ngrok tunnel) — fast timeout so we don't hang
-  let sent = false;
+  // HTTP backend via ngrok
+  const sendTs = Date.now() / 1000;
   try {
     const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 3000);
+    const timer = setTimeout(() => ctrl.abort(), 8000);
     const resp = await fetch(BACKEND_URL + '/api/message', {
-      method: 'POST', signal: ctrl.signal,
-      headers: {'Content-Type':'application/json','ngrok-skip-browser-warning':'1'},
-      body: JSON.stringify({text, context: source==='profile'?'settings':'chat',
-        initData: twa.initData||'',
-        user_id: twa.initDataUnsafe?.user?.id || null})
+      method: 'POST', signal: ctrl.signal, headers: NGROK_H,
+      body: JSON.stringify({
+        text,
+        context: source === 'profile' ? 'settings' : 'chat',
+        initData: twa.initData || '',
+        user_id: twa.initDataUnsafe?.user?.id || null
+      })
     });
     clearTimeout(timer);
-    if(resp.ok) { sent = true; showToast('✓ Sent'); }
-  } catch(e) { /* timeout or no connection — use clipboard */ }
-
-  // 3) Clipboard fallback: copy + close → user pastes in TG chat
-  if(!sent) {
-    try { twa.setClipboardText(text); } catch(e) {
-      try { await navigator.clipboard.writeText(text); } catch(e2) {}
+    if(resp.ok) {
+      // Start polling for bot reply
+      _lastMsgTs = sendTs;
+      _startReplyPoll();
+      return;
     }
-    showToast('✓ Copied — paste in chat');
-    setTimeout(() => twa.close(), 1100);
+  } catch(e) {}
+
+  // Fallback: clipboard + close
+  showToast('No connection — copied');
+  try { twa.setClipboardText(text); } catch(e) {
+    try { await navigator.clipboard.writeText(text); } catch(e2) {}
   }
+  setTimeout(() => twa.close(), 1000);
+}
+
+function _startReplyPoll() {
+  if(_pollTimer) clearTimeout(_pollTimer);
+  _pollTimer = null;
+  let attempts = 0;
+  const uid = (twa && twa.initDataUnsafe && twa.initDataUnsafe.user)
+    ? twa.initDataUnsafe.user.id : null;
+
+  async function poll() {
+    if(attempts++ > 20) return; // stop after 40s
+    try {
+      const r = await fetch(
+        `${BACKEND_URL}/api/messages?user_id=${uid || ''}&since=${_lastMsgTs}`,
+        {headers: NGROK_H}
+      );
+      if(r.ok) {
+        const data = await r.json();
+        if(data.messages && data.messages.length > 0) {
+          data.messages.forEach(m => {
+            addChatBubble(m.text, 'bot');
+            _lastMsgTs = Math.max(_lastMsgTs, m.ts);
+          });
+          return; // got reply — stop polling
+        }
+      }
+    } catch(e) {}
+    _pollTimer = setTimeout(poll, 2000);
+  }
+  _pollTimer = setTimeout(poll, 1500); // first check after 1.5s
 }
 
 function addChatBubble(text, who) {
   const area = document.getElementById('chat-scroll');
   if(!area) return;
-  // Hide empty state
   const empty = document.getElementById('chat-empty');
   if(empty) empty.style.display = 'none';
+
+  // Flex row wrapper for proper alignment
+  const row = document.createElement('div');
+  row.style.cssText = 'display:flex;margin:4px 8px;'
+    + (who === 'user' ? 'justify-content:flex-end;' : 'justify-content:flex-start;');
+
   const b = document.createElement('div');
-  b.style.cssText = 'margin:8px 12px;padding:10px 14px;border-radius:16px;max-width:80%;word-wrap:break-word;'
-    + 'font-family:var(--font-body);font-size:15px;line-height:1.4;display:block;';
+  b.style.cssText = 'max-width:75%;padding:10px 14px;border-radius:18px;'
+    + 'word-wrap:break-word;font-family:var(--font-body);font-size:15px;line-height:1.5;'
+    + 'white-space:pre-wrap;';
   if(who === 'user') {
-    b.style.cssText += 'background:var(--accent);color:#000;margin-left:auto;border-bottom-right-radius:4px;text-align:left;';
+    b.style.cssText += 'background:var(--accent);color:#000;border-bottom-right-radius:4px;';
   } else {
-    b.style.cssText += 'background:var(--bg3);color:var(--ivory);margin-right:auto;border-bottom-left-radius:4px;';
+    b.style.cssText += 'background:var(--bg3);color:var(--ivory);border-bottom-left-radius:4px;';
   }
   b.textContent = text;
-  area.appendChild(b);
+  row.appendChild(b);
+  area.appendChild(row);
   area.scrollTop = area.scrollHeight;
 }
 
