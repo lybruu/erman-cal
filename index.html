@@ -856,6 +856,8 @@ async function sendToBot(source) {
     clearTimeout(timer);
     if(resp.ok) {
       sent = true;
+      // Switch to Chat tab so user sees the response
+      if(source !== 'chat') switchTab('chat');
       showToast('✓ Sent');
       _lastMsgTs = sendTs;
       _startReplyPoll();
