@@ -940,19 +940,33 @@ function switchModel(m) {
   document.querySelectorAll('.model-chip').forEach(c =>
     c.classList.toggle('active', c.dataset.model === m));
   localStorage.setItem('erman_model', m);
-  if(twa) try { twa.sendData(JSON.stringify({type:'setting', key:'model', value:m})); return; } catch(e){}
-  showToast(m.charAt(0).toUpperCase()+m.slice(1) + ' — type /' + m);
+  // Send /sonnet, /opus, /haiku command to bot via ngrok
+  fetch(BACKEND_URL + '/api/message', {
+    method:'POST', headers: NGROK_H,
+    body: JSON.stringify({text:'/'+m, context:'settings',
+      user_id: twa?.initDataUnsafe?.user?.id || null})
+  }).catch(()=>{});
+  showToast(m.charAt(0).toUpperCase()+m.slice(1));
 }
 
 function toggleSetting(btn) {
   btn.classList.toggle('on');
   const key = btn.dataset.key, val = btn.classList.contains('on');
   localStorage.setItem('erman_'+key, val);
-
-  // Try sendData (works when opened via ReplyKeyboard button)
-  if(twa) try { twa.sendData(JSON.stringify({type:'setting', key, value:val})); return; } catch(e){}
-
-  // Saved locally — bot will read it on next interaction
+  // Send command to bot via ngrok
+  const cmds = {
+    morning_brief: val ? '/brief on' : '/brief off',
+    proactive: val ? '/nudge on' : '/nudge off',
+    focus_sounds: null
+  };
+  const cmd = cmds[key];
+  if(cmd) {
+    fetch(BACKEND_URL + '/api/message', {
+      method:'POST', headers: NGROK_H,
+      body: JSON.stringify({text: cmd, context:'settings',
+        user_id: twa?.initDataUnsafe?.user?.id || null})
+    }).catch(()=>{});
+  }
   const labels = {morning_brief:'Morning Brief', proactive:'Nudges', focus_sounds:'Focus Sounds'};
   showToast((labels[key]||key) + ': ' + (val ? 'ON' : 'OFF'));
 }
