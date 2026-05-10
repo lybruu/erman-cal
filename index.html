@@ -460,6 +460,60 @@ html, body {
 .profile-chat { padding: 12px 18px 14px; }
 .p-divider { height: 1px; background: rgba(253,248,240,.04); margin: 14px 18px; }
 
+/* ── MEMORY HEADER ROW ── */
+.mem-header-row {
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; user-select: none; padding: 2px 0;
+}
+.mem-header-row:active { opacity: .7; }
+.mem-arrow {
+  font-size: 22px; color: var(--accent); line-height: 1;
+  transition: transform .2s;
+}
+
+/* ── MEMORY OVERLAY SCREEN ── */
+#memory-screen {
+  position: fixed; inset: 0; z-index: 300;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform .28s cubic-bezier(.4,0,.2,1);
+}
+#memory-screen.open { transform: translateX(0); }
+.mem-screen-nav {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid rgba(253,248,240,.06);
+}
+.mem-back-btn {
+  background: none; border: none; color: var(--accent);
+  font-size: 26px; cursor: pointer; padding: 0 6px 0 0; line-height: 1;
+}
+.mem-screen-title {
+  font-family: var(--font-display); font-size: 20px;
+  letter-spacing: 3px; color: var(--ivory); flex: 1;
+}
+.mem-save-btn {
+  background: var(--accent); border: none; border-radius: 50%;
+  width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 20px; color: #000;
+  box-shadow: 0 0 14px var(--glow);
+  transition: transform .15s, box-shadow .15s;
+}
+.mem-save-btn:active { transform: scale(.92); }
+#mem-textarea {
+  flex: 1; background: transparent; border: none; outline: none;
+  color: var(--ivory); font-family: var(--font-body); font-size: 16px;
+  line-height: 1.7; padding: 18px 20px;
+  resize: none; overflow-y: auto;
+}
+#mem-textarea::placeholder { color: var(--sub); }
+.mem-hint {
+  font-size: 12px; color: var(--sub); letter-spacing: 1.5px;
+  text-transform: uppercase; padding: 8px 20px 16px;
+  font-family: var(--font-display);
+}
+
 /* ── SETTINGS TOGGLES ── */
 .setting-row {
   display: flex; align-items: center; justify-content: space-between;
@@ -707,6 +761,13 @@ html, body {
         </div>
         <div class="p-divider"></div>
         <div class="profile-section">
+          <div class="mem-header-row" onclick="openMemory()">
+            <div class="section-header" style="margin:0">Память о тебе</div>
+            <span class="mem-arrow">›</span>
+          </div>
+        </div>
+        <div class="p-divider"></div>
+        <div class="profile-section">
           <div class="section-header">Custom Request</div>
           <p class="config-intro">Tell erMan what to change — anything you want.</p>
         </div>
@@ -721,6 +782,17 @@ html, body {
         <div style="height: 20px;"></div>
       </div>
     </div>
+  </div>
+
+  <!-- Memory overlay screen -->
+  <div id="memory-screen">
+    <div class="mem-screen-nav">
+      <button class="mem-back-btn" onclick="closeMemory()">‹</button>
+      <span class="mem-screen-title">ПАМЯТЬ</span>
+      <button class="mem-save-btn" onclick="saveMemory()">✓</button>
+    </div>
+    <textarea id="mem-textarea" placeholder="Факты о тебе — по одному на строку..."></textarea>
+    <div class="mem-hint">каждая строка — отдельный факт</div>
   </div>
 
   <!-- Tab bar — text only, no emojis -->
@@ -1278,6 +1350,50 @@ function celebrate(){
   requestAnimationFrame(draw);
 }
 function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,100)+'px';}
+
+// ══ MEMORY ══
+async function openMemory() {
+  const screen = document.getElementById('memory-screen');
+  const ta = document.getElementById('mem-textarea');
+  screen.classList.add('open');
+  // Load facts from API
+  try {
+    const uid = (twa && twa.initDataUnsafe && twa.initDataUnsafe.user) ? twa.initDataUnsafe.user.id : '';
+    const r = await fetch(`${BACKEND_URL}/api/memory?user_id=${uid}`, { headers: NGROK_H });
+    if (r.ok) {
+      const d = await r.json();
+      ta.value = (d.facts || []).join('\n');
+    }
+  } catch(e) { /* keep empty */ }
+}
+function closeMemory() {
+  document.getElementById('memory-screen').classList.remove('open');
+}
+async function saveMemory() {
+  const ta = document.getElementById('mem-textarea');
+  const btn = document.querySelector('.mem-save-btn');
+  const uid = (twa && twa.initDataUnsafe && twa.initDataUnsafe.user) ? twa.initDataUnsafe.user.id : null;
+  btn.textContent = '…';
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/memory`, {
+      method: 'POST', headers: NGROK_H,
+      body: JSON.stringify({
+        all_facts: ta.value,
+        initData: twa.initData || '',
+        user_id: uid
+      })
+    });
+    if (r.ok) {
+      btn.textContent = '✓';
+      showToast('Память сохранена');
+      setTimeout(closeMemory, 700);
+    } else {
+      btn.textContent = '✗'; setTimeout(()=>btn.textContent='✓', 1200);
+    }
+  } catch(e) {
+    btn.textContent = '✗'; setTimeout(()=>btn.textContent='✓', 1200);
+  }
+}
 
 // ══ SPLASH — golden spiral ══
 function runSplash() {
