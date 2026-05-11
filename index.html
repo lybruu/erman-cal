@@ -258,9 +258,42 @@ html, body {
 }
 .event-item {
   display: flex; gap: 12px; align-items: flex-start;
-  padding: 10px 0; border-bottom: 1px solid rgba(253,248,240,.04);
+  padding: 12px 14px; margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, rgba(253,248,240,.035) 0%, rgba(253,248,240,.015) 100%);
+  border: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 rgba(253,248,240,.05);
+  transition: all .25s cubic-bezier(.2,.8,.3,1);
 }
-.event-item:last-child { border-bottom: none; }
+.event-item:hover, .event-item:active {
+  border-color: rgba(255,159,10,.25);
+  box-shadow: inset 0 1px 0 rgba(253,248,240,.08), 0 0 16px rgba(255,159,10,.08);
+  transform: translateY(-1px);
+}
+.event-item:last-child { margin-bottom: 0; }
+
+/* ── Premium shimmer — Granola-style "AI thinking" ── */
+.shimmer {
+  background: linear-gradient(90deg,
+    rgba(253,248,240,.04) 0%,
+    rgba(255,159,10,.18) 50%,
+    rgba(253,248,240,.04) 100%);
+  background-size: 200% 100%;
+  animation: shimmer-sweep 1.4s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+@keyframes shimmer-sweep {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.shimmer-text {
+  background: linear-gradient(90deg,
+    var(--sub) 0%, var(--ivory) 30%, var(--accent) 50%, var(--ivory) 70%, var(--sub) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  animation: shimmer-sweep 2s linear infinite;
+}
 .event-dot { width: 7px; height: 7px; border-radius: 50%; margin-top: 7px; flex-shrink: 0; }
 .event-title { font-size: 18px; color: var(--ivory); font-family: var(--font-body); line-height: 1.3; }
 .event-time { font-size: 13px; color: var(--sub); margin-top: 2px; font-family: var(--font-display); letter-spacing: 1px; }
