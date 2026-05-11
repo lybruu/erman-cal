@@ -121,17 +121,18 @@ html, body {
   color: var(--ivory);
   text-shadow: 0 0 16px rgba(253,248,240,.5);
 }
-/* Explosion glow on press */
+/* Soft aura glow on press */
 .tab-glow {
   position: absolute; border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,159,10,.55) 0%, rgba(255,159,10,.2) 40%, transparent 70%);
+  background: radial-gradient(circle, rgba(255,159,10,.45) 0%, rgba(255,159,10,.12) 50%, transparent 75%);
   pointer-events: none; opacity: 0;
-  transform: scale(0); animation: none;
+  transform: scale(.6); animation: none;
+  filter: blur(2px);
 }
 @keyframes tab-burst {
-  0%  { opacity: 1; transform: scale(0); }
-  50% { opacity: .6; }
-  100%{ opacity: 0; transform: scale(3.5); }
+  0%   { opacity: 0;   transform: scale(.6); }
+  35%  { opacity: .85; transform: scale(1);   }
+  100% { opacity: 0;   transform: scale(1.15); }
 }
 .tab-item .tab-dot {
   display: none; width: 4px; height: 4px; border-radius: 50%;
@@ -1129,16 +1130,17 @@ function tabBurst(el) {
   const glow = el.querySelector('.tab-glow');
   if(!glow) return;
   const rect = el.getBoundingClientRect();
-  const size = Math.max(rect.width, rect.height) * 2.2;
+  // Aura = soft halo, ~1.1x the button (not exploding outward)
+  const size = Math.min(rect.width, rect.height) * 1.4;
   glow.style.width = size + 'px';
   glow.style.height = size + 'px';
   glow.style.left = (rect.width/2 - size/2) + 'px';
   glow.style.top = (rect.height/2 - size/2) + 'px';
   glow.style.animation = 'none';
   glow.offsetWidth; // reflow
-  glow.style.animation = 'tab-burst .5s ease-out forwards';
-  if(twa && twa.HapticFeedback) twa.HapticFeedback.impactOccurred('medium');
-  else if(navigator.vibrate) navigator.vibrate(18);
+  glow.style.animation = 'tab-burst .55s cubic-bezier(.2,.8,.3,1) forwards';
+  if(twa && twa.HapticFeedback) twa.HapticFeedback.impactOccurred('light');
+  else if(navigator.vibrate) navigator.vibrate(12);
 }
 
 // ══ I18N ══
