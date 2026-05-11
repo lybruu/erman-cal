@@ -108,9 +108,9 @@ html, body {
   z-index: 10; position: relative;
 }
 .tab-item {
-  flex: 1; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 3px;
-  padding: 8px 4px 6px; cursor: pointer;
+  flex: 1; display: flex;
+  align-items: center; justify-content: center;
+  padding: 10px 4px; cursor: pointer;
   color: var(--sub); font-size: 11px; letter-spacing: 2px;
   font-family: var(--font-display);
   border: none; background: none; transition: color .2s;
@@ -120,17 +120,6 @@ html, body {
 .tab-item.active {
   color: var(--ivory);
   text-shadow: 0 0 16px rgba(253,248,240,.5);
-}
-/* Tab icon circles */
-.tab-icon {
-  width: 28px; height: 28px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 15px; transition: all .2s;
-  background: transparent;
-}
-.tab-item.active .tab-icon {
-  background: rgba(255,159,10,.15);
-  box-shadow: 0 0 14px rgba(255,159,10,.25);
 }
 /* Explosion glow on press */
 .tab-glow {
@@ -850,26 +839,22 @@ html, body {
     <div class="mem-hint">каждая строка — отдельный факт</div>
   </div>
 
-  <!-- Tab bar — text only, no emojis -->
+  <!-- Tab bar — clean text only -->
   <div class="tab-bar">
     <button class="tab-item active" data-tab="calendar" onclick="switchTab('calendar');tabBurst(this)">
       <div class="tab-glow"></div>
-      <div class="tab-icon">◫</div>
       <span data-i18n="tab_calendar">Calendar</span><span class="tab-dot"></span>
     </button>
     <button class="tab-item" data-tab="focus" onclick="switchTab('focus');tabBurst(this)">
       <div class="tab-glow"></div>
-      <div class="tab-icon">◎</div>
       <span data-i18n="tab_focus">Focus</span><span class="tab-dot"></span>
     </button>
     <button class="tab-item" data-tab="chat" onclick="switchTab('chat');tabBurst(this)">
       <div class="tab-glow"></div>
-      <div class="tab-icon">◈</div>
       <span data-i18n="tab_chat">Chat</span><span class="tab-dot"></span>
     </button>
     <button class="tab-item" data-tab="profile" onclick="switchTab('profile');tabBurst(this)">
       <div class="tab-glow"></div>
-      <div class="tab-icon">◉</div>
       <span data-i18n="tab_profile">Profile</span><span class="tab-dot"></span>
     </button>
   </div>
