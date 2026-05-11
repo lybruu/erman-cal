@@ -11,7 +11,7 @@
 
 :root {
   --bg: #060609; --bg2: #0d0d18; --bg3: #16162a;
-  --sub: #ccc8e0; --dim: #2a2a3e;
+  --sub: rgba(253,248,240,.72); --dim: #2a2a3e;
   --accent: #ff9f0a; --accent2: #ff6200;
   --green: #34d399; --danger: #ff453a;
   --glow: rgba(255,159,10,.3);
@@ -381,9 +381,9 @@ html, body {
   text-shadow: 0 0 20px rgba(253,248,240,.2);
 }
 .timer-label {
-  font-size: 13px; color: var(--sub);
-  letter-spacing: 4px; text-transform: uppercase;
-  font-family: var(--font-display);
+  font-size: 12px; color: rgba(253,248,240,.5);
+  letter-spacing: .5px;
+  font-family: 'Inter', sans-serif; font-weight: 300;
 }
 .tree-container {
   position: relative; width: 260px; height: 280px;
@@ -391,7 +391,7 @@ html, body {
   margin-bottom: 8px;
 }
 .tree-timer-overlay {
-  position: absolute; top: 58%; left: 50%; transform: translate(-50%, -50%);
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
   display: flex; flex-direction: column; align-items: center; gap: 2px;
   z-index: 3; pointer-events: none;
   text-shadow: 0 2px 16px rgba(0,0,0,.9), 0 0 40px rgba(0,0,0,.6);
@@ -440,7 +440,7 @@ html, body {
   font-family: var(--font-display); font-size: 34px;
   color: var(--ivory); text-shadow: 0 0 14px rgba(253,248,240,.15);
 }
-.focus-stat .lbl { font-size: 11px; color: var(--sub); text-transform: uppercase; letter-spacing: 2px; font-family: var(--font-display); }
+.focus-stat .lbl { font-size: 12px; color: rgba(253,248,240,.65); font-family: 'Inter', sans-serif; font-weight: 300; letter-spacing: .2px; }
 .level-bar { width: 100%; max-width: 240px; margin-bottom: 14px; }
 .level-info { display: flex; justify-content: space-between; margin-bottom: 6px; }
 .level-name { font-family: var(--font-display); letter-spacing: 2px; font-size: 13px; color: var(--ivory-dim); }
@@ -696,52 +696,90 @@ html, body {
             <div class="timer-digits" id="timer-digits">25:00</div>
             <div class="timer-label" id="timer-label" data-i18n="focus_ready">READY</div>
           </div>
-          <svg class="tree-svg" id="tree-svg" viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg">
+          <svg class="tree-svg" id="tree-svg" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
             <defs>
-              <linearGradient id="trunk-g" x1="0" y1="1" x2="0" y2="0">
-                <stop offset="0%" stop-color="#6B4226"/>
-                <stop offset="100%" stop-color="#A87040"/>
-              </linearGradient>
-              <radialGradient id="leaf-g" cx=".5" cy=".4" r=".55">
-                <stop offset="0%" stop-color="#FFE080"/>
-                <stop offset="40%" stop-color="#FFB020"/>
-                <stop offset="100%" stop-color="#FF8800" stop-opacity=".7"/>
+              <radialGradient id="gem-bg-glow" cx="50%" cy="50%" r="55%">
+                <stop offset="0%" stop-color="#ff9f0a" stop-opacity=".18"/>
+                <stop offset="100%" stop-color="#ff9f0a" stop-opacity="0"/>
               </radialGradient>
-              <radialGradient id="crown-glow-g" cx=".5" cy=".5" r=".5">
-                <stop offset="0%" stop-color="#FFBF40" stop-opacity=".4"/>
-                <stop offset="100%" stop-color="#FF9F0A" stop-opacity="0"/>
-              </radialGradient>
-              <radialGradient id="ground-glow-g" cx=".5" cy=".5" r=".5">
-                <stop offset="0%" stop-color="#FF9F0A" stop-opacity=".2"/>
-                <stop offset="100%" stop-color="#FF9F0A" stop-opacity="0"/>
-              </radialGradient>
-              <filter id="leaf-soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.2"/></filter>
-              <filter id="crown-soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="16"/></filter>
+              <filter id="gem-glow" x="-40%" y="-40%" width="180%" height="180%">
+                <feGaussianBlur stdDeviation="6" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <filter id="gem-outer-glow" x="-60%" y="-60%" width="220%" height="220%">
+                <feGaussianBlur stdDeviation="14"/>
+              </filter>
             </defs>
-            <ellipse id="tree-ground-glow" cx="100" cy="262" rx="65" ry="18" fill="url(#ground-glow-g)" opacity="0"/>
-            <ellipse cx="100" cy="262" rx="50" ry="3" fill="rgba(255,159,10,.05)"/>
-            <ellipse id="tree-seed" cx="100" cy="258" rx="6" ry="4" fill="#8B5E34"/>
-            <path id="tree-trunk" d="M100,258 Q97,238 98,218 Q100,198 99,178 Q98,162 100,148"
-              stroke="url(#trunk-g)" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-            <path class="tree-branch" data-threshold=".15" d="M99,218 Q80,206 62,200" stroke="#8B5E34" stroke-width="4" fill="none" stroke-linecap="round"/>
-            <path class="tree-branch" data-threshold=".30" d="M99,192 Q76,178 55,174" stroke="#9B6E3E" stroke-width="3.2" fill="none" stroke-linecap="round"/>
-            <path class="tree-branch" data-threshold=".45" d="M100,170 Q83,155 66,150" stroke="#9B6E3E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-            <path class="tree-branch" data-threshold=".20" d="M101,212 Q120,200 138,196" stroke="#8B5E34" stroke-width="4" fill="none" stroke-linecap="round"/>
-            <path class="tree-branch" data-threshold=".35" d="M101,188 Q124,174 144,170" stroke="#9B6E3E" stroke-width="3.2" fill="none" stroke-linecap="round"/>
-            <path class="tree-branch" data-threshold=".50" d="M100,165 Q117,153 134,148" stroke="#9B6E3E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-            <ellipse id="tree-crown-glow" cx="100" cy="148" rx="62" ry="52" fill="url(#crown-glow-g)" filter="url(#crown-soft)" opacity="0"/>
-            <circle class="tree-leaf" data-threshold=".25" data-r="15" cx="58" cy="198" r="0" fill="url(#leaf-g)" filter="url(#leaf-soft)"/>
-            <circle class="tree-leaf" data-threshold=".28" data-r="14" cx="140" cy="194" r="0" fill="url(#leaf-g)" filter="url(#leaf-soft)"/>
-            <circle class="tree-leaf" data-threshold=".38" data-r="17" cx="52" cy="172" r="0" fill="url(#leaf-g)" filter="url(#leaf-soft)"/>
-            <circle class="tree-leaf" data-threshold=".42" data-r="16" cx="148" cy="168" r="0" fill="url(#leaf-g)" filter="url(#leaf-soft)"/>
-            <circle class="tree-leaf" data-threshold=".48" data-r="14" cx="62" cy="150" r="0" fill="url(#leaf-g)" filter="url(#leaf-soft)"/>
-            <circle class="tree-leaf" data-threshold=".52" data-r="14" cx="138" cy="148" r="0" fill="url(#leaf-g)" filter="url(#leaf-soft)"/>
-            <circle class="tree-leaf" data-threshold=".58" data-r="20" cx="100" cy="130" r="0" fill="url(#leaf-g)" filter="url(#leaf-soft)"/>
-            <circle class="tree-leaf" data-threshold=".62" data-r="13" cx="80" cy="140" r="0" fill="url(#leaf-g)" filter="url(#leaf-soft)"/>
-            <circle class="tree-leaf" data-threshold=".66" data-r="13" cx="120" cy="138" r="0" fill="url(#leaf-g)" filter="url(#leaf-soft)"/>
-            <circle class="tree-leaf" data-threshold=".72" data-r="16" cx="100" cy="112" r="0" fill="url(#leaf-g)" filter="url(#leaf-soft)"/>
-            <circle class="tree-leaf" data-threshold=".78" data-r="11" cx="76" cy="122" r="0" fill="url(#leaf-g)" filter="url(#leaf-soft)"/>
-            <circle class="tree-leaf" data-threshold=".82" data-r="11" cx="124" cy="120" r="0" fill="url(#leaf-g)" filter="url(#leaf-soft)"/>
+
+            <!-- Outer ambient glow (animated by JS) -->
+            <ellipse id="gem-bg-glow" cx="100" cy="110" rx="80" ry="90"
+              fill="url(#gem-bg-glow)" opacity="0.3"/>
+
+            <!-- Crown — upper half facets -->
+            <!-- Crown top-left: top → upper-left → table-top -->
+            <polygon id="gem-cr-tl"
+              points="100,12 38,52 100,55"
+              fill="rgba(255,140,20,.55)" opacity="0.08" style="transition:opacity .5s,fill .5s"/>
+            <!-- Crown top-right: top → table-top → upper-right  -->
+            <polygon id="gem-cr-tr"
+              points="100,12 100,55 162,52"
+              fill="rgba(255,240,160,.75)" opacity="0.08" style="transition:opacity .5s,fill .5s"/>
+            <!-- Crown left side: upper-left → left-girdle → table-left → table-top -->
+            <polygon id="gem-cr-l"
+              points="38,52 18,110 48,110 100,55"
+              fill="rgba(200,90,10,.6)" opacity="0.08" style="transition:opacity .5s,fill .5s"/>
+            <!-- Crown right side: upper-right → table-top → table-right → right-girdle -->
+            <polygon id="gem-cr-r"
+              points="162,52 100,55 152,110 182,110"
+              fill="rgba(255,210,90,.7)" opacity="0.08" style="transition:opacity .5s,fill .5s"/>
+
+            <!-- Table — center diamond (brightest, appears first) -->
+            <polygon id="gem-table"
+              points="100,55 152,110 100,165 48,110"
+              fill="rgba(255,220,120,.85)" opacity="0.06" style="transition:opacity .5s"/>
+
+            <!-- Pavilion — lower half facets -->
+            <!-- Pav right: right-girdle → table-right → table-bottom → lower-right -->
+            <polygon id="gem-pv-r"
+              points="182,110 152,110 100,165 162,168"
+              fill="rgba(255,180,60,.65)" opacity="0.05" style="transition:opacity .5s,fill .5s"/>
+            <!-- Pav left: left-girdle → lower-left → table-bottom → table-left -->
+            <polygon id="gem-pv-l"
+              points="18,110 38,168 100,165 48,110"
+              fill="rgba(180,70,10,.55)" opacity="0.05" style="transition:opacity .5s,fill .5s"/>
+            <!-- Pav bottom-right: lower-right → bottom → table-bottom -->
+            <polygon id="gem-pv-br"
+              points="162,168 100,208 100,165"
+              fill="rgba(255,130,40,.5)" opacity="0.04" style="transition:opacity .5s"/>
+            <!-- Pav bottom-left: table-bottom → bottom → lower-left -->
+            <polygon id="gem-pv-bl"
+              points="100,165 100,208 38,168"
+              fill="rgba(140,55,10,.45)" opacity="0.04" style="transition:opacity .5s"/>
+
+            <!-- Crystal outline edges -->
+            <!-- Outer silhouette -->
+            <polygon id="gem-outline"
+              points="100,12 162,52 182,110 162,168 100,208 38,168 18,110 38,52"
+              fill="none" stroke="rgba(255,159,10,.22)" stroke-width="1"
+              style="transition:stroke-opacity .5s"/>
+            <!-- Inner table edges -->
+            <polygon points="100,55 152,110 100,165 48,110"
+              fill="none" stroke="rgba(255,200,80,.18)" stroke-width=".8"/>
+            <!-- Crown internal lines -->
+            <line x1="100" y1="12" x2="100" y2="55" stroke="rgba(255,230,130,.2)" stroke-width=".7"/>
+            <line x1="38" y1="52" x2="48" y2="110" stroke="rgba(255,159,10,.12)" stroke-width=".6"/>
+            <line x1="162" y1="52" x2="152" y2="110" stroke="rgba(255,159,10,.12)" stroke-width=".6"/>
+            <!-- Pavilion internal lines -->
+            <line x1="100" y1="165" x2="100" y2="208" stroke="rgba(255,159,10,.12)" stroke-width=".6"/>
+            <line x1="38" y1="168" x2="48" y2="110" stroke="rgba(255,159,10,.1)" stroke-width=".6"/>
+            <line x1="162" y1="168" x2="152" y2="110" stroke="rgba(255,159,10,.1)" stroke-width=".6"/>
+            <!-- Girdle line -->
+            <line x1="18" y1="110" x2="182" y2="110" stroke="rgba(255,159,10,.1)" stroke-width=".5"/>
+
+            <!-- Specular highlight (top-right facet, always slightly visible) -->
+            <polygon id="gem-specular"
+              points="100,12 162,52 100,55"
+              fill="rgba(255,255,220,.5)" opacity="0.12" style="transition:opacity .4s"/>
           </svg>
         </div>
         <div class="dur-row" id="dur-row">
@@ -772,7 +810,8 @@ html, body {
           <div class="done-section" id="done-list"></div>
         </div>
         <div class="empty-chat" id="chat-empty" style="display:none">
-          <p>Talk to erMan —<br>key insights will appear here</p>
+          <p data-i18n="chat_empty_line1">Talk to erMan</p>
+          <p data-i18n="chat_empty_line2" style="margin-top:4px">key insights will appear here</p>
         </div>
       </div>
       <div class="send-row" id="chat-send-row">
@@ -1183,6 +1222,8 @@ const I18N = {
     tab_calendar: 'Calendar', tab_focus: 'Focus', tab_chat: 'Chat', tab_profile: 'Profile',
     today: 'Today', today_lbl: 'Today',
     back_to_chat: 'Back to Chat',
+    chat_empty_line1: 'Talk to erMan',
+    chat_empty_line2: 'key insights will appear here',
     cal_empty_text: 'Tell erMan<br><b>open calendar</b>',
     no_events: 'No events',
     focus_ready: 'READY', focus_start: 'Start Focus', focus_stop: 'Stop',
@@ -1207,6 +1248,8 @@ const I18N = {
     tab_calendar: 'Календарь', tab_focus: 'Фокус', tab_chat: 'Чат', tab_profile: 'Профиль',
     today: 'Сегодня', today_lbl: 'Сегодня',
     back_to_chat: 'В чат',
+    chat_empty_line1: 'Напиши Эрману',
+    chat_empty_line2: 'ключевые инсайты появятся здесь',
     cal_empty_text: 'Напиши Эрману<br><b>открой календарь</b>',
     no_events: 'Нет событий',
     focus_ready: 'ГОТОВ', focus_start: 'Начать фокус', focus_stop: 'Стоп',
@@ -1370,39 +1413,55 @@ document.getElementById('add-modal').addEventListener('click', function(e) { if(
 let focusDuration=25, focusRunning=false, focusTimer=null, focusStart=0, focusElapsed=0, trunkLen=0;
 
 function initTree(){
-  const trunk=document.getElementById('tree-trunk'); if(!trunk) return;
-  trunkLen=trunk.getTotalLength();
-  trunk.style.strokeDasharray=trunkLen; trunk.style.strokeDashoffset=trunkLen;
-  document.querySelectorAll('.tree-branch').forEach(b=>{
-    const len=b.getTotalLength(); b.style.strokeDasharray=len; b.style.strokeDashoffset=len; b.style.opacity='0';
+  // Crystal gem — reset all facets to dim state
+  const facets = ['gem-cr-tl','gem-cr-tr','gem-cr-l','gem-cr-r',
+    'gem-table','gem-pv-r','gem-pv-l','gem-pv-br','gem-pv-bl'];
+  const opacities = [0.08,0.08,0.08,0.08,0.06,0.05,0.05,0.04,0.04];
+  facets.forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el) el.setAttribute('opacity',String(opacities[i]));
   });
-  document.querySelectorAll('.tree-leaf').forEach(l=>{ l.setAttribute('r','0'); l.style.opacity='0'; });
-  document.getElementById('tree-crown-glow').style.opacity='0';
-  document.getElementById('tree-ground-glow').style.opacity='0';
-  document.getElementById('tree-seed').style.opacity='1';
+  const glow=document.getElementById('gem-bg-glow');
+  if(glow) glow.setAttribute('opacity','0.15');
+  const outline=document.getElementById('gem-outline');
+  if(outline) outline.setAttribute('stroke','rgba(255,159,10,.14)');
+  const spec=document.getElementById('gem-specular');
+  if(spec) spec.setAttribute('opacity','0.1');
 }
 
 function treeProgress(pct){
   pct=Math.max(0,Math.min(1,pct));
-  const trunk=document.getElementById('tree-trunk'); if(!trunk) return;
   const ring=document.getElementById('progress-ring-fg');
   if(ring) ring.setAttribute('stroke-dashoffset', String(911*(1-pct)));
-  document.getElementById('tree-seed').style.opacity=String(Math.max(0,1-pct*4));
-  const trunkPct=Math.min(1,pct/0.4);
-  trunk.style.strokeDashoffset=String(trunkLen*(1-trunkPct));
-  trunk.style.strokeWidth=String(6+trunkPct*2);
-  document.querySelectorAll('.tree-branch').forEach(b=>{
-    const thresh=parseFloat(b.dataset.threshold), len=b.getTotalLength();
-    if(pct>=thresh){ b.style.opacity='1'; b.style.strokeDashoffset=String(len*(1-Math.min(1,(pct-thresh)/0.12))); }
-    else { b.style.opacity='0'; b.style.strokeDashoffset=String(len); }
-  });
-  document.querySelectorAll('.tree-leaf').forEach(l=>{
-    const thresh=parseFloat(l.dataset.threshold), maxR=parseFloat(l.dataset.r);
-    if(pct>=thresh){ const e=1-Math.pow(1-Math.min(1,(pct-thresh)/0.15),3); l.setAttribute('r',String(maxR*e)); l.style.opacity=String(0.6+e*0.4); }
-    else { l.setAttribute('r','0'); l.style.opacity='0'; }
-  });
-  document.getElementById('tree-crown-glow').style.opacity=String(Math.max(0,(pct-0.5)/0.5)*0.8);
-  document.getElementById('tree-ground-glow').style.opacity=String(Math.max(0,(pct-0.2)/0.8)*0.5);
+
+  function ease(p){ return p<0?0:p>1?1:1-Math.pow(1-p,2.5); }
+  function facetOp(id, base, max, thresh){
+    const el=document.getElementById(id); if(!el) return;
+    const e=ease(Math.max(0,(pct-thresh)/(1-thresh)));
+    el.setAttribute('opacity', String(base + (max-base)*e));
+  }
+
+  // Table appears first, center of attention
+  facetOp('gem-table',    0.06, 0.92, 0.05);
+  // Crown facets
+  facetOp('gem-cr-tr',    0.08, 0.85, 0.10);
+  facetOp('gem-cr-tl',    0.08, 0.70, 0.15);
+  facetOp('gem-cr-r',     0.08, 0.80, 0.20);
+  facetOp('gem-cr-l',     0.08, 0.65, 0.25);
+  // Pavilion facets appear later
+  facetOp('gem-pv-r',     0.05, 0.75, 0.35);
+  facetOp('gem-pv-l',     0.05, 0.60, 0.40);
+  facetOp('gem-pv-br',    0.04, 0.65, 0.50);
+  facetOp('gem-pv-bl',    0.04, 0.50, 0.55);
+  // Specular highlight pulses brighter
+  facetOp('gem-specular', 0.10, 0.70, 0.30);
+
+  // Outer glow intensifies
+  const glow=document.getElementById('gem-bg-glow');
+  if(glow) glow.setAttribute('opacity', String(0.15 + pct*0.55));
+  // Outline becomes more visible
+  const outline=document.getElementById('gem-outline');
+  if(outline) outline.setAttribute('stroke', `rgba(255,159,10,${0.14+pct*0.5})`);
 }
 
 function setDuration(min){
