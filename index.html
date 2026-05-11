@@ -1444,9 +1444,14 @@ function runSplash() {
   const splash=document.getElementById('splash'), starsEl=document.getElementById('splash-stars');
   const logo=document.getElementById('splash-logo'), app=document.getElementById('app');
 
-  // Haptic
-  if(twa && twa.HapticFeedback) twa.HapticFeedback.impactOccurred('medium');
-  else if(navigator.vibrate) navigator.vibrate([20,50,20]);
+  // Haptic — triple pulse on launch
+  if(twa && twa.HapticFeedback) {
+    twa.HapticFeedback.impactOccurred('heavy');
+    setTimeout(()=>twa.HapticFeedback.impactOccurred('medium'), 120);
+    setTimeout(()=>twa.HapticFeedback.notificationOccurred('success'), 280);
+  } else if(navigator.vibrate) {
+    navigator.vibrate([40, 60, 30, 40, 80]);
+  }
 
   const cx=window.innerWidth/2, cy=window.innerHeight/2, stars=[];
   for(let i=0;i<80;i++){
