@@ -561,18 +561,18 @@ html, body {
 
 <div class="modal-overlay" id="add-modal">
   <div class="modal-sheet">
-    <div class="modal-title">New Event</div>
+    <div class="modal-title" data-i18n="new_event">New Event</div>
     <div class="modal-field">
-      <label>Title</label>
+      <label data-i18n="label_title">Title</label>
       <input type="text" id="modal-title-input" placeholder="Meeting, reminder..." autocomplete="off">
     </div>
     <div class="modal-field">
-      <label>Time</label>
+      <label data-i18n="label_time">Time</label>
       <input type="time" id="modal-time-input">
     </div>
     <div class="modal-btns">
-      <button class="modal-cancel" onclick="closeAddModal()">Cancel</button>
-      <button class="modal-save" onclick="saveEvent()">Save</button>
+      <button class="modal-cancel" onclick="closeAddModal()" data-i18n="cancel">Cancel</button>
+      <button class="modal-save" onclick="saveEvent()" data-i18n="save">Save</button>
     </div>
   </div>
 </div>
@@ -587,18 +587,18 @@ html, body {
         <button class="nav-btn" onclick="prevMonth()">&#8249;</button>
         <h2 id="month-label"></h2>
         <button class="nav-btn" onclick="nextMonth()">&#8250;</button>
-        <button class="today-btn" onclick="goToday()">Today</button>
+        <button class="today-btn" onclick="goToday()" data-i18n="today">Today</button>
       </div>
       <div class="weekdays">
-        <span>MO</span><span>TU</span><span>WE</span><span>TH</span>
-        <span>FR</span><span>SA</span><span>SU</span>
+        <span data-i18n-wd="0">MO</span><span data-i18n-wd="1">TU</span><span data-i18n-wd="2">WE</span><span data-i18n-wd="3">TH</span>
+        <span data-i18n-wd="4">FR</span><span data-i18n-wd="5">SA</span><span data-i18n-wd="6">SU</span>
       </div>
       <div class="grid" id="grid"></div>
       <div class="divider"></div>
       <div class="events-area" id="events-area">
         <div class="empty-state" id="empty-state">
-          <p>Tell erMan<br><b>open calendar</b></p>
-          <button class="action-btn" onclick="goBack()">Back to Chat</button>
+          <p data-i18n="cal_empty_text">Tell erMan<br><b>open calendar</b></p>
+          <button class="action-btn" onclick="goBack()" data-i18n="back_to_chat">Back to Chat</button>
         </div>
       </div>
       <button class="fab-add" onclick="openAddModal()">+</button>
@@ -621,7 +621,7 @@ html, body {
           </svg>
           <div class="tree-timer-overlay">
             <div class="timer-digits" id="timer-digits">25:00</div>
-            <div class="timer-label" id="timer-label">READY</div>
+            <div class="timer-label" id="timer-label" data-i18n="focus_ready">READY</div>
           </div>
           <svg class="tree-svg" id="tree-svg" viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -676,11 +676,11 @@ html, body {
           <button class="dur-chip active" data-min="25" onclick="setDuration(25)">25 MIN</button>
           <button class="dur-chip" data-min="45" onclick="setDuration(45)">45 MIN</button>
         </div>
-        <button class="focus-btn start" id="focus-btn" onclick="toggleFocus()">Start Focus</button>
+        <button class="focus-btn start" id="focus-btn" onclick="toggleFocus()" data-i18n="focus_start">Start Focus</button>
         <div class="focus-stats">
-          <div class="focus-stat"><div class="val" id="stat-streak">0</div><div class="lbl">Streak</div></div>
-          <div class="focus-stat"><div class="val" id="stat-crystals">0</div><div class="lbl">Gems</div></div>
-          <div class="focus-stat"><div class="val" id="stat-today">0</div><div class="lbl">Today</div></div>
+          <div class="focus-stat"><div class="val" id="stat-streak">0</div><div class="lbl" data-i18n="streak">Streak</div></div>
+          <div class="focus-stat"><div class="val" id="stat-crystals">0</div><div class="lbl" data-i18n="gems">Gems</div></div>
+          <div class="focus-stat"><div class="val" id="stat-today">0</div><div class="lbl" data-i18n="today_lbl">Today</div></div>
         </div>
         <div id="level-name" style="display:none"></div>
         <div id="level-next" style="display:none"></div>
@@ -692,10 +692,10 @@ html, body {
     <!-- CHAT -->
     <div class="tab-pane" id="tab-chat">
       <div class="scroll-area" id="chat-scroll">
-        <div class="section-header">Key Insights</div>
+        <div class="section-header" data-i18n="key_insights">Key Insights</div>
         <div class="insights-list" id="insights-list"></div>
         <div id="done-section" style="display:none">
-          <div class="section-header">Done Today</div>
+          <div class="section-header" data-i18n="done_today">Done Today</div>
           <div class="done-section" id="done-list"></div>
         </div>
         <div class="empty-chat" id="chat-empty" style="display:none">
@@ -703,7 +703,7 @@ html, body {
         </div>
       </div>
       <div class="send-row" id="chat-send-row">
-        <textarea id="chat-input" rows="1" placeholder="Message erMan..."
+        <textarea id="chat-input" rows="1" placeholder="Message erMan..." data-i18n-ph="chat_placeholder"
           oninput="autoResize(this)"
           onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendToBot('chat');}"></textarea>
         <button class="send-btn" onclick="sendToBot('chat')">&#8593;</button>
@@ -715,7 +715,7 @@ html, body {
       <div class="profile-wrap">
         <div class="profile-section">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-            <div class="section-header" style="margin:0">Model</div>
+            <div class="section-header" style="margin:0" data-i18n="model">Model</div>
             <button id="lang-btn" onclick="toggleLang()" style="background:none;border:1px solid rgba(253,248,240,.15);border-radius:10px;padding:5px 12px;color:var(--ivory);font-size:13px;cursor:pointer;letter-spacing:1px;font-family:var(--font-display);display:flex;align-items:center;gap:6px;">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
               <span id="lang-label">EN</span>
@@ -729,7 +729,7 @@ html, body {
         </div>
         <div class="p-divider"></div>
         <div class="profile-section">
-          <div class="section-header">Timezone</div>
+          <div class="section-header" data-i18n="timezone">Timezone</div>
           <div class="tz-chips" id="tz-chips">
             <button class="tz-chip" data-tz="auto" onclick="setTimezone('auto')">Auto</button>
             <button class="tz-chip" data-tz="Europe/Moscow" onclick="setTimezone('Europe/Moscow')">MSK</button>
@@ -741,45 +741,45 @@ html, body {
         </div>
         <div class="p-divider"></div>
         <div class="profile-section">
-          <div class="section-header">Settings</div>
+          <div class="section-header" data-i18n="settings">Settings</div>
           <div class="setting-row">
-            <div><div class="setting-label">Morning Brief</div><div class="setting-desc">DAILY SUMMARY AT 9 AM</div></div>
+            <div><div class="setting-label" data-i18n="morning_brief">Morning Brief</div><div class="setting-desc" data-i18n="morning_brief_desc">DAILY SUMMARY AT 9 AM</div></div>
             <button class="toggle on" data-key="morning_brief" onclick="toggleSetting(this)"></button>
           </div>
           <div class="setting-row">
-            <div><div class="setting-label">Proactive Nudges</div><div class="setting-desc">SMART TASK REMINDERS</div></div>
+            <div><div class="setting-label" data-i18n="proactive">Proactive Nudges</div><div class="setting-desc" data-i18n="proactive_desc">SMART TASK REMINDERS</div></div>
             <button class="toggle on" data-key="proactive" onclick="toggleSetting(this)"></button>
           </div>
           <div class="setting-row">
-            <div><div class="setting-label">Focus Sounds</div><div class="setting-desc">COMPLETION HAPTICS</div></div>
+            <div><div class="setting-label" data-i18n="focus_sounds">Focus Sounds</div><div class="setting-desc" data-i18n="focus_sounds_desc">COMPLETION HAPTICS</div></div>
             <button class="toggle on" data-key="focus_sounds" onclick="toggleSetting(this)"></button>
           </div>
         </div>
         <div class="p-divider"></div>
         <div class="profile-section">
-          <div class="section-header">Statistics</div>
+          <div class="section-header" data-i18n="statistics">Statistics</div>
           <div class="stats-grid">
-            <div class="stat-card"><div class="val" id="p-streak">0</div><div class="lbl">Streak</div></div>
-            <div class="stat-card"><div class="val" id="p-gems">0</div><div class="lbl">Gems</div></div>
-            <div class="stat-card"><div class="val" id="p-mins">0</div><div class="lbl">Focus Min</div></div>
-            <div class="stat-card"><div class="val" id="p-insights">0</div><div class="lbl">Insights</div></div>
+            <div class="stat-card"><div class="val" id="p-streak">0</div><div class="lbl" data-i18n="streak">Streak</div></div>
+            <div class="stat-card"><div class="val" id="p-gems">0</div><div class="lbl" data-i18n="gems">Gems</div></div>
+            <div class="stat-card"><div class="val" id="p-mins">0</div><div class="lbl" data-i18n="focus_min">Focus Min</div></div>
+            <div class="stat-card"><div class="val" id="p-insights">0</div><div class="lbl" data-i18n="insights">Insights</div></div>
           </div>
         </div>
         <div class="p-divider"></div>
         <div class="profile-section">
           <div class="mem-header-row" onclick="openMemory()">
-            <div class="section-header" style="margin:0">Память о тебе</div>
+            <div class="section-header" style="margin:0" data-i18n="memory_title">Память о тебе</div>
             <span class="mem-arrow">›</span>
           </div>
         </div>
         <div class="p-divider"></div>
         <div class="profile-section">
-          <div class="section-header">Custom Request</div>
-          <p class="config-intro">Tell erMan what to change — anything you want.</p>
+          <div class="section-header" data-i18n="custom_request">Custom Request</div>
+          <p class="config-intro" data-i18n="custom_request_desc">Tell erMan what to change — anything you want.</p>
         </div>
         <div class="profile-chat">
           <div class="send-row" style="padding: 0; border: none;">
-            <textarea id="profile-input" rows="1" placeholder="Configure erMan..."
+            <textarea id="profile-input" rows="1" placeholder="Configure erMan..." data-i18n-ph="profile_placeholder"
               oninput="autoResize(this)"
               onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendToBot('profile');}"></textarea>
             <button class="send-btn" onclick="sendToBot('profile')">&#8593;</button>
@@ -804,16 +804,16 @@ html, body {
   <!-- Tab bar — text only, no emojis -->
   <div class="tab-bar">
     <button class="tab-item active" data-tab="calendar" onclick="switchTab('calendar')">
-      <span>Calendar</span><span class="tab-dot"></span>
+      <span data-i18n="tab_calendar">Calendar</span><span class="tab-dot"></span>
     </button>
     <button class="tab-item" data-tab="focus" onclick="switchTab('focus')">
-      <span>Focus</span><span class="tab-dot"></span>
+      <span data-i18n="tab_focus">Focus</span><span class="tab-dot"></span>
     </button>
     <button class="tab-item" data-tab="chat" onclick="switchTab('chat')">
-      <span>Chat</span><span class="tab-dot"></span>
+      <span data-i18n="tab_chat">Chat</span><span class="tab-dot"></span>
     </button>
     <button class="tab-item" data-tab="profile" onclick="switchTab('profile')">
-      <span>Profile</span><span class="tab-dot"></span>
+      <span data-i18n="tab_profile">Profile</span><span class="tab-dot"></span>
     </button>
   </div>
 </div>
@@ -913,7 +913,7 @@ async function sendToBot(source) {
   if(!twa){ showToast('Open via Telegram'); return; }
 
   addChatBubble(text, 'user');
-  showToast('Sending…');
+  showToast(t('toast_sending'));
 
   // HTTP backend via ngrok — прямо, без sendData (sendData ломает на MenuButton)
   const sendTs = Date.now() / 1000;
@@ -941,11 +941,11 @@ async function sendToBot(source) {
       _startReplyPoll();
     }
   } catch(e) {
-    showToast('Error: ' + (e.message || 'network'));
+    showToast(t('toast_error') + (e.message || 'network'));
   }
 
   if(!sent) {
-    showToast('No connection — copied');
+    showToast(t('toast_no_conn'));
     try { twa.setClipboardText(text); } catch(e) {
       try { await navigator.clipboard.writeText(text); } catch(e2) {}
     }
@@ -1083,6 +1083,91 @@ function switchTab(name) {
   document.body.scrollTop = 0; document.documentElement.scrollTop = 0; window.scrollTo(0, 0);
 }
 
+// ══ I18N ══
+const I18N = {
+  en: {
+    tab_calendar: 'Calendar', tab_focus: 'Focus', tab_chat: 'Chat', tab_profile: 'Profile',
+    today: 'Today', today_lbl: 'Today',
+    back_to_chat: 'Back to Chat',
+    cal_empty_text: 'Tell erMan<br><b>open calendar</b>',
+    no_events: 'No events',
+    focus_ready: 'READY', focus_start: 'Start Focus', focus_stop: 'Stop',
+    focus_focusing: 'FOCUSING', focus_complete: 'COMPLETE', focus_cancelled: 'CANCELLED',
+    streak: 'Streak', gems: 'Gems', focus_min: 'Focus Min', insights: 'Insights',
+    key_insights: 'Key Insights', done_today: 'Done Today',
+    chat_placeholder: 'Message erMan...',
+    model: 'Model', timezone: 'Timezone', settings: 'Settings',
+    morning_brief: 'Morning Brief', morning_brief_desc: 'DAILY SUMMARY AT 9 AM',
+    proactive: 'Proactive Nudges', proactive_desc: 'SMART TASK REMINDERS',
+    focus_sounds: 'Focus Sounds', focus_sounds_desc: 'COMPLETION HAPTICS',
+    statistics: 'Statistics',
+    custom_request: 'Custom Request', custom_request_desc: 'Tell erMan what to change — anything you want.',
+    profile_placeholder: 'Configure erMan...',
+    new_event: 'New Event', label_title: 'Title', label_time: 'Time', cancel: 'Cancel', save: 'Save',
+    memory_title: 'Память о тебе',
+    toast_sending: 'Sending…', toast_error: 'Error: ', toast_no_conn: 'No connection — copied',
+    toast_title_req: 'Enter a title', toast_event_added: 'Event added',
+    toast_mem_saved: 'Memory saved',
+  },
+  ru: {
+    tab_calendar: 'Календарь', tab_focus: 'Фокус', tab_chat: 'Чат', tab_profile: 'Профиль',
+    today: 'Сегодня', today_lbl: 'Сегодня',
+    back_to_chat: 'В чат',
+    cal_empty_text: 'Напиши Эрману<br><b>открой календарь</b>',
+    no_events: 'Нет событий',
+    focus_ready: 'ГОТОВ', focus_start: 'Начать фокус', focus_stop: 'Стоп',
+    focus_focusing: 'ФОКУС', focus_complete: 'ГОТОВО', focus_cancelled: 'ОТМЕНЕНО',
+    streak: 'Стрик', gems: 'Кристаллы', focus_min: 'Мин фокуса', insights: 'Инсайты',
+    key_insights: 'Инсайты', done_today: 'Сделано сегодня',
+    chat_placeholder: 'Сообщение Эрману...',
+    model: 'Модель', timezone: 'Часовой пояс', settings: 'Настройки',
+    morning_brief: 'Утренний бриф', morning_brief_desc: 'СВОДКА В 9 УТРА',
+    proactive: 'Проактивность', proactive_desc: 'УМНЫЕ НАПОМИНАНИЯ',
+    focus_sounds: 'Звуки фокуса', focus_sounds_desc: 'ВИБРАЦИЯ ПРИ ЗАВЕРШЕНИИ',
+    statistics: 'Статистика',
+    custom_request: 'Запрос', custom_request_desc: 'Напиши Эрману что изменить — что угодно.',
+    profile_placeholder: 'Настроить Эрмана...',
+    new_event: 'Новое событие', label_title: 'Название', label_time: 'Время', cancel: 'Отмена', save: 'Сохранить',
+    memory_title: 'Память о тебе',
+    toast_sending: 'Отправляю…', toast_error: 'Ошибка: ', toast_no_conn: 'Нет связи — скопировано',
+    toast_title_req: 'Введи название', toast_event_added: 'Событие добавлено',
+    toast_mem_saved: 'Память сохранена',
+  }
+};
+
+function t(key) { return (I18N[LANG]||I18N.en)[key] || (I18N.en[key]) || key; }
+
+function applyLang() {
+  // Static text elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = t(key);
+    if(val.includes('<')) el.innerHTML = val; else el.textContent = val;
+  });
+  // Placeholders
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    el.placeholder = t(el.getAttribute('data-i18n-ph'));
+  });
+  // Weekdays
+  const wd = LANG==='ru' ? WEEKDAYS_RU : WEEKDAYS_EN;
+  document.querySelectorAll('[data-i18n-wd]').forEach(el => {
+    el.textContent = wd[parseInt(el.getAttribute('data-i18n-wd'))];
+  });
+  // Dynamic focus state
+  const btn = document.getElementById('focus-btn');
+  if(btn) {
+    const isFocusing = btn.classList.contains('stop');
+    btn.textContent = isFocusing ? t('focus_stop') : t('focus_start');
+  }
+  const timerLabel = document.getElementById('timer-label');
+  if(timerLabel && !timerLabel._dynamic) {
+    timerLabel.textContent = t('focus_ready');
+  }
+  // Lang button label
+  const lb = document.getElementById('lang-label');
+  if(lb) lb.textContent = LANG.toUpperCase();
+}
+
 // ══ CALENDAR ══
 const MONTHS_EN=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const MONTHS_RU=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
@@ -1100,11 +1185,7 @@ function _dshort(){return LANG==='ru'?DSHORT_RU:DSHORT_EN;}
 function toggleLang(){
   LANG=LANG==='en'?'ru':'en';
   localStorage.setItem('erman_lang',LANG);
-  document.getElementById('lang-label').textContent=LANG.toUpperCase();
-  // Update weekday headers
-  const spans=document.querySelectorAll('.weekdays span');
-  const wd=LANG==='ru'?WEEKDAYS_RU:WEEKDAYS_EN;
-  spans.forEach((s,i)=>s.textContent=wd[i]);
+  applyLang();
   renderCal();
 }
 
@@ -1116,12 +1197,7 @@ function initCal(){
   const t=getLocalNow();
   curY=t.getFullYear(); curM=t.getMonth(); selDate=TODAY;
   if(!hasData && LOCAL_EVENTS.length===0) document.getElementById('empty-state').classList.add('show');
-  // Apply saved language
-  const lb=document.getElementById('lang-label');
-  if(lb) lb.textContent=LANG.toUpperCase();
-  const wd=LANG==='ru'?WEEKDAYS_RU:WEEKDAYS_EN;
-  const spans=document.querySelectorAll('.weekdays span');
-  spans.forEach((s,i)=>s.textContent=wd[i]);
+  applyLang();
   renderCal();
 }
 function renderCal(){
@@ -1151,7 +1227,7 @@ function renderEvents(dateStr){
   const d=new Date(dateStr+'T12:00:00');
   const label=_dshort()[d.getDay()]+', '+_mshort()[d.getMonth()+1]+' '+d.getDate();
   let html='<div class="events-date">'+label+'</div>';
-  if(!evs.length){html+='<div class="no-events">No events</div>';}
+  if(!evs.length){html+='<div class="no-events">'+t('no_events')+'</div>';}
   else{[...evs].sort((a,b)=>(a.time||'99').localeCompare(b.time||'99')).forEach(e=>{const col=e.overdue?'var(--danger)':e.source==='erman'?'var(--accent)':'rgba(253,248,240,.3)'; html+='<div class="event-item"><div class="event-dot" style="background:'+col+';'+(e.source==='erman'?'box-shadow:0 0 6px var(--glow)':'')+'"></div><div><div class="event-title">'+esc(e.title)+'</div>'+(e.time?'<div class="event-time">'+e.time+'</div>':'')+'</div></div>';});}
   area.innerHTML=html;
 }
@@ -1183,7 +1259,7 @@ function closeAddModal() { document.getElementById('add-modal').classList.remove
 function saveEvent() {
   const title = document.getElementById('modal-title-input').value.trim();
   const time = document.getElementById('modal-time-input').value;
-  if(!title) { showToast('Enter a title'); return; }
+  if(!title) { showToast(t('toast_title_req')); return; }
   const ev = { title, date: selDate, time: time || null, source: 'local' };
   LOCAL_EVENTS.push(ev);
   localStorage.setItem('erman_local_events', JSON.stringify(LOCAL_EVENTS));
@@ -1191,7 +1267,7 @@ function saveEvent() {
   closeAddModal();
   document.getElementById('empty-state').classList.remove('show');
   renderCal();
-  showToast('Event added');
+  showToast(t('toast_event_added'));
   if(twa && twa.HapticFeedback) twa.HapticFeedback.impactOccurred('light');
 }
 document.getElementById('add-modal').addEventListener('click', function(e) { if(e.target === this) closeAddModal(); });
@@ -1246,8 +1322,8 @@ function startFocus(){
   document.getElementById('dur-row').style.opacity='.3';
   document.getElementById('dur-row').style.pointerEvents='none';
   const btn=document.getElementById('focus-btn');
-  btn.className='focus-btn stop'; btn.textContent='Stop';
-  document.getElementById('timer-label').textContent='FOCUSING';
+  btn.className='focus-btn stop'; btn.textContent=t('focus_stop');
+  document.getElementById('timer-label').textContent=t('focus_focusing');
   document.getElementById('timer-digits').classList.add('pulsing');
   burstParticles();
   const totalSec=focusDuration*60;
@@ -1265,10 +1341,10 @@ function stopFocus(completed){
   document.getElementById('dur-row').style.opacity='';
   document.getElementById('dur-row').style.pointerEvents='';
   const btn=document.getElementById('focus-btn');
-  btn.className='focus-btn start'; btn.textContent='Start Focus';
+  btn.className='focus-btn start'; btn.textContent=t('focus_start');
   document.getElementById('timer-digits').classList.remove('pulsing');
   if(completed){
-    document.getElementById('timer-label').textContent='COMPLETE';
+    document.getElementById('timer-label').textContent=t('focus_complete');
     document.getElementById('timer-digits').textContent='00:00';
     celebrate();
     FOCUS.today_sessions=(FOCUS.today_sessions||0)+1;
@@ -1282,7 +1358,7 @@ function stopFocus(completed){
       l.style.fill='rgba(255,69,58,.4)'; l.style.transition='fill .4s, opacity .6s';
       setTimeout(()=>l.style.opacity='0',200);
     });
-    document.getElementById('timer-label').textContent='CANCELLED';
+    document.getElementById('timer-label').textContent=t('focus_cancelled');
     if(twa&&focusElapsed>60) try{twa.sendData(JSON.stringify({type:'focus_cancel',elapsed_seconds:focusElapsed}));}catch(e){}
     setTimeout(resetTimer,1400);
   }
@@ -1292,7 +1368,7 @@ function resetTimer(){
   const ring=document.getElementById('progress-ring-fg');
   if(ring) ring.setAttribute('stroke-dashoffset','911');
   initTree();
-  document.getElementById('timer-label').textContent='READY';
+  document.getElementById('timer-label').textContent=t('focus_ready');
   document.getElementById('timer-digits').textContent=focusDuration+':00';
 }
 // Level definitions — based on total completed sessions
@@ -1429,7 +1505,7 @@ async function saveMemory() {
     });
     if (r.ok) {
       btn.textContent = '✓';
-      showToast('Память сохранена');
+      showToast(t('toast_mem_saved'));
       setTimeout(closeMemory, 700);
     } else {
       btn.textContent = '✗'; setTimeout(()=>btn.textContent='✓', 1200);
