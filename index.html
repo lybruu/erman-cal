@@ -143,9 +143,9 @@ html, body {
 
 /* ── SHARED ── */
 .section-header {
-  font-size: 13px; color: rgba(253,248,240,.5);
-  text-transform: uppercase; letter-spacing: 4px; margin-bottom: 14px;
-  font-family: var(--font-display);
+  font-size: 11px; color: rgba(253,248,240,.38);
+  text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 14px;
+  font-family: 'Inter', sans-serif; font-weight: 500;
 }
 .scroll-area { flex: 1; overflow-y: auto; padding: 18px 18px 14px; position: relative; z-index: 2; }
 
@@ -523,7 +523,7 @@ html, body {
   font-size: 38px; letter-spacing: 2px; font-family: var(--font-display);
   color: var(--ivory); text-shadow: 0 0 14px rgba(253,248,240,.15);
 }
-.stat-card .lbl { font-size: 11px; color: var(--sub); text-transform: uppercase; letter-spacing: 2px; font-family: var(--font-display); }
+.stat-card .lbl { font-size: 12px; color: rgba(204,200,224,.6); font-family: 'Inter', sans-serif; font-weight: 300; letter-spacing: .3px; margin-top: 2px; }
 .config-intro {
   font-size: 17px; color: var(--ivory-dim); line-height: 1.5; margin-top: 10px;
   font-family: var(--font-body); font-style: italic;
@@ -591,10 +591,11 @@ html, body {
   padding: 13px 0; border-bottom: 1px solid rgba(253,248,240,.04);
 }
 .setting-row:last-child { border-bottom: none; }
-.setting-label { font-family: var(--font-body); font-size: 18px; color: var(--ivory); }
+.setting-label { font-family: var(--font-body); font-size: 17px; color: var(--ivory); font-weight: 500; }
 .setting-desc {
-  font-family: var(--font-display); font-size: 11px; color: var(--sub);
-  letter-spacing: 1px; margin-top: 2px;
+  font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 300;
+  color: rgba(204,200,224,.65); letter-spacing: .2px; margin-top: 3px;
+  text-transform: none;
 }
 .toggle {
   position: relative; width: 44px; height: 24px; border-radius: 12px;
@@ -1186,13 +1187,13 @@ const I18N = {
     no_events: 'No events',
     focus_ready: 'READY', focus_start: 'Start Focus', focus_stop: 'Stop',
     focus_focusing: 'FOCUSING', focus_complete: 'COMPLETE', focus_cancelled: 'CANCELLED',
-    streak: 'Streak', gems: 'Gems', focus_min: 'Focus Min', insights: 'Insights',
+    streak: 'streak', gems: 'gems', focus_min: 'focus min', insights: 'insights',
     key_insights: 'Key Insights', done_today: 'Done Today',
     chat_placeholder: 'Message erMan...',
     model: 'Model', timezone: 'Timezone', settings: 'Settings',
-    morning_brief: 'Morning Brief', morning_brief_desc: 'DAILY SUMMARY AT 9 AM',
-    proactive: 'Proactive Nudges', proactive_desc: 'SMART TASK REMINDERS',
-    focus_sounds: 'Focus Sounds', focus_sounds_desc: 'COMPLETION HAPTICS',
+    morning_brief: 'Morning Brief', morning_brief_desc: 'Daily summary at 9 am',
+    proactive: 'Proactive Nudges', proactive_desc: 'Smart reminders before you forget',
+    focus_sounds: 'Focus Sounds', focus_sounds_desc: 'Haptics on session complete',
     statistics: 'Statistics',
     custom_request: 'Custom Request', custom_request_desc: 'Tell erMan what to change — anything you want.',
     profile_placeholder: 'Configure erMan...',
@@ -1210,13 +1211,13 @@ const I18N = {
     no_events: 'Нет событий',
     focus_ready: 'ГОТОВ', focus_start: 'Начать фокус', focus_stop: 'Стоп',
     focus_focusing: 'ФОКУС', focus_complete: 'ГОТОВО', focus_cancelled: 'ОТМЕНЕНО',
-    streak: 'Стрик', gems: 'Кристаллы', focus_min: 'Мин фокуса', insights: 'Инсайты',
+    streak: 'стрик', gems: 'кристаллы', focus_min: 'мин фокуса', insights: 'инсайты',
     key_insights: 'Инсайты', done_today: 'Сделано сегодня',
     chat_placeholder: 'Сообщение Эрману...',
     model: 'Модель', timezone: 'Часовой пояс', settings: 'Настройки',
-    morning_brief: 'Утренний бриф', morning_brief_desc: 'СВОДКА В 9 УТРА',
-    proactive: 'Проактивность', proactive_desc: 'УМНЫЕ НАПОМИНАНИЯ',
-    focus_sounds: 'Звуки фокуса', focus_sounds_desc: 'ВИБРАЦИЯ ПРИ ЗАВЕРШЕНИИ',
+    morning_brief: 'Утренний бриф', morning_brief_desc: 'Сводка каждое утро в 9:00',
+    proactive: 'Проактивность', proactive_desc: 'Напомнит до того как забудешь',
+    focus_sounds: 'Звуки фокуса', focus_sounds_desc: 'Вибрация при завершении сессии',
     statistics: 'Статистика',
     custom_request: 'Запрос', custom_request_desc: 'Напиши Эрману что изменить — что угодно.',
     profile_placeholder: 'Настроить Эрмана...',
