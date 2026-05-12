@@ -389,21 +389,27 @@ html, body {
   display: flex; align-items: center; justify-content: center;
   margin-bottom: 8px;
 }
-/* Ambient halo behind crystal */
+/* Opal-style ambient halo — violet/blue/teal */
 .tree-container::before {
   content: '';
-  position: absolute; width: 180px; height: 200px;
+  position: absolute; width: 220px; height: 240px;
   border-radius: 50%;
-  background: radial-gradient(ellipse at 40% 35%,
-    rgba(255,200,60,.18) 0%, rgba(255,130,10,.08) 45%, transparent 72%);
-  filter: blur(16px);
-  animation: halo-pulse 3.2s ease-in-out infinite;
+  background: radial-gradient(ellipse at 42% 38%,
+    rgba(160,100,255,.22) 0%,
+    rgba(60,140,255,.14) 35%,
+    rgba(20,200,180,.06) 65%,
+    transparent 80%);
+  filter: blur(22px);
+  animation: gem-halo-pulse 4s ease-in-out infinite;
   pointer-events: none; z-index: 0;
 }
-@keyframes halo-pulse {
-  /* убрали scale — только opacity, иначе артефакты при blur */
-  0%,100% { opacity: .55; }
-  50%      { opacity: .9; }
+@keyframes gem-halo-pulse {
+  0%,100% { opacity: .6; }
+  50%      { opacity: 1; }
+}
+#gem-3d-canvas {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%; z-index: 1;
 }
 .tree-timer-overlay {
   position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -411,46 +417,9 @@ html, body {
   z-index: 3; pointer-events: none;
   text-shadow: 0 2px 16px rgba(0,0,0,.9), 0 0 40px rgba(0,0,0,.6);
 }
-/* Smooth orb breathing — без граней, без мигания */
-#tree-svg #orb-core-c {
-  transform-origin: 110px 110px;
-  transform-box: fill-box;
-  animation: orb-breathe 6s ease-in-out infinite;
-  will-change: transform, opacity;
-}
-@keyframes orb-breathe {
-  0%, 100% { opacity: .82; transform: scale(1); }
-  50%      { opacity: 1;   transform: scale(1.035); }
-}
-#tree-svg #orb-halo-c {
-  transform-origin: 110px 110px;
-  transform-box: fill-box;
-  animation: orb-halo-pulse 9s ease-in-out infinite;
-  will-change: opacity, transform;
-}
-@keyframes orb-halo-pulse {
-  0%, 100% { opacity: .7; transform: scale(1); }
-  50%      { opacity: 1;  transform: scale(1.06); }
-}
-#tree-svg #orb-highlight-c {
-  animation: orb-highlight 7s ease-in-out infinite;
-}
-@keyframes orb-highlight {
-  0%, 100% { opacity: .55; }
-  50%      { opacity: .85; }
-}
-
-/* Плавный float — только вертикаль, никакого rotation (рвёт рендер) */
-.tree-svg {
-  width: 100%; height: 100%; overflow: visible;
-  animation: orb-float 5s ease-in-out infinite;
-  position: relative; z-index: 1;
-}
-@keyframes orb-float {
-  0%,100% { transform: translateY(0px); }
-  50%     { transform: translateY(-6px); }
-}
-/* ::after убран — была та самая косая полоска skewX */
+/* SVG orb hidden when gem is active — kept for fallback only */
+.tree-svg { display: none; }
+/* ::after не используется */
 .tree-container::after { display: none; }
 .progress-ring { position: absolute; inset: -12px; pointer-events: none; }
 .progress-ring circle {
@@ -459,7 +428,7 @@ html, body {
   transition: stroke-dashoffset .8s ease;
 }
 .ring-bg { stroke: rgba(253,248,240,.03); stroke-width: 1.5; }
-.ring-fg { stroke: url(#ring-grad); stroke-width: 2; filter: drop-shadow(0 0 6px var(--glow)); }
+.ring-fg { stroke: url(#ring-grad); stroke-width: 2; filter: drop-shadow(0 0 7px rgba(168,85,247,.7)); }
 .tree-svg polygon, .tree-svg path, .tree-svg line, .tree-svg ellipse {
   transition: opacity .55s ease, stroke .55s ease, fill .55s ease;
 }
@@ -800,8 +769,9 @@ html, body {
           <svg class="progress-ring" viewBox="0 0 300 300">
             <defs>
               <linearGradient id="ring-grad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#FFD060"/>
-                <stop offset="100%" stop-color="#FF6200"/>
+                <stop offset="0%"   stop-color="#a855f7"/>
+                <stop offset="40%"  stop-color="#38bdf8"/>
+                <stop offset="100%" stop-color="#2dd4bf"/>
               </linearGradient>
             </defs>
             <circle class="ring-bg" cx="150" cy="150" r="145"/>
@@ -835,7 +805,7 @@ html, body {
             <circle id="orb-highlight-c" cx="110" cy="110" r="80"  fill="url(#orb-highlight)"/>
           </svg>
           <!-- WebGL 3D gem (Three.js) -->
-          <canvas id="gem-3d-canvas" style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;border-radius:50%;"></canvas>
+          <canvas id="gem-3d-canvas" style="display:none;z-index:1;"></canvas>
           <!-- CSS shape overlay -->
           <div id="focus-shape-wrap"></div>
         </div>
@@ -1511,14 +1481,9 @@ function initWebGLGem(gemDef) {
 
 let _focusShapeInited = false;
 function initFocusShape() {
-  // Всегда показываем SVG-орб. Никаких рандомных CSS-шейпов, никаких 3D-кубов.
-  const treeSvg = document.getElementById('tree-svg');
-  const canvas3d = document.getElementById('gem-3d-canvas');
   const wrap = document.getElementById('focus-shape-wrap');
-  if(treeSvg) treeSvg.style.display = '';
-  if(canvas3d) canvas3d.style.display = 'none';
   if(wrap) { wrap.innerHTML = ''; wrap.style.display = 'none'; }
-  if(!_focusShapeInited) { _focusShapeInited = true; initTree(); }
+  if(!_focusShapeInited) { _focusShapeInited = true; initGem(); }
 }
 
 function tabBurst(el) {
@@ -1734,36 +1699,125 @@ document.getElementById('add-modal').addEventListener('click', function(e) { if(
 // ══ TREE TIMER ══
 let focusDuration=25, focusRunning=false, focusTimer=null, focusStart=0, focusElapsed=0, trunkLen=0;
 
-function initTree(){
-  // Мягкий орб — никаких setInterval, никаких граней.
-  // Дыхание идёт через CSS-анимацию. JS только устанавливает базовое drop-shadow.
-  const svg=document.getElementById('tree-svg');
-  if(svg) svg.style.filter='drop-shadow(0 0 18px rgba(255,159,10,.28)) drop-shadow(0 0 6px rgba(255,210,80,.18))';
-  const core=document.getElementById('orb-core-c');
-  if(core) core.style.opacity='';
+// ─── Opal-style 3D gem (Three.js) ────────────────────────────────────────────
+let _gem = null;
+
+function initGem(){
+  const canvas = document.getElementById('gem-3d-canvas');
+  if(!canvas || !window.THREE || _gem) return;
+  const W = 260, H = 280;
+  canvas.width = W * Math.min(devicePixelRatio, 2);
+  canvas.height = H * Math.min(devicePixelRatio, 2);
+  canvas.style.display = 'block';
+  document.getElementById('tree-svg') && (document.getElementById('tree-svg').style.display='none');
+
+  const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
+  renderer.setSize(W, H, false);
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.5;
+  renderer.outputColorSpace = THREE.SRGBColorSpace || THREE.sRGBEncoding;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(38, W/H, 0.1, 50);
+  camera.position.z = 4.8;
+
+  // ── Gem geometry — organic elongated opal stone ──
+  const geo = new THREE.IcosahedronGeometry(1.05, 5);
+  const pos = geo.attributes.position;
+  for(let i=0; i<pos.count; i++){
+    const x=pos.getX(i), y=pos.getY(i), z=pos.getZ(i);
+    const ny = y * 1.38;     // elongate vertically
+    const nx = x * 0.86;
+    const nz = z * 0.90;
+    const wave = 0.055*(Math.sin(x*7.4+y*4.8)*Math.cos(z*5.3) + Math.sin(y*6.1+z*3.9)*0.6);
+    pos.setXYZ(i, nx*(1+wave), ny*(1+wave*0.6), nz*(1+wave));
+  }
+  pos.needsUpdate = true;
+  geo.computeVertexNormals();
+
+  // ── Iridescent physical material ──
+  const mat = new THREE.MeshPhysicalMaterial({
+    color: new THREE.Color(0xd0dcff),
+    roughness: 0.04,
+    metalness: 0.05,
+    iridescence: 1.0,
+    iridescenceIOR: 1.9,
+    iridescenceThicknessRange: [80, 1000],
+    clearcoat: 1.0,
+    clearcoatRoughness: 0.03,
+    transparent: true,
+    opacity: 0.91,
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.y = 0.15;
+  scene.add(mesh);
+
+  // ── Pedestal ──
+  const pedGeo = new THREE.CylinderGeometry(0.48, 0.54, 0.14, 40);
+  const pedMat = new THREE.MeshStandardMaterial({color:0x0c0c14, roughness:0.2, metalness:0.7});
+  const pedestal = new THREE.Mesh(pedGeo, pedMat);
+  pedestal.position.y = -1.52;
+  scene.add(pedestal);
+
+  // ── Orbiting colored lights (create rainbow shifts) ──
+  const lightDefs = [
+    {color:0x7c3aed, int:7, r:3.2, sp:0.38, ph:0.0},   // violet
+    {color:0x2563eb, int:5, r:2.8, sp:0.55, ph:2.1},   // blue
+    {color:0x0d9488, int:6, r:3.0, sp:0.48, ph:1.2},   // teal
+    {color:0xea580c, int:7, r:2.6, sp:0.32, ph:3.5},   // orange
+    {color:0xbe185d, int:5, r:2.4, sp:0.65, ph:4.8},   // pink/rose
+    {color:0xffd700, int:3, r:2.2, sp:0.45, ph:5.6},   // gold highlight
+  ];
+  const orbitLights = lightDefs.map(d => {
+    const light = new THREE.PointLight(d.color, d.int, 14);
+    scene.add(light);
+    return {...d, angle: d.ph, light};
+  });
+  scene.add(new THREE.AmbientLight(0x223366, 0.9));
+
+  let t=0;
+  function render(){
+    requestAnimationFrame(render);
+    t += 0.007;
+    mesh.rotation.y = t * 0.22;
+    mesh.rotation.x = Math.sin(t*0.35) * 0.11;
+    mesh.position.y = 0.15 + Math.sin(t*0.72)*0.09;
+    orbitLights.forEach(ol => {
+      ol.angle += ol.sp * 0.012;
+      ol.light.position.set(
+        Math.cos(ol.angle)*ol.r,
+        Math.sin(ol.angle*0.55)*1.8,
+        Math.sin(ol.angle)*ol.r*0.7 + 2.5
+      );
+    });
+    renderer.render(scene, camera);
+  }
+  render();
+  _gem = {mesh, mat, orbitLights, lightDefs};
 }
+
+function gemProgress(pct){
+  if(!_gem) return;
+  const {mat, orbitLights, lightDefs} = _gem;
+  mat.iridescenceThicknessRange = [80 + pct*200, 1000 + pct*600];
+  mat.opacity = 0.91 + pct*0.07;
+  mat.needsUpdate = true;
+  orbitLights.forEach((ol, i) => { ol.light.intensity = lightDefs[i].int * (1 + pct*1.4); });
+  // Background halo intensifies + shifts color
+  const cont = document.querySelector('#tab-focus .tree-container');
+  if(cont) cont.style.setProperty('--gem-progress', pct.toFixed(3));
+}
+
+function initTree(){ initGem(); }  // alias
 
 function treeProgress(pct){
   pct=Math.max(0,Math.min(1,pct));
+  // Progress ring
   const ring=document.getElementById('progress-ring-fg');
   if(ring) ring.setAttribute('stroke-dashoffset', String(911*(1-pct)));
-
-  // Орб наполняется свечением плавно: чем выше pct — тем ярче drop-shadow.
-  // Сам орб дышит по CSS-анимации, тут только наращиваем halo через filter.
-  const svg=document.getElementById('tree-svg');
-  if(svg){
-    const blur1 = (18 + pct*26).toFixed(0);
-    const op1   = (.28 + pct*.45).toFixed(2);
-    const blur2 = (6 + pct*10).toFixed(0);
-    const op2   = (.18 + pct*.30).toFixed(2);
-    svg.style.filter = `drop-shadow(0 0 ${blur1}px rgba(255,159,10,${op1})) drop-shadow(0 0 ${blur2}px rgba(255,210,80,${op2}))`;
-  }
-  // Halo радиус растёт по мере прогресса
-  const halo=document.getElementById('orb-halo-c');
-  if(halo) halo.setAttribute('r', String(105 + pct*8));
-  // Halo container
-  const cont=document.querySelector('#tab-focus .tree-container');
-  if(cont) cont.style.setProperty('--halo-op', (0.6+pct*0.4).toFixed(2));
+  // Gem intensity
+  gemProgress(pct);
 }
 
 function setDuration(min){
@@ -1818,25 +1872,24 @@ function stopFocus(completed){
     fetch(BACKEND_URL+'/api/focus_cancel',{method:'POST',headers:NGROK_H,body:'{}'}).catch(()=>{});
     setTimeout(resetTimer,3500);
   } else {
-    // Плавная анимация возврата кольца к нулю
+    // Плавная анимация возврата кольца
     const ring=document.getElementById('progress-ring-fg');
     if(ring) ring.style.strokeDashoffset='911';
-    // Орб плавно тускнеет
-    const svg=document.getElementById('tree-svg');
-    if(svg){ svg.style.transition='filter 1.2s ease'; svg.style.filter='drop-shadow(0 0 18px rgba(255,159,10,.28)) drop-shadow(0 0 6px rgba(255,210,80,.18))'; }
+    // Gem dims back
+    if(_gem){ _gem.orbitLights.forEach((ol,i)=>{ ol.light.intensity = _gem.lightDefs[i].int; }); }
     document.getElementById('timer-label').textContent=t('focus_cancelled');
-    // Отменяем серверный таймер
     fetch(BACKEND_URL+'/api/focus_cancel',{method:'POST',headers:NGROK_H,body:'{}'}).catch(()=>{});
     setTimeout(resetTimer,1400);
   }
 }
 function resetTimer(){
-  document.querySelectorAll('.tree-leaf').forEach(l=>{ l.style.fill=''; l.style.transition=''; });
   const ring=document.getElementById('progress-ring-fg');
   if(ring){ ring.style.strokeDashoffset=''; ring.setAttribute('stroke-dashoffset','911'); }
-  const svg=document.getElementById('tree-svg');
-  if(svg) svg.style.transition='';
-  initTree();
+  if(_gem){
+    const {mat,lightDefs,orbitLights}=_gem;
+    mat.iridescenceThicknessRange=[80,1000]; mat.opacity=0.91; mat.needsUpdate=true;
+    orbitLights.forEach((ol,i)=>{ ol.light.intensity=lightDefs[i].int; });
+  }
   document.getElementById('timer-label').textContent=t('focus_ready');
   document.getElementById('timer-digits').textContent=focusDuration+':00';
 }
