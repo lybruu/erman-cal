@@ -34,12 +34,14 @@
 }
 .splash.gone { opacity: 0; pointer-events: none; }
 .splash-logo {
-  font-family: var(--font-display); font-size: 54px;
-  letter-spacing: 14px; color: var(--ivory); opacity: 0;
+  font-family: var(--font-body); font-size: 64px; font-weight: 700;
+  letter-spacing: 6px; color: var(--ivory); opacity: 0;
   animation: logo-in 1s cubic-bezier(.2,.8,.3,1) .25s forwards;
-  text-shadow: 0 0 40px rgba(253,248,240,.12);
+  text-shadow: 0 0 40px rgba(253,248,240,.14);
 }
-.splash-logo span { color: var(--accent); text-shadow: 0 0 24px var(--glow); }
+/* "er" — тонкий, "Man" — акцент */
+.splash-logo .logo-er { font-weight: 300; color: rgba(253,248,240,.75); }
+.splash-logo .logo-man { font-weight: 800; color: var(--ivory); letter-spacing: 2px; }
 @keyframes logo-in {
   0%   { opacity: 0; transform: scale(.6); filter: blur(10px); }
   55%  { opacity: .8; transform: scale(1.04); filter: blur(1px); }
@@ -743,7 +745,7 @@ html, body {
 <body>
 <div class="splash" id="splash">
   <div class="splash-stars" id="splash-stars"></div>
-  <div class="splash-logo" id="splash-logo">er<span>Man</span></div>
+  <div class="splash-logo" id="splash-logo"><span class="logo-er">er</span><span class="logo-man">Man</span></div>
 </div>
 
 <div class="modal-overlay" id="add-modal">
@@ -981,14 +983,23 @@ html, body {
     </button>
     <button class="tab-item" data-tab="focus" onclick="switchTab('focus');tabBurst(this)">
       <div class="tab-glow"></div>
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="2" y1="22" x2="22" y2="5"/>
-        <circle cx="17" cy="8.5" r="3"/>
-        <circle cx="7.5" cy="15.5" r="2.2"/>
-        <path d="M7.5 17.7 L11.5 13.5 L15 10.5"/>
-        <line x1="11.5" y1="13.5" x2="9" y2="21"/>
+      <!-- Sisyphus: фигура толкает камень в гору. viewBox 0 0 24 24, всё внутри -->
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <!-- Камень (большой круг вверху-справа) -->
+        <circle cx="17" cy="6" r="3.2"/>
+        <!-- Холм / наклонная линия -->
+        <line x1="2" y1="21" x2="21" y2="6"/>
+        <!-- Тело Сизифа — туловище -->
+        <line x1="8.5" y1="14" x2="10" y2="18"/>
+        <!-- Голова -->
+        <circle cx="8" cy="12.5" r="1.4" fill="currentColor" stroke="none"/>
+        <!-- Руки тянутся к камню -->
+        <path d="M8.5 14 L12.5 11.5 L14.5 9.5"/>
+        <!-- Ноги -->
+        <line x1="10" y1="18" x2="8" y2="22"/>
+        <line x1="10" y1="18" x2="13" y2="21"/>
       </svg>
-      <span class="tab-lbl" data-i18n="tab_focus">FOC</span>
+      <span class="tab-lbl" data-i18n="tab_focus">ФОКУС</span>
     </button>
     <button class="tab-item" data-tab="chat" onclick="switchTab('chat');tabBurst(this)">
       <div class="tab-glow"></div>
@@ -1500,42 +1511,14 @@ function initWebGLGem(gemDef) {
 
 let _focusShapeInited = false;
 function initFocusShape() {
-  if(_focusShapeInited) return;
-  _focusShapeInited = true;
-  const saved = sessionStorage.getItem('erman_fshape');
-  const idx = saved != null ? parseInt(saved) : Math.floor(Math.random() * _FSHAPES.length);
-  if(saved == null) sessionStorage.setItem('erman_fshape', idx);
-  const v = _FSHAPES[idx];
+  // Всегда показываем SVG-орб. Никаких рандомных CSS-шейпов, никаких 3D-кубов.
   const treeSvg = document.getElementById('tree-svg');
   const canvas3d = document.getElementById('gem-3d-canvas');
   const wrap = document.getElementById('focus-shape-wrap');
-
-  // Hide SVG crystal
-  if(treeSvg) treeSvg.style.display = 'none';
-
-  if(v && v.type === 'webgl') {
-    // Three.js gem
-    const gemDef = _WEBGL_GEMS[v.gem % _WEBGL_GEMS.length];
-    if(canvas3d) canvas3d.style.display = 'block';
-    const ok = initWebGLGem(gemDef);
-    if(!ok) {
-      // Fallback: show CSS shape
-      if(canvas3d) canvas3d.style.display = 'none';
-      if(treeSvg) treeSvg.style.display = '';
-    }
-  } else if(v) {
-    // CSS shape
-    if(canvas3d) canvas3d.style.display = 'none';
-    let html = `<div class="fshape-glow" style="width:${v.gs};height:${v.gs};background:radial-gradient(circle,${v.glow} 0%,transparent 70%);"></div>`;
-    v.faces.forEach(f => {
-      html += `<div class="fshape-face" style="clip-path:${f.c};background:${f.b};z-index:${f.z};position:absolute;inset:0;"></div>`;
-    });
-    html += `<div class="fshape-sparkle" style="top:${v.spark.t};left:${v.spark.l};"></div>`;
-    if(wrap) { wrap.innerHTML = html; wrap.style.display = 'block'; }
-  } else {
-    // Fallback: show existing SVG
-    if(treeSvg) treeSvg.style.display = '';
-  }
+  if(treeSvg) treeSvg.style.display = '';
+  if(canvas3d) canvas3d.style.display = 'none';
+  if(wrap) { wrap.innerHTML = ''; wrap.style.display = 'none'; }
+  if(!_focusShapeInited) { _focusShapeInited = true; initTree(); }
 }
 
 function tabBurst(el) {
