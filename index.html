@@ -504,6 +504,33 @@ html, body {
 .collection-row { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; max-width: 260px; max-height: 44px; overflow: hidden; }
 .mini-crystal { font-size: 13px; opacity: .7; }
 
+/* ── FOCUS CSS SHAPES ── */
+#focus-shape-wrap {
+  width:200px; height:200px;
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  display:none; z-index:1;
+  animation:crystal-float 4s ease-in-out infinite;
+}
+.fshape-glow {
+  position:absolute; border-radius:50%;
+  top:50%; left:50%; transform:translate(-50%,-50%);
+  pointer-events:none;
+  animation:halo-pulse 3.2s ease-in-out infinite;
+}
+.fshape-face {
+  position:absolute; inset:0;
+}
+.fshape-sparkle {
+  position:absolute; border-radius:50%; width:12px; height:12px;
+  background:radial-gradient(circle,#fff 0%,transparent 70%);
+  animation:spark-f 2.5s ease-in-out infinite;
+}
+@keyframes spark-f {
+  0%,100%{opacity:.9;transform:scale(1);}
+  50%{opacity:.15;transform:scale(.4);}
+}
+
 /* ── CHAT ── */
 .insights-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
 .insight-card {
@@ -863,6 +890,8 @@ html, body {
               points="100,12 162,52 100,55"
               fill="rgba(255,255,220,.5)" opacity="0.12" style="transition:opacity .4s"/>
           </svg>
+          <!-- CSS shape overlay (randomly replaces SVG crystal) -->
+          <div id="focus-shape-wrap"></div>
         </div>
         <div class="dur-row" id="dur-row">
           <button class="dur-chip" data-min="15" onclick="setDuration(15)">15 MIN</button>
@@ -1028,7 +1057,15 @@ html, body {
     </button>
     <button class="tab-item" data-tab="focus" onclick="switchTab('focus');tabBurst(this)">
       <div class="tab-glow"></div>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M1 23 L23 5"/>
+        <circle cx="17.5" cy="8" r="2.5"/>
+        <circle cx="8.5" cy="13.5" r="1.5"/>
+        <path d="M8.5 15 L11.5 12"/>
+        <path d="M10.5 12.5 L14.5 9.5"/>
+        <path d="M11.5 12 L9.5 18"/>
+        <path d="M11.5 12 L13.5 17.5"/>
+      </svg>
       <span class="tab-lbl" data-i18n="tab_focus">FOC</span>
     </button>
     <button class="tab-item" data-tab="chat" onclick="switchTab('chat');tabBurst(this)">
@@ -1340,6 +1377,97 @@ function switchTab(name) {
   const btn = document.querySelector('.tab-item[data-tab="'+name+'"]');
   if(btn) btn.classList.add('active');
   document.body.scrollTop = 0; document.documentElement.scrollTop = 0; window.scrollTo(0, 0);
+  if(name === 'focus') initFocusShape();
+}
+
+// ── Random CSS gem shapes for Focus tab ──
+const _FSHAPES = [
+  null, null, null, // SVG crystal (3× weight)
+  { // Amber Hex
+    glow:'rgba(255,140,0,.38)', gs:'200px',
+    spark:{t:'10%',l:'60%'},
+    faces:[
+      {c:'polygon(50% 3%,82% 21%,82% 59%,50% 77%,18% 59%,18% 21%)',    b:'linear-gradient(135deg,#fff5cc,#ffd060 40%,#ff8000)',z:3},
+      {c:'polygon(50% 3%,82% 21%,68% 38%,50% 26%,32% 38%,18% 21%)',     b:'linear-gradient(160deg,#fffde0,#ffc030)',z:4},
+      {c:'polygon(50% 26%,68% 38%,68% 56%,50% 65%,32% 56%,32% 38%)',    b:'linear-gradient(180deg,#ffd060,#ff9020)',z:5},
+      {c:'polygon(82% 21%,82% 59%,68% 56%,68% 38%)',                     b:'linear-gradient(180deg,#ff8000,#cc4000)',z:2},
+      {c:'polygon(18% 21%,32% 38%,32% 56%,18% 59%)',                     b:'linear-gradient(180deg,#e07000,#7a2000)',z:2},
+      {c:'polygon(50% 65%,68% 56%,68% 65%,50% 77%,32% 65%,32% 56%)',    b:'linear-gradient(180deg,#aa4000,#3a1000)',z:1},
+    ]
+  },
+  { // Sapphire Diamond
+    glow:'rgba(30,80,255,.38)', gs:'185px',
+    spark:{t:'8%',l:'62%'},
+    faces:[
+      {c:'polygon(50% 2%,82% 40%,50% 58%,18% 40%)',    b:'linear-gradient(135deg,#e8f4ff,#7ab8ff,#1a60ff)',z:4},
+      {c:'polygon(50% 58%,82% 40%,50% 98%)',            b:'linear-gradient(200deg,#0030cc,#000880)',z:3},
+      {c:'polygon(50% 58%,18% 40%,50% 98%)',            b:'linear-gradient(160deg,#0050e0,#001460)',z:3},
+      {c:'polygon(50% 2%,82% 40%,50% 58%)',             b:'linear-gradient(200deg,#aad4ff,#3090ff)',z:3},
+      {c:'polygon(50% 2%,50% 58%,18% 40%)',             b:'linear-gradient(160deg,#d0e8ff,#4080f0)',z:3},
+    ]
+  },
+  { // Amethyst Star
+    glow:'rgba(140,0,255,.32)', gs:'195px',
+    spark:{t:'12%',l:'58%'},
+    faces:[
+      {c:'polygon(50% 5%,61% 35%,95% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,5% 35%,39% 35%)',
+       b:'linear-gradient(135deg,#f0c0ff,#a040e0,#5000a0)',z:3},
+      {c:'polygon(50% 25%,62% 40%,74% 55%,62% 70%,50% 75%,38% 70%,26% 55%,38% 40%)',
+       b:'linear-gradient(135deg,#fce0ff,#c860ff)',z:4},
+    ]
+  },
+  { // Emerald Shield
+    glow:'rgba(0,180,80,.3)', gs:'185px',
+    spark:{t:'14%',l:'58%'},
+    faces:[
+      {c:'polygon(50% 2%,95% 18%,95% 62%,50% 98%,5% 62%,5% 18%)',       b:'linear-gradient(160deg,#b0ffcc,#20c060,#004020)',z:2},
+      {c:'polygon(50% 12%,82% 24%,82% 58%,50% 88%,18% 58%,18% 24%)',    b:'linear-gradient(145deg,#e0ffe8,#50e080,#007040)',z:3},
+      {c:'polygon(50% 22%,70% 32%,70% 58%,50% 74%,30% 58%,30% 32%)',    b:'linear-gradient(135deg,#f0fff4,#90ffb0)',z:4},
+    ]
+  },
+  { // Ruby Orb
+    glow:'rgba(220,0,50,.35)', gs:'210px',
+    spark:{t:'26%',l:'38%'},
+    faces:[
+      {c:'circle(46% at 50% 50%)',   b:'radial-gradient(circle at 38% 34%,#fff0f0 0%,#ff4060 30%,#cc0030 65%,#600010 100%)',z:2},
+      {c:'circle(36% at 50% 50%)',   b:'radial-gradient(circle at 36% 30%,rgba(255,255,255,.85) 0%,rgba(255,100,120,.5) 35%,transparent 70%)',z:3},
+      {c:'circle(16% at 38% 32%)',   b:'radial-gradient(circle,rgba(255,255,255,.95) 0%,transparent 80%)',z:4},
+    ]
+  },
+  { // Ice Hex
+    glow:'rgba(120,220,255,.32)', gs:'195px',
+    spark:{t:'9%',l:'62%'},
+    faces:[
+      {c:'polygon(50% 3%,82% 21%,82% 59%,50% 77%,18% 59%,18% 21%)',    b:'linear-gradient(135deg,#f0faff,#b0e8ff 40%,#40b0f0)',z:3},
+      {c:'polygon(50% 3%,82% 21%,68% 38%,50% 26%,32% 38%,18% 21%)',     b:'linear-gradient(160deg,#ffffff,#d0f4ff)',z:4},
+      {c:'polygon(50% 26%,68% 38%,68% 56%,50% 65%,32% 56%,32% 38%)',    b:'linear-gradient(180deg,#c0eeff,#60c8ff)',z:5},
+      {c:'polygon(82% 21%,82% 59%,68% 56%,68% 38%)',                     b:'linear-gradient(180deg,#40a0e0,#0070b0)',z:2},
+      {c:'polygon(18% 21%,32% 38%,32% 56%,18% 59%)',                     b:'linear-gradient(180deg,#60b0d8,#004080)',z:2},
+    ]
+  },
+];
+
+let _focusShapeInited = false;
+function initFocusShape() {
+  if(_focusShapeInited) return;
+  _focusShapeInited = true;
+  const saved = sessionStorage.getItem('erman_fshape');
+  const idx = saved != null ? parseInt(saved) : Math.floor(Math.random() * _FSHAPES.length);
+  if(saved == null) sessionStorage.setItem('erman_fshape', idx);
+  const v = _FSHAPES[idx];
+  const treeSvg = document.getElementById('tree-svg');
+  const wrap = document.getElementById('focus-shape-wrap');
+  if(!v || !wrap || !treeSvg) return; // null → show existing SVG crystal
+  // Hide SVG crystal, show CSS shape
+  treeSvg.style.display = 'none';
+  // Build shape HTML
+  let html = `<div class="fshape-glow" style="width:${v.gs};height:${v.gs};background:radial-gradient(circle,${v.glow} 0%,transparent 70%);"></div>`;
+  v.faces.forEach(f => {
+    html += `<div class="fshape-face" style="clip-path:${f.c};background:${f.b};z-index:${f.z};position:absolute;inset:0;"></div>`;
+  });
+  html += `<div class="fshape-sparkle" style="top:${v.spark.t};left:${v.spark.l};"></div>`;
+  wrap.innerHTML = html;
+  wrap.style.display = 'block';
 }
 
 function tabBurst(el) {
