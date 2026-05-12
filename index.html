@@ -108,19 +108,26 @@ html, body {
   z-index: 10; position: relative;
 }
 .tab-item {
-  flex: 1; display: flex;
-  align-items: center; justify-content: center;
-  padding: 10px 2px; cursor: pointer;
-  color: var(--sub); font-size: 10px; letter-spacing: 1.5px;
-  font-family: var(--font-display);
-  border: none; background: none; transition: color .2s;
-  text-transform: uppercase; min-width: 0; position: relative;
-  overflow: hidden; border-radius: 14px; white-space: nowrap;
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 4px;
+  padding: 8px 2px 6px; cursor: pointer;
+  color: rgba(253,248,240,.32);
+  border: none; background: none; transition: color .25s;
+  min-width: 0; position: relative;
+  overflow: hidden; border-radius: 14px;
+}
+.tab-item svg { transition: opacity .25s, transform .2s; }
+.tab-item .tab-lbl {
+  font-size: 9px; letter-spacing: 1.2px; font-family: var(--font-display);
+  text-transform: uppercase; opacity: 0; transition: opacity .25s;
+  max-width: 100%; overflow: hidden; text-overflow: clip; white-space: nowrap;
 }
 .tab-item.active {
   color: var(--ivory);
   text-shadow: 0 0 16px rgba(253,248,240,.5);
 }
+.tab-item.active svg { opacity: 1; transform: scale(1.08); }
+.tab-item.active .tab-lbl { opacity: .55; }
 /* Soft aura glow on press */
 .tab-glow {
   position: absolute; border-radius: 50%;
@@ -134,12 +141,7 @@ html, body {
   35%  { opacity: .85; transform: scale(1);   }
   100% { opacity: 0;   transform: scale(1.15); }
 }
-.tab-item .tab-dot {
-  display: none; width: 4px; height: 4px; border-radius: 50%;
-  background: var(--accent); box-shadow: 0 0 8px var(--glow);
-  position: absolute; bottom: 2px;
-}
-.tab-item.active .tab-dot { display: block; }
+/* tab-dot replaced by icon+label system */
 
 /* ── SHARED ── */
 .section-header {
@@ -562,16 +564,27 @@ html, body {
 }
 .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
 .stat-card {
-  background: rgba(13,13,24,.9); border-radius: var(--radius); padding: 18px;
-  display: flex; flex-direction: column; gap: 6px;
-  border: 1px solid var(--glass-border);
-  backdrop-filter: blur(12px);
+  background: rgba(13,13,24,.8); border-radius: var(--radius); padding: 18px 16px 16px;
+  display: flex; flex-direction: column; gap: 2px;
+  border: 1px solid rgba(253,248,240,.07);
+  border-top: 1px solid rgba(255,159,10,.18);
+  backdrop-filter: blur(12px); position: relative; overflow: hidden;
+}
+.stat-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,159,10,.35) 50%, transparent 100%);
 }
 .stat-card .val {
-  font-size: 38px; letter-spacing: 2px; font-family: var(--font-display);
-  color: var(--ivory); text-shadow: 0 0 14px rgba(253,248,240,.15);
+  font-size: 40px; letter-spacing: 1px; font-family: var(--font-display);
+  color: var(--ivory); line-height: 1;
+  text-shadow: 0 0 20px rgba(255,159,10,.2);
 }
-.stat-card .lbl { font-size: 12px; color: rgba(253,248,240,.52); font-family: 'Inter', sans-serif; font-weight: 300; letter-spacing: .3px; margin-top: 2px; }
+.stat-card .lbl {
+  font-size: 11px; color: rgba(253,248,240,.45);
+  font-family: 'Inter', sans-serif; font-weight: 300;
+  letter-spacing: .5px; margin-top: 6px;
+  text-transform: uppercase;
+}
 .config-intro {
   font-size: 17px; color: var(--ivory-dim); line-height: 1.5; margin-top: 10px;
   font-family: var(--font-body); font-style: italic;
@@ -672,6 +685,27 @@ html, body {
   background: rgba(253,248,240,.08);
   box-shadow: 0 0 10px rgba(253,248,240,.12);
 }
+/* Custom TZ input */
+.tz-custom-row {
+  display: none; align-items: center; gap: 8px; margin-top: 10px;
+}
+.tz-custom-row.visible { display: flex; }
+.tz-input {
+  flex: 1; background: rgba(253,248,240,.05);
+  border: 1px solid rgba(253,248,240,.15); border-radius: 12px;
+  padding: 9px 14px; font-size: 13px; color: var(--ivory);
+  font-family: 'Inter', sans-serif; outline: none;
+  transition: border-color .2s;
+}
+.tz-input:focus { border-color: rgba(255,159,10,.45); }
+.tz-input::placeholder { color: rgba(253,248,240,.3); }
+.tz-apply-btn {
+  padding: 9px 16px; border-radius: 12px; font-size: 12px;
+  background: rgba(255,159,10,.15); border: 1px solid rgba(255,159,10,.3);
+  color: var(--accent); cursor: pointer; font-family: var(--font-display);
+  letter-spacing: 1px; transition: all .2s; white-space: nowrap;
+}
+.tz-apply-btn:active { transform: scale(.93); }
 </style>
 </head>
 <body>
@@ -891,12 +925,36 @@ html, body {
         <div class="profile-section">
           <div class="section-header" data-i18n="timezone">Timezone</div>
           <div class="tz-chips" id="tz-chips">
+            <button class="tz-chip active" data-tz="Europe/Moscow" onclick="setTimezone('Europe/Moscow')">МСК</button>
             <button class="tz-chip" data-tz="auto" onclick="setTimezone('auto')">Auto</button>
-            <button class="tz-chip" data-tz="Europe/Moscow" onclick="setTimezone('Europe/Moscow')">MSK</button>
             <button class="tz-chip" data-tz="America/New_York" onclick="setTimezone('America/New_York')">NY</button>
             <button class="tz-chip" data-tz="America/Los_Angeles" onclick="setTimezone('America/Los_Angeles')">LA</button>
             <button class="tz-chip" data-tz="Europe/London" onclick="setTimezone('Europe/London')">LON</button>
             <button class="tz-chip" data-tz="Asia/Tokyo" onclick="setTimezone('Asia/Tokyo')">TKY</button>
+            <button class="tz-chip" data-tz="custom" onclick="toggleCustomTz()" id="tz-custom-btn">＋ Свой</button>
+          </div>
+          <div class="tz-custom-row" id="tz-custom-row">
+            <input class="tz-input" id="tz-input" placeholder="Europe/Berlin, Asia/Dubai…" list="tz-list" autocomplete="off">
+            <datalist id="tz-list">
+              <option value="Europe/Moscow">
+              <option value="Europe/Berlin">
+              <option value="Europe/Paris">
+              <option value="Europe/London">
+              <option value="Europe/Istanbul">
+              <option value="Asia/Dubai">
+              <option value="Asia/Tokyo">
+              <option value="Asia/Shanghai">
+              <option value="Asia/Kolkata">
+              <option value="Asia/Bangkok">
+              <option value="America/New_York">
+              <option value="America/Chicago">
+              <option value="America/Denver">
+              <option value="America/Los_Angeles">
+              <option value="America/Sao_Paulo">
+              <option value="Pacific/Auckland">
+              <option value="Australia/Sydney">
+            </datalist>
+            <button class="tz-apply-btn" onclick="applyCustomTz()">OK</button>
           </div>
         </div>
         <div class="p-divider"></div>
@@ -965,19 +1023,23 @@ html, body {
   <div class="tab-bar">
     <button class="tab-item active" data-tab="calendar" onclick="switchTab('calendar');tabBurst(this)">
       <div class="tab-glow"></div>
-      <span data-i18n="tab_calendar">Calendar</span><span class="tab-dot"></span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span class="tab-lbl" data-i18n="tab_calendar">CAL</span>
     </button>
     <button class="tab-item" data-tab="focus" onclick="switchTab('focus');tabBurst(this)">
       <div class="tab-glow"></div>
-      <span data-i18n="tab_focus">Focus</span><span class="tab-dot"></span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <span class="tab-lbl" data-i18n="tab_focus">FOC</span>
     </button>
     <button class="tab-item" data-tab="chat" onclick="switchTab('chat');tabBurst(this)">
       <div class="tab-glow"></div>
-      <span data-i18n="tab_chat">Chat</span><span class="tab-dot"></span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="tab-lbl" data-i18n="tab_chat">CHAT</span>
     </button>
     <button class="tab-item" data-tab="profile" onclick="switchTab('profile');tabBurst(this)">
       <div class="tab-glow"></div>
-      <span data-i18n="tab_profile">Profile</span><span class="tab-dot"></span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <span class="tab-lbl" data-i18n="tab_profile">ME</span>
     </button>
   </div>
 </div>
@@ -1216,13 +1278,46 @@ function toggleSetting(btn) {
 }
 
 function setTimezone(tz) {
+  if (tz === 'custom') return; // handled by toggleCustomTz
   USER_TZ = tz;
   localStorage.setItem('erman_tz', tz);
   TODAY = getTodayISO();
   document.querySelectorAll('.tz-chip').forEach(c =>
     c.classList.toggle('active', c.dataset.tz === tz));
+  // hide custom row if selecting preset
+  document.getElementById('tz-custom-row').classList.remove('visible');
+  document.getElementById('tz-custom-btn').classList.remove('active');
   initCal();
   showToast('Timezone: ' + (tz === 'auto' ? 'device' : tz.split('/').pop()));
+}
+
+function toggleCustomTz() {
+  const row = document.getElementById('tz-custom-row');
+  const btn = document.getElementById('tz-custom-btn');
+  const visible = row.classList.toggle('visible');
+  btn.classList.toggle('active', visible);
+  if (visible) setTimeout(() => document.getElementById('tz-input').focus(), 80);
+}
+
+function applyCustomTz() {
+  const val = document.getElementById('tz-input').value.trim();
+  if (!val) return;
+  // Validate IANA timezone
+  try {
+    new Intl.DateTimeFormat('en', { timeZone: val });
+  } catch {
+    showToast('Неверный timezone');
+    return;
+  }
+  USER_TZ = val;
+  localStorage.setItem('erman_tz', val);
+  TODAY = getTodayISO();
+  document.querySelectorAll('.tz-chip').forEach(c => c.classList.remove('active'));
+  document.getElementById('tz-custom-btn').classList.add('active');
+  document.getElementById('tz-custom-btn').textContent = val.split('/').pop();
+  document.getElementById('tz-custom-row').classList.remove('visible');
+  initCal();
+  showToast('Timezone: ' + val.split('/').pop());
 }
 
 function loadSettings() {
