@@ -110,12 +110,12 @@ html, body {
 .tab-item {
   flex: 1; display: flex;
   align-items: center; justify-content: center;
-  padding: 10px 4px; cursor: pointer;
-  color: var(--sub); font-size: 11px; letter-spacing: 2px;
+  padding: 10px 2px; cursor: pointer;
+  color: var(--sub); font-size: 10px; letter-spacing: 1.5px;
   font-family: var(--font-display);
   border: none; background: none; transition: color .2s;
   text-transform: uppercase; min-width: 0; position: relative;
-  overflow: hidden; border-radius: 14px;
+  overflow: hidden; border-radius: 14px; white-space: nowrap;
 }
 .tab-item.active {
   color: var(--ivory);
@@ -571,7 +571,7 @@ html, body {
   font-size: 38px; letter-spacing: 2px; font-family: var(--font-display);
   color: var(--ivory); text-shadow: 0 0 14px rgba(253,248,240,.15);
 }
-.stat-card .lbl { font-size: 12px; color: rgba(204,200,224,.6); font-family: 'Inter', sans-serif; font-weight: 300; letter-spacing: .3px; margin-top: 2px; }
+.stat-card .lbl { font-size: 12px; color: rgba(253,248,240,.52); font-family: 'Inter', sans-serif; font-weight: 300; letter-spacing: .3px; margin-top: 2px; }
 .config-intro {
   font-size: 17px; color: var(--ivory-dim); line-height: 1.5; margin-top: 10px;
   font-family: var(--font-body); font-style: italic;
@@ -642,7 +642,7 @@ html, body {
 .setting-label { font-family: var(--font-body); font-size: 17px; color: var(--ivory); font-weight: 500; }
 .setting-desc {
   font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 300;
-  color: rgba(204,200,224,.65); letter-spacing: .2px; margin-top: 3px;
+  color: rgba(253,248,240,.52); letter-spacing: .2px; margin-top: 3px;
   text-transform: none;
 }
 .toggle {
@@ -876,8 +876,8 @@ html, body {
         <div class="profile-section">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
             <div class="section-header" style="margin:0" data-i18n="model">Model</div>
-            <button id="lang-btn" onclick="toggleLang()" style="background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;padding:8px 18px;color:var(--ivory);font-size:14px;cursor:pointer;letter-spacing:1.5px;font-family:var(--font-display);display:flex;align-items:center;gap:8px;transition:all .2s;" onmousedown="this.style.transform='scale(.93)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.93)'" ontouchend="this.style.transform=''">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <button id="lang-btn" onclick="toggleLang()" style="background:rgba(253,248,240,.07);border:1px solid rgba(253,248,240,.18);border-radius:20px;padding:10px 22px;color:var(--ivory);font-size:15px;cursor:pointer;letter-spacing:2px;font-family:var(--font-display);display:flex;align-items:center;gap:9px;transition:all .2s;box-shadow:0 0 12px rgba(255,159,10,.08);" onmousedown="this.style.transform='scale(.93)'" onmouseup="this.style.transform=''" ontouchstart="this.style.transform='scale(.93)'" ontouchend="this.style.transform=''">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:.85"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
               <span id="lang-label">EN</span>
             </button>
           </div>
