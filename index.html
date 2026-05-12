@@ -6,6 +6,7 @@
 <title>erMan</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.min.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
@@ -413,6 +414,35 @@ html, body {
   z-index: 3; pointer-events: none;
   text-shadow: 0 2px 16px rgba(0,0,0,.9), 0 0 40px rgba(0,0,0,.6);
 }
+/* Smooth orb breathing — без граней, без мигания */
+#tree-svg #orb-core-c {
+  transform-origin: 110px 110px;
+  transform-box: fill-box;
+  animation: orb-breathe 6s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+@keyframes orb-breathe {
+  0%, 100% { opacity: .82; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.035); }
+}
+#tree-svg #orb-halo-c {
+  transform-origin: 110px 110px;
+  transform-box: fill-box;
+  animation: orb-halo-pulse 9s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+@keyframes orb-halo-pulse {
+  0%, 100% { opacity: .7; transform: scale(1); }
+  50%      { opacity: 1;  transform: scale(1.06); }
+}
+#tree-svg #orb-highlight-c {
+  animation: orb-highlight 7s ease-in-out infinite;
+}
+@keyframes orb-highlight {
+  0%, 100% { opacity: .55; }
+  50%      { opacity: .85; }
+}
+
 /* Crystal floats + light sweep */
 .tree-svg {
   width: 100%; height: 100%; overflow: visible;
@@ -805,92 +835,31 @@ html, body {
             <div class="timer-digits" id="timer-digits">25:00</div>
             <div class="timer-label" id="timer-label" data-i18n="focus_ready">READY</div>
           </div>
-          <svg class="tree-svg" id="tree-svg" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
+          <svg class="tree-svg" id="tree-svg" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
             <defs>
-              <radialGradient id="gem-bg-glow" cx="50%" cy="50%" r="55%">
-                <stop offset="0%" stop-color="#ff9f0a" stop-opacity=".18"/>
+              <!-- Мягкий теплый орб: ядро → halo. Никаких граней. -->
+              <radialGradient id="orb-core" cx="50%" cy="46%" r="50%">
+                <stop offset="0%"   stop-color="#fff2c4" stop-opacity="0.95"/>
+                <stop offset="32%"  stop-color="#ffb050" stop-opacity="0.55"/>
+                <stop offset="70%"  stop-color="#ff7a18" stop-opacity="0.20"/>
+                <stop offset="100%" stop-color="#3a1500" stop-opacity="0"/>
+              </radialGradient>
+              <radialGradient id="orb-halo" cx="50%" cy="50%" r="65%">
+                <stop offset="0%"   stop-color="#ff9f0a" stop-opacity="0.22"/>
                 <stop offset="100%" stop-color="#ff9f0a" stop-opacity="0"/>
               </radialGradient>
-              <filter id="gem-glow" x="-40%" y="-40%" width="180%" height="180%">
-                <feGaussianBlur stdDeviation="6" result="blur"/>
-                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-              </filter>
-              <filter id="gem-outer-glow" x="-60%" y="-60%" width="220%" height="220%">
-                <feGaussianBlur stdDeviation="14"/>
-              </filter>
+              <radialGradient id="orb-highlight" cx="38%" cy="30%" r="22%">
+                <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.55"/>
+                <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+              </radialGradient>
             </defs>
-
-            <!-- Outer ambient glow (animated by JS) -->
-            <ellipse id="gem-bg-glow" cx="100" cy="110" rx="80" ry="90"
-              fill="url(#gem-bg-glow)" opacity="0.3"/>
-
-            <!-- Crown — upper half facets -->
-            <!-- Crown top-left: top → upper-left → table-top -->
-            <polygon id="gem-cr-tl"
-              points="100,12 38,52 100,55"
-              fill="rgba(255,140,20,.55)" opacity="0.08" style="transition:opacity .5s,fill .5s"/>
-            <!-- Crown top-right: top → table-top → upper-right  -->
-            <polygon id="gem-cr-tr"
-              points="100,12 100,55 162,52"
-              fill="rgba(255,240,160,.75)" opacity="0.08" style="transition:opacity .5s,fill .5s"/>
-            <!-- Crown left side: upper-left → left-girdle → table-left → table-top -->
-            <polygon id="gem-cr-l"
-              points="38,52 18,110 48,110 100,55"
-              fill="rgba(200,90,10,.6)" opacity="0.08" style="transition:opacity .5s,fill .5s"/>
-            <!-- Crown right side: upper-right → table-top → table-right → right-girdle -->
-            <polygon id="gem-cr-r"
-              points="162,52 100,55 152,110 182,110"
-              fill="rgba(255,210,90,.7)" opacity="0.08" style="transition:opacity .5s,fill .5s"/>
-
-            <!-- Table — center diamond (brightest, appears first) -->
-            <polygon id="gem-table"
-              points="100,55 152,110 100,165 48,110"
-              fill="rgba(255,220,120,.85)" opacity="0.06" style="transition:opacity .5s"/>
-
-            <!-- Pavilion — lower half facets -->
-            <!-- Pav right: right-girdle → table-right → table-bottom → lower-right -->
-            <polygon id="gem-pv-r"
-              points="182,110 152,110 100,165 162,168"
-              fill="rgba(255,180,60,.65)" opacity="0.05" style="transition:opacity .5s,fill .5s"/>
-            <!-- Pav left: left-girdle → lower-left → table-bottom → table-left -->
-            <polygon id="gem-pv-l"
-              points="18,110 38,168 100,165 48,110"
-              fill="rgba(180,70,10,.55)" opacity="0.05" style="transition:opacity .5s,fill .5s"/>
-            <!-- Pav bottom-right: lower-right → bottom → table-bottom -->
-            <polygon id="gem-pv-br"
-              points="162,168 100,208 100,165"
-              fill="rgba(255,130,40,.5)" opacity="0.04" style="transition:opacity .5s"/>
-            <!-- Pav bottom-left: table-bottom → bottom → lower-left -->
-            <polygon id="gem-pv-bl"
-              points="100,165 100,208 38,168"
-              fill="rgba(140,55,10,.45)" opacity="0.04" style="transition:opacity .5s"/>
-
-            <!-- Crystal outline edges -->
-            <!-- Outer silhouette -->
-            <polygon id="gem-outline"
-              points="100,12 162,52 182,110 162,168 100,208 38,168 18,110 38,52"
-              fill="none" stroke="rgba(255,159,10,.22)" stroke-width="1"
-              style="transition:stroke-opacity .5s"/>
-            <!-- Inner table edges -->
-            <polygon points="100,55 152,110 100,165 48,110"
-              fill="none" stroke="rgba(255,200,80,.18)" stroke-width=".8"/>
-            <!-- Crown internal lines -->
-            <line x1="100" y1="12" x2="100" y2="55" stroke="rgba(255,230,130,.2)" stroke-width=".7"/>
-            <line x1="38" y1="52" x2="48" y2="110" stroke="rgba(255,159,10,.12)" stroke-width=".6"/>
-            <line x1="162" y1="52" x2="152" y2="110" stroke="rgba(255,159,10,.12)" stroke-width=".6"/>
-            <!-- Pavilion internal lines -->
-            <line x1="100" y1="165" x2="100" y2="208" stroke="rgba(255,159,10,.12)" stroke-width=".6"/>
-            <line x1="38" y1="168" x2="48" y2="110" stroke="rgba(255,159,10,.1)" stroke-width=".6"/>
-            <line x1="162" y1="168" x2="152" y2="110" stroke="rgba(255,159,10,.1)" stroke-width=".6"/>
-            <!-- Girdle line -->
-            <line x1="18" y1="110" x2="182" y2="110" stroke="rgba(255,159,10,.1)" stroke-width=".5"/>
-
-            <!-- Specular highlight (top-right facet, always slightly visible) -->
-            <polygon id="gem-specular"
-              points="100,12 162,52 100,55"
-              fill="rgba(255,255,220,.5)" opacity="0.12" style="transition:opacity .4s"/>
+            <circle id="orb-halo-c"      cx="110" cy="110" r="105" fill="url(#orb-halo)"/>
+            <circle id="orb-core-c"      cx="110" cy="110" r="80"  fill="url(#orb-core)"/>
+            <circle id="orb-highlight-c" cx="110" cy="110" r="80"  fill="url(#orb-highlight)"/>
           </svg>
-          <!-- CSS shape overlay (randomly replaces SVG crystal) -->
+          <!-- WebGL 3D gem (Three.js) -->
+          <canvas id="gem-3d-canvas" style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;border-radius:50%;"></canvas>
+          <!-- CSS shape overlay -->
           <div id="focus-shape-wrap"></div>
         </div>
         <div class="dur-row" id="dur-row">
@@ -953,37 +922,17 @@ html, body {
         <div class="p-divider"></div>
         <div class="profile-section">
           <div class="section-header" data-i18n="timezone">Timezone</div>
-          <div class="tz-chips" id="tz-chips">
-            <button class="tz-chip active" data-tz="Europe/Moscow" onclick="setTimezone('Europe/Moscow')">МСК</button>
-            <button class="tz-chip" data-tz="auto" onclick="setTimezone('auto')">Auto</button>
-            <button class="tz-chip" data-tz="America/New_York" onclick="setTimezone('America/New_York')">NY</button>
-            <button class="tz-chip" data-tz="America/Los_Angeles" onclick="setTimezone('America/Los_Angeles')">LA</button>
-            <button class="tz-chip" data-tz="Europe/London" onclick="setTimezone('Europe/London')">LON</button>
-            <button class="tz-chip" data-tz="Asia/Tokyo" onclick="setTimezone('Asia/Tokyo')">TKY</button>
-            <button class="tz-chip" data-tz="custom" onclick="toggleCustomTz()" id="tz-custom-btn">＋ Свой</button>
+          <div style="margin-top:10px;font-size:11px;color:var(--sub);letter-spacing:1px;line-height:1.5;">
+            Введи своё текущее время — Эрман запомнит сдвиг от твоих часов и будет считать его сразу.
           </div>
-          <div class="tz-custom-row" id="tz-custom-row">
-            <input class="tz-input" id="tz-input" placeholder="Europe/Berlin, Asia/Dubai…" list="tz-list" autocomplete="off">
-            <datalist id="tz-list">
-              <option value="Europe/Moscow">
-              <option value="Europe/Berlin">
-              <option value="Europe/Paris">
-              <option value="Europe/London">
-              <option value="Europe/Istanbul">
-              <option value="Asia/Dubai">
-              <option value="Asia/Tokyo">
-              <option value="Asia/Shanghai">
-              <option value="Asia/Kolkata">
-              <option value="Asia/Bangkok">
-              <option value="America/New_York">
-              <option value="America/Chicago">
-              <option value="America/Denver">
-              <option value="America/Los_Angeles">
-              <option value="America/Sao_Paulo">
-              <option value="Pacific/Auckland">
-              <option value="Australia/Sydney">
-            </datalist>
-            <button class="tz-apply-btn" onclick="applyCustomTz()">OK</button>
+          <div class="tz-custom-row visible" style="margin-top:12px;">
+            <input class="tz-input" id="tz-now-input" type="time"
+                   placeholder="20:30" autocomplete="off"
+                   style="flex:1;text-align:center;font-size:18px;letter-spacing:2px;">
+            <button class="tz-apply-btn" onclick="applyMyNow()">OK</button>
+          </div>
+          <div id="tz-now-status" style="margin-top:8px;font-size:11px;color:var(--sub);letter-spacing:1px;">
+            <span id="tz-now-status-text">не задано — используется устройство</span>
           </div>
         </div>
         <div class="p-divider"></div>
@@ -1057,14 +1006,12 @@ html, body {
     </button>
     <button class="tab-item" data-tab="focus" onclick="switchTab('focus');tabBurst(this)">
       <div class="tab-glow"></div>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M1 23 L23 5"/>
-        <circle cx="17.5" cy="8" r="2.5"/>
-        <circle cx="8.5" cy="13.5" r="1.5"/>
-        <path d="M8.5 15 L11.5 12"/>
-        <path d="M10.5 12.5 L14.5 9.5"/>
-        <path d="M11.5 12 L9.5 18"/>
-        <path d="M11.5 12 L13.5 17.5"/>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="2" y1="22" x2="22" y2="5"/>
+        <circle cx="17" cy="8.5" r="3"/>
+        <circle cx="7.5" cy="15.5" r="2.2"/>
+        <path d="M7.5 17.7 L11.5 13.5 L15 10.5"/>
+        <line x1="11.5" y1="13.5" x2="9" y2="21"/>
       </svg>
       <span class="tab-lbl" data-i18n="tab_focus">FOC</span>
     </button>
@@ -1314,47 +1261,58 @@ function toggleSetting(btn) {
   showToast((labels[key]||key) + ': ' + (val ? 'ON' : 'OFF'));
 }
 
-function setTimezone(tz) {
-  if (tz === 'custom') return; // handled by toggleCustomTz
-  USER_TZ = tz;
-  localStorage.setItem('erman_tz', tz);
-  TODAY = getTodayISO();
-  document.querySelectorAll('.tz-chip').forEach(c =>
-    c.classList.toggle('active', c.dataset.tz === tz));
-  // hide custom row if selecting preset
-  document.getElementById('tz-custom-row').classList.remove('visible');
-  document.getElementById('tz-custom-btn').classList.remove('active');
-  initCal();
-  showToast('Timezone: ' + (tz === 'auto' ? 'device' : tz.split('/').pop()));
-}
+// Старые функции-заглушки (chips удалены, оставлены для совместимости если где-то зовутся)
+function setTimezone(tz) {}
+function toggleCustomTz() {}
+function applyCustomTz() {}
 
-function toggleCustomTz() {
-  const row = document.getElementById('tz-custom-row');
-  const btn = document.getElementById('tz-custom-btn');
-  const visible = row.classList.toggle('visible');
-  btn.classList.toggle('active', visible);
-  if (visible) setTimeout(() => document.getElementById('tz-input').focus(), 80);
-}
-
-function applyCustomTz() {
-  const val = document.getElementById('tz-input').value.trim();
+function applyMyNow() {
+  // Пользователь ввёл своё текущее время → вычисляем offset от UTC.
+  const val = document.getElementById('tz-now-input').value.trim(); // "HH:MM"
   if (!val) return;
-  // Validate IANA timezone
-  try {
-    new Intl.DateTimeFormat('en', { timeZone: val });
-  } catch {
-    showToast('Неверный timezone');
-    return;
-  }
-  USER_TZ = val;
-  localStorage.setItem('erman_tz', val);
+  const [hh, mm] = val.split(':').map(Number);
+  if (isNaN(hh) || isNaN(mm)) { showToast('Формат: ЧЧ:ММ'); return; }
+
+  // UTC сейчас
+  const now = new Date();
+  const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+  const userMinutes = hh * 60 + mm;
+
+  // Смещение в минутах (с учётом пересечения полуночи)
+  let offsetMin = userMinutes - utcMinutes;
+  if (offsetMin > 780)  offsetMin -= 1440;  // > +13h → wrap
+  if (offsetMin < -780) offsetMin += 1440;  // < -13h → wrap
+
+  // Сохраняем смещение; преобразуем в «Etc/GMT±N» для Intl
+  localStorage.setItem('erman_tz_offset_min', String(offsetMin));
+  const offsetH = Math.round(offsetMin / 60);
+  // Etc/GMT знак инвертирован!
+  const ianaFake = offsetH === 0 ? 'UTC' : `Etc/GMT${offsetH > 0 ? -offsetH : '+'+Math.abs(offsetH)}`;
+  // Проверяем что такой TZ существует
+  let resolvedTZ = ianaFake;
+  try { new Intl.DateTimeFormat('en', { timeZone: ianaFake }); }
+  catch { resolvedTZ = 'UTC'; }
+
+  USER_TZ = resolvedTZ;
+  localStorage.setItem('erman_tz', resolvedTZ);
   TODAY = getTodayISO();
-  document.querySelectorAll('.tz-chip').forEach(c => c.classList.remove('active'));
-  document.getElementById('tz-custom-btn').classList.add('active');
-  document.getElementById('tz-custom-btn').textContent = val.split('/').pop();
-  document.getElementById('tz-custom-row').classList.remove('visible');
   initCal();
-  showToast('Timezone: ' + val.split('/').pop());
+
+  // Статус
+  const sign = offsetMin >= 0 ? '+' : '';
+  const hDisp = String(Math.abs(Math.trunc(offsetMin/60))).padStart(2,'0');
+  const mDisp = String(Math.abs(offsetMin%60)).padStart(2,'0');
+  const statusEl = document.getElementById('tz-now-status-text');
+  if (statusEl) statusEl.textContent = `UTC${sign}${hDisp}:${mDisp} · сохранено`;
+  showToast(`Время: ${val} → UTC${sign}${hDisp}:${mDisp}`);
+
+  // Шлём в бот как команду (чтобы нейросеть знала время)
+  if (twa) {
+    try {
+      twa.sendData(JSON.stringify({type:'set_user_time', time: val,
+        utc_offset_min: offsetMin, tz: resolvedTZ}));
+    } catch(e) {}
+  }
 }
 
 function loadSettings() {
@@ -1362,8 +1320,16 @@ function loadSettings() {
     const saved = localStorage.getItem('erman_'+btn.dataset.key);
     if(saved !== null) btn.classList.toggle('on', saved === 'true');
   });
-  document.querySelectorAll('.tz-chip').forEach(c =>
-    c.classList.toggle('active', c.dataset.tz === USER_TZ));
+  // Восстановить статус текущего времени
+  const savedOff = localStorage.getItem('erman_tz_offset_min');
+  if (savedOff !== null) {
+    const offMin = parseInt(savedOff);
+    const sign = offMin >= 0 ? '+' : '';
+    const hh = String(Math.abs(Math.trunc(offMin/60))).padStart(2,'0');
+    const mm = String(Math.abs(offMin%60)).padStart(2,'0');
+    const el = document.getElementById('tz-now-status-text');
+    if (el) el.textContent = `UTC${sign}${hh}:${mm} · сохранено`;
+  }
 }
 
 // ══ TABS ══
@@ -1382,7 +1348,8 @@ function switchTab(name) {
 
 // ── Random CSS gem shapes for Focus tab ──
 const _FSHAPES = [
-  null, null, null, // SVG crystal (3× weight)
+  // WebGL gems (3× weight — premium look)
+  {type:'webgl',gem:0}, {type:'webgl',gem:1}, {type:'webgl',gem:2},
   { // Amber Hex
     glow:'rgba(255,140,0,.38)', gs:'200px',
     spark:{t:'10%',l:'60%'},
@@ -1447,6 +1414,115 @@ const _FSHAPES = [
   },
 ];
 
+// ── WebGL gem definitions ──
+const _WEBGL_GEMS = [
+  {name:'Amber',    hue:35,  sat:.95, lit:.55, ior:1.56, disp:.08},
+  {name:'Diamond',  hue:200, sat:.25, lit:.92, ior:2.42, disp:.44},
+  {name:'Sapphire', hue:225, sat:.95, lit:.52, ior:1.76, disp:.20},
+  {name:'Ruby',     hue:4,   sat:.95, lit:.52, ior:1.76, disp:.22},
+  {name:'Amethyst', hue:275, sat:.85, lit:.58, ior:1.63, disp:.18},
+  {name:'Emerald',  hue:145, sat:.90, lit:.46, ior:1.57, disp:.12},
+  {name:'Opal',     hue:200, sat:.50, lit:.80, ior:1.45, disp:.35},
+];
+
+function _hsl2hex(h,s,l){
+  const a=s*Math.min(l,1-l);
+  const f=n=>{const k=(n+h/30)%12;const c=l-a*Math.max(-1,Math.min(k-3,9-k,1));return Math.round(255*c);};
+  return (f(0)<<16)|(f(8)<<8)|f(4);
+}
+
+let _webglScene=null, _webglRenderer=null, _webglCamera=null, _webglMesh=null, _webglRaf=null;
+
+function initWebGLGem(gemDef) {
+  if(typeof THREE === 'undefined') return false;
+  const canvas = document.getElementById('gem-3d-canvas');
+  if(!canvas) return false;
+
+  // Cleanup previous
+  if(_webglRaf) cancelAnimationFrame(_webglRaf);
+  if(_webglRenderer) { try{_webglRenderer.dispose();}catch(e){} }
+
+  const W = canvas.parentElement.offsetWidth || 260;
+  const H = canvas.parentElement.offsetHeight || 280;
+  canvas.width = W * window.devicePixelRatio;
+  canvas.height = H * window.devicePixelRatio;
+  canvas.style.width = W+'px'; canvas.style.height = H+'px';
+
+  _webglRenderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  _webglRenderer.setPixelRatio(window.devicePixelRatio);
+  _webglRenderer.setSize(W, H);
+  _webglRenderer.outputColorSpace = THREE.SRGBColorSpace;
+  _webglRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+  _webglRenderer.toneMappingExposure = 1.6;
+
+  _webglScene = new THREE.Scene();
+  _webglCamera = new THREE.PerspectiveCamera(42, W/H, 0.1, 100);
+  _webglCamera.position.set(0, 0.1, 3.8);
+
+  // Lights
+  const key = new THREE.DirectionalLight(0xfff0e0, 3.5); key.position.set(3,5,4);
+  const fill= new THREE.DirectionalLight(0x8090ff, 1.2); fill.position.set(-4,1,3);
+  const back= new THREE.PointLight(0xff9f0a, 2.5, 20);   back.position.set(0,-3,-3);
+  const rim = new THREE.PointLight(0x60a0ff, 1.2, 12);   rim.position.set(-4,2,0);
+  const rimR= new THREE.PointLight(0xff4080, 0.9, 12);   rimR.position.set(4,-1,0);
+  const top = new THREE.PointLight(0xffffff, 1.8, 15);   top.position.set(0,8,2);
+  [key,fill,back,rim,rimR,top,new THREE.AmbientLight(0xfff8e8,.4)].forEach(l=>_webglScene.add(l));
+
+  // Brilliant cut geometry
+  const pts=[
+    new THREE.Vector2(0.00,-0.68), new THREE.Vector2(0.14,-0.56),
+    new THREE.Vector2(0.32,-0.35), new THREE.Vector2(0.55,-0.12),
+    new THREE.Vector2(0.76, 0.02), new THREE.Vector2(0.74, 0.06),
+    new THREE.Vector2(0.68, 0.10), new THREE.Vector2(0.52, 0.24),
+    new THREE.Vector2(0.34, 0.36), new THREE.Vector2(0.16, 0.43),
+    new THREE.Vector2(0.00, 0.46),
+  ];
+  const geo = new THREE.LatheGeometry(pts, 18);
+  geo.computeVertexNormals();
+
+  const d = gemDef;
+  const mat = new THREE.MeshPhysicalMaterial({
+    color: new THREE.Color(_hsl2hex(d.hue,d.sat,d.lit)),
+    emissive: new THREE.Color(_hsl2hex(d.hue,d.sat,d.lit*.4)),
+    emissiveIntensity: 0.12,
+    transmission: 0.94, transparent: true, thickness: 2.2,
+    ior: d.ior, dispersion: d.disp,
+    roughness: 0.01, metalness: 0.0,
+    clearcoat: 1.0, clearcoatRoughness: 0.02,
+    iridescence: d.name==='Opal' ? 1.0 : 0.4,
+    iridescenceIOR: 1.3,
+    iridescenceThicknessRange: [80, 400],
+    envMapIntensity: 2.8,
+    side: THREE.DoubleSide,
+  });
+
+  _webglMesh = new THREE.Mesh(geo, mat);
+  _webglScene.add(_webglMesh);
+
+  // Environment
+  try {
+    const pmrem = new THREE.PMREMGenerator(_webglRenderer);
+    _webglScene.environment = pmrem.fromScene(
+      new THREE.RoomEnvironment(_webglRenderer), 0.04
+    ).texture;
+    pmrem.dispose();
+  } catch(e) {} // RoomEnvironment may not be in three.min.js — fallback ok
+
+  let t0=null;
+  function loop(ts){
+    _webglRaf=requestAnimationFrame(loop);
+    if(!t0)t0=ts; const t=(ts-t0)*.001;
+    if(_webglMesh){
+      _webglMesh.rotation.y = t * .18;
+      _webglMesh.position.y = Math.sin(t*.65)*.07;
+      _webglMesh.rotation.x = Math.sin(t*.38)*.035 - .07;
+    }
+    _webglRenderer.render(_webglScene, _webglCamera);
+  }
+  requestAnimationFrame(loop);
+  return true;
+}
+
 let _focusShapeInited = false;
 function initFocusShape() {
   if(_focusShapeInited) return;
@@ -1456,18 +1532,35 @@ function initFocusShape() {
   if(saved == null) sessionStorage.setItem('erman_fshape', idx);
   const v = _FSHAPES[idx];
   const treeSvg = document.getElementById('tree-svg');
+  const canvas3d = document.getElementById('gem-3d-canvas');
   const wrap = document.getElementById('focus-shape-wrap');
-  if(!v || !wrap || !treeSvg) return; // null → show existing SVG crystal
-  // Hide SVG crystal, show CSS shape
-  treeSvg.style.display = 'none';
-  // Build shape HTML
-  let html = `<div class="fshape-glow" style="width:${v.gs};height:${v.gs};background:radial-gradient(circle,${v.glow} 0%,transparent 70%);"></div>`;
-  v.faces.forEach(f => {
-    html += `<div class="fshape-face" style="clip-path:${f.c};background:${f.b};z-index:${f.z};position:absolute;inset:0;"></div>`;
-  });
-  html += `<div class="fshape-sparkle" style="top:${v.spark.t};left:${v.spark.l};"></div>`;
-  wrap.innerHTML = html;
-  wrap.style.display = 'block';
+
+  // Hide SVG crystal
+  if(treeSvg) treeSvg.style.display = 'none';
+
+  if(v && v.type === 'webgl') {
+    // Three.js gem
+    const gemDef = _WEBGL_GEMS[v.gem % _WEBGL_GEMS.length];
+    if(canvas3d) canvas3d.style.display = 'block';
+    const ok = initWebGLGem(gemDef);
+    if(!ok) {
+      // Fallback: show CSS shape
+      if(canvas3d) canvas3d.style.display = 'none';
+      if(treeSvg) treeSvg.style.display = '';
+    }
+  } else if(v) {
+    // CSS shape
+    if(canvas3d) canvas3d.style.display = 'none';
+    let html = `<div class="fshape-glow" style="width:${v.gs};height:${v.gs};background:radial-gradient(circle,${v.glow} 0%,transparent 70%);"></div>`;
+    v.faces.forEach(f => {
+      html += `<div class="fshape-face" style="clip-path:${f.c};background:${f.b};z-index:${f.z};position:absolute;inset:0;"></div>`;
+    });
+    html += `<div class="fshape-sparkle" style="top:${v.spark.t};left:${v.spark.l};"></div>`;
+    if(wrap) { wrap.innerHTML = html; wrap.style.display = 'block'; }
+  } else {
+    // Fallback: show existing SVG
+    if(treeSvg) treeSvg.style.display = '';
+  }
 }
 
 function tabBurst(el) {
@@ -1684,32 +1777,12 @@ document.getElementById('add-modal').addEventListener('click', function(e) { if(
 let focusDuration=25, focusRunning=false, focusTimer=null, focusStart=0, focusElapsed=0, trunkLen=0;
 
 function initTree(){
-  // Crystal gem — reset all facets to dim state
-  const facets = ['gem-cr-tl','gem-cr-tr','gem-cr-l','gem-cr-r',
-    'gem-table','gem-pv-r','gem-pv-l','gem-pv-br','gem-pv-bl'];
-  const opacities = [0.08,0.08,0.08,0.08,0.06,0.05,0.05,0.04,0.04];
-  facets.forEach((id,i)=>{
-    const el=document.getElementById(id);
-    if(el) el.setAttribute('opacity',String(opacities[i]));
-  });
-  const glow=document.getElementById('gem-bg-glow');
-  if(glow) glow.setAttribute('opacity','0.15');
-  const outline=document.getElementById('gem-outline');
-  if(outline) outline.setAttribute('stroke','rgba(255,159,10,.14)');
-  const spec=document.getElementById('gem-specular');
-  if(spec) spec.setAttribute('opacity','0.1');
-  // Specular glint — slowly pulses
-  let glintDir=1, glintVal=0;
-  setInterval(()=>{
-    glintVal+=0.03*glintDir;
-    if(glintVal>=1){glintVal=1;glintDir=-1;}
-    if(glintVal<=0){glintVal=0;glintDir=1;}
-    const s=document.getElementById('gem-specular');
-    if(s) s.setAttribute('opacity',(0.06+glintVal*0.55).toFixed(3));
-  }, 45);
-  // drop-shadow on crystal SVG
+  // Мягкий орб — никаких setInterval, никаких граней.
+  // Дыхание идёт через CSS-анимацию. JS только устанавливает базовое drop-shadow.
   const svg=document.getElementById('tree-svg');
-  if(svg) svg.style.filter='drop-shadow(0 0 12px rgba(255,159,10,.35)) drop-shadow(0 0 4px rgba(255,210,80,.25))';
+  if(svg) svg.style.filter='drop-shadow(0 0 18px rgba(255,159,10,.28)) drop-shadow(0 0 6px rgba(255,210,80,.18))';
+  const core=document.getElementById('orb-core-c');
+  if(core) core.style.opacity='';
 }
 
 function treeProgress(pct){
@@ -1717,38 +1790,20 @@ function treeProgress(pct){
   const ring=document.getElementById('progress-ring-fg');
   if(ring) ring.setAttribute('stroke-dashoffset', String(911*(1-pct)));
 
-  function ease(p){ return p<0?0:p>1?1:1-Math.pow(1-p,2.5); }
-  function facetOp(id, base, max, thresh){
-    const el=document.getElementById(id); if(!el) return;
-    const e=ease(Math.max(0,(pct-thresh)/(1-thresh)));
-    el.setAttribute('opacity', String(base + (max-base)*e));
-  }
-
-  // Table appears first, center of attention
-  facetOp('gem-table',    0.06, 0.92, 0.05);
-  // Crown facets
-  facetOp('gem-cr-tr',    0.08, 0.85, 0.10);
-  facetOp('gem-cr-tl',    0.08, 0.70, 0.15);
-  facetOp('gem-cr-r',     0.08, 0.80, 0.20);
-  facetOp('gem-cr-l',     0.08, 0.65, 0.25);
-  // Pavilion facets appear later
-  facetOp('gem-pv-r',     0.05, 0.75, 0.35);
-  facetOp('gem-pv-l',     0.05, 0.60, 0.40);
-  facetOp('gem-pv-br',    0.04, 0.65, 0.50);
-  facetOp('gem-pv-bl',    0.04, 0.50, 0.55);
-  // Specular highlight pulses brighter
-  facetOp('gem-specular', 0.10, 0.70, 0.30);
-
-  // Outer glow intensifies
-  const glow=document.getElementById('gem-bg-glow');
-  if(glow) glow.setAttribute('opacity', String(0.15 + pct*0.55));
-  // Outline becomes more visible
-  const outline=document.getElementById('gem-outline');
-  if(outline) outline.setAttribute('stroke', `rgba(255,159,10,${(0.14+pct*0.5).toFixed(2)})`);
-  // Drop-shadow grows with charge
+  // Орб наполняется свечением плавно: чем выше pct — тем ярче drop-shadow.
+  // Сам орб дышит по CSS-анимации, тут только наращиваем halo через filter.
   const svg=document.getElementById('tree-svg');
-  if(svg) svg.style.filter=`drop-shadow(0 0 ${12+pct*26}px rgba(255,159,10,${(.3+pct*.5).toFixed(2)})) drop-shadow(0 0 ${4+pct*8}px rgba(255,${Math.round(180+pct*60)},${Math.round(60+pct*50)},.${Math.round(20+pct*40)}))`;
-  // Halo brightens via ::before opacity (indirect via container opacity)
+  if(svg){
+    const blur1 = (18 + pct*26).toFixed(0);
+    const op1   = (.28 + pct*.45).toFixed(2);
+    const blur2 = (6 + pct*10).toFixed(0);
+    const op2   = (.18 + pct*.30).toFixed(2);
+    svg.style.filter = `drop-shadow(0 0 ${blur1}px rgba(255,159,10,${op1})) drop-shadow(0 0 ${blur2}px rgba(255,210,80,${op2}))`;
+  }
+  // Halo радиус растёт по мере прогресса
+  const halo=document.getElementById('orb-halo-c');
+  if(halo) halo.setAttribute('r', String(105 + pct*8));
+  // Halo container
   const cont=document.querySelector('#tab-focus .tree-container');
   if(cont) cont.style.setProperty('--halo-op', (0.6+pct*0.4).toFixed(2));
 }
