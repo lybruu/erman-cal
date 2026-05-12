@@ -6,7 +6,7 @@
 <title>erMan</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.min.js"></script>
+<!-- Three.js removed — gem is pure CSS -->
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
@@ -389,38 +389,110 @@ html, body {
   display: flex; align-items: center; justify-content: center;
   margin-bottom: 8px;
 }
-/* Opal-style ambient halo — violet/blue/teal */
+.tree-svg { display: none; }
+.tree-container::after { display: none; }
+#gem-3d-canvas { display: none; }
+
+/* ── Opal gem: pure CSS, no WebGL ── */
+.opal-gem {
+  --progress: 0;
+  position: relative;
+  width: 140px; height: 190px;
+  border-radius: 44% 56% 48% 52% / 36% 34% 66% 64%;
+  overflow: hidden;
+  z-index: 1;
+  animation: gem-float 6s ease-in-out infinite;
+  box-shadow:
+    0 0 40px rgba(140,80,255, calc(.3 + var(--progress)*.3)),
+    0 0 80px rgba(60,140,255, calc(.15 + var(--progress)*.2)),
+    0 0 4px rgba(255,255,255,.12),
+    inset 0 0 25px rgba(80,40,160,.35);
+}
+.opal-gem .layer { position: absolute; inset: 0; border-radius: inherit; }
+
+/* Base body: deep purple-blue gem interior */
+.opal-gem .base {
+  background: radial-gradient(ellipse at 42% 38%,
+    #9b7fd4 0%, #5e3aaf 28%, #2a1566 62%, #0e0826 100%);
+}
+
+/* Iridescent rainbow — conic gradient + overlay blend + hue-rotate animation */
+.opal-gem .iris {
+  background: conic-gradient(from 140deg at 48% 42%,
+    #ff6b9d 0%, #e040fb 14%, #7c4dff 28%,
+    #448aff 42%, #18ffff 56%, #69f0ae 70%,
+    #ffab40 84%, #ff6b9d 100%);
+  mix-blend-mode: overlay;
+  opacity: calc(.55 + var(--progress)*.25);
+  animation: iris-shift 10s ease-in-out infinite;
+}
+@keyframes iris-shift {
+  0%   { filter: hue-rotate(0deg); }
+  50%  { filter: hue-rotate(55deg); }
+  100% { filter: hue-rotate(0deg); }
+}
+
+/* Internal "fire" color patches — like real opal play-of-color */
+.opal-gem .fire {
+  background:
+    radial-gradient(ellipse at 28% 22%, rgba(255,170,50,.5) 0%, transparent 42%),
+    radial-gradient(ellipse at 68% 58%, rgba(80,200,255,.45) 0%, transparent 38%),
+    radial-gradient(ellipse at 42% 78%, rgba(220,70,220,.35) 0%, transparent 32%);
+  mix-blend-mode: screen;
+  opacity: calc(.5 + var(--progress)*.35);
+  animation: fire-drift 9s ease-in-out infinite alternate;
+}
+@keyframes fire-drift {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-6px, 4px) scale(1.05); }
+}
+
+/* Top highlight — specular shine */
+.opal-gem .highlight {
+  background: radial-gradient(ellipse at 34% 24%,
+    rgba(255,255,255,.65) 0%, rgba(255,255,255,.08) 28%, transparent 52%);
+}
+
+/* Pedestal: small dark ellipse below gem */
+.opal-pedestal {
+  position: absolute;
+  bottom: 20px; left: 50%; transform: translateX(-50%);
+  width: 70px; height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(15,10,30,.9) 0%, transparent 75%);
+  z-index: 0;
+}
+
+@keyframes gem-float {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-8px); }
+}
+
+/* Ambient glow behind gem */
 .tree-container::before {
   content: '';
-  position: absolute; width: 220px; height: 240px;
+  position: absolute; width: 240px; height: 260px;
   border-radius: 50%;
-  background: radial-gradient(ellipse at 42% 38%,
-    rgba(160,100,255,.22) 0%,
-    rgba(60,140,255,.14) 35%,
-    rgba(20,200,180,.06) 65%,
-    transparent 80%);
-  filter: blur(22px);
-  animation: gem-halo-pulse 4s ease-in-out infinite;
+  background: radial-gradient(ellipse at 46% 40%,
+    rgba(140,80,255,.18) 0%,
+    rgba(60,120,255,.1) 40%,
+    rgba(20,200,180,.04) 70%,
+    transparent 85%);
+  filter: blur(28px);
+  animation: halo-breathe 5s ease-in-out infinite;
   pointer-events: none; z-index: 0;
 }
-@keyframes gem-halo-pulse {
-  0%,100% { opacity: .6; }
-  50%      { opacity: 1; }
+@keyframes halo-breathe {
+  0%,100% { opacity: .5; }
+  50%     { opacity: .9; }
 }
-#gem-3d-canvas {
-  position: absolute; top: 0; left: 0;
-  width: 100%; height: 100%; z-index: 1;
-}
+
 .tree-timer-overlay {
   position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
   display: flex; flex-direction: column; align-items: center; gap: 2px;
   z-index: 3; pointer-events: none;
-  text-shadow: 0 2px 16px rgba(0,0,0,.9), 0 0 40px rgba(0,0,0,.6);
+  text-shadow: 0 2px 16px rgba(0,0,0,.95), 0 0 40px rgba(0,0,0,.7);
 }
-/* SVG orb hidden when gem is active — kept for fallback only */
-.tree-svg { display: none; }
-/* ::after не используется */
-.tree-container::after { display: none; }
 .progress-ring { position: absolute; inset: -12px; pointer-events: none; }
 .progress-ring circle {
   fill: none; stroke-linecap: round;
@@ -429,9 +501,6 @@ html, body {
 }
 .ring-bg { stroke: rgba(253,248,240,.03); stroke-width: 1.5; }
 .ring-fg { stroke: url(#ring-grad); stroke-width: 2; filter: drop-shadow(0 0 7px rgba(168,85,247,.7)); }
-.tree-svg polygon, .tree-svg path, .tree-svg line, .tree-svg ellipse {
-  transition: opacity .55s ease, stroke .55s ease, fill .55s ease;
-}
 .timer-digits.pulsing { animation: digit-pulse 2.5s ease-in-out infinite; }
 @keyframes digit-pulse {
   0%, 100% { transform: scale(1); opacity: .9; }
@@ -782,32 +851,14 @@ html, body {
             <div class="timer-digits" id="timer-digits">25:00</div>
             <div class="timer-label" id="timer-label" data-i18n="focus_ready">READY</div>
           </div>
-          <svg class="tree-svg" id="tree-svg" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
-            <defs>
-              <!-- Мягкий теплый орб: ядро → halo. Никаких граней. -->
-              <radialGradient id="orb-core" cx="50%" cy="46%" r="50%">
-                <stop offset="0%"   stop-color="#fff2c4" stop-opacity="0.95"/>
-                <stop offset="32%"  stop-color="#ffb050" stop-opacity="0.55"/>
-                <stop offset="70%"  stop-color="#ff7a18" stop-opacity="0.20"/>
-                <stop offset="100%" stop-color="#3a1500" stop-opacity="0"/>
-              </radialGradient>
-              <radialGradient id="orb-halo" cx="50%" cy="50%" r="65%">
-                <stop offset="0%"   stop-color="#ff9f0a" stop-opacity="0.22"/>
-                <stop offset="100%" stop-color="#ff9f0a" stop-opacity="0"/>
-              </radialGradient>
-              <radialGradient id="orb-highlight" cx="38%" cy="30%" r="22%">
-                <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.55"/>
-                <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
-              </radialGradient>
-            </defs>
-            <circle id="orb-halo-c"      cx="110" cy="110" r="105" fill="url(#orb-halo)"/>
-            <circle id="orb-core-c"      cx="110" cy="110" r="80"  fill="url(#orb-core)"/>
-            <circle id="orb-highlight-c" cx="110" cy="110" r="80"  fill="url(#orb-highlight)"/>
-          </svg>
-          <!-- WebGL 3D gem (Three.js) -->
-          <canvas id="gem-3d-canvas" style="display:none;z-index:1;"></canvas>
-          <!-- CSS shape overlay -->
-          <div id="focus-shape-wrap"></div>
+          <!-- CSS Opal Gem -->
+          <div class="opal-gem" id="opal-gem">
+            <div class="layer base"></div>
+            <div class="layer iris"></div>
+            <div class="layer fire"></div>
+            <div class="layer highlight"></div>
+          </div>
+          <div class="opal-pedestal"></div>
         </div>
         <div class="dur-row" id="dur-row">
           <button class="dur-chip" data-min="15" onclick="setDuration(15)">15 MIN</button>
@@ -869,16 +920,12 @@ html, body {
         <div class="p-divider"></div>
         <div class="profile-section">
           <div class="section-header" data-i18n="timezone">Timezone</div>
-          <!-- MSK быстрый пресет -->
           <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="tz-chip" id="tz-msk-btn" onclick="applyPresetTZ('MSK',3)" style="font-size:12px;padding:6px 14px;">
+            <button class="tz-chip" id="tz-msk-btn" onclick="applyPresetTZ('МСК',3,this)" style="font-size:12px;padding:6px 14px;">
               МСК (UTC+3)
             </button>
-            <button class="tz-chip" onclick="applyPresetTZ('CET',1)" style="font-size:12px;padding:6px 14px;">
-              CET (UTC+1)
-            </button>
-            <button class="tz-chip" onclick="applyPresetTZ('EST',-5)" style="font-size:12px;padding:6px 14px;">
-              EST (UTC−5)
+            <button class="tz-chip" id="tz-nyc-btn" onclick="applyPresetTZ('NYC',-4,this)" style="font-size:12px;padding:6px 14px;">
+              NYC (UTC−4)
             </button>
           </div>
           <div style="margin-top:10px;font-size:11px;color:var(--sub);letter-spacing:1px;line-height:1.5;">
@@ -965,21 +1012,14 @@ html, body {
     </button>
     <button class="tab-item" data-tab="focus" onclick="switchTab('focus');tabBurst(this)">
       <div class="tab-glow"></div>
-      <!-- Sisyphus: человек толкает камень в гору -->
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-        <!-- Камень -->
-        <circle cx="16" cy="7" r="2.8"/>
-        <!-- Холм -->
-        <path d="M2 21 Q11 14 20 7" fill="none"/>
-        <!-- Голова -->
-        <circle cx="7" cy="13" r="1.4" fill="currentColor" stroke="none"/>
-        <!-- Туловище наклонено вперёд -->
-        <line x1="7" y1="14.4" x2="9.5" y2="18"/>
-        <!-- Рука к камню -->
-        <line x1="7.5" y1="15" x2="13" y2="9.5"/>
-        <!-- Ноги -->
-        <line x1="9.5" y1="18" x2="7.5" y2="22"/>
-        <line x1="9.5" y1="18" x2="12" y2="21.5"/>
+      <!-- Target / crosshair (focus) -->
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+        <circle cx="12" cy="12" r="9"/>
+        <circle cx="12" cy="12" r="4"/>
+        <line x1="12" y1="2" x2="12" y2="5.5"/>
+        <line x1="12" y1="18.5" x2="12" y2="22"/>
+        <line x1="2" y1="12" x2="5.5" y2="12"/>
+        <line x1="18.5" y1="12" x2="22" y2="12"/>
       </svg>
       <span class="tab-lbl" data-i18n="tab_focus">ФОКУС</span>
     </button>
@@ -1283,26 +1323,24 @@ function applyMyNow() {
   }
 }
 
-function applyPresetTZ(name, offsetH) {
-  // Устанавливает фиксированный UTC+N offset (например МСК = UTC+3)
+function applyPresetTZ(name, offsetH, btn) {
   const offsetMin = offsetH * 60;
   localStorage.setItem('erman_tz_offset_min', String(offsetMin));
-  const ianaFake = offsetH === 0 ? 'UTC' : `Etc/GMT${offsetH > 0 ? -offsetH : '+'+Math.abs(offsetH)}`;
+  const ianaFake = offsetH === 0 ? 'UTC' : 'Etc/GMT' + (offsetH > 0 ? -offsetH : '+'+Math.abs(offsetH));
   let resolvedTZ = ianaFake;
   try { new Intl.DateTimeFormat('en', { timeZone: ianaFake }); }
-  catch { resolvedTZ = 'UTC'; }
+  catch(e) { resolvedTZ = 'UTC'; }
   USER_TZ = resolvedTZ;
   localStorage.setItem('erman_tz', resolvedTZ);
   TODAY = getTodayISO();
   initCal();
   const sign = offsetH >= 0 ? '+' : '';
   const statusEl = document.getElementById('tz-now-status-text');
-  if (statusEl) statusEl.textContent = `${name} UTC${sign}${offsetH} · сохранено`;
-  // Подсветить активный пресет
-  document.querySelectorAll('#tab-profile .tz-chip').forEach(c => c.classList.remove('active'));
-  event.target.classList.add('active');
-  showToast(`${name} UTC${sign}${offsetH} · установлен`);
-  if (twa) try { twa.sendData(JSON.stringify({type:'set_user_time', utc_offset_min: offsetMin, tz: resolvedTZ})); } catch(e) {}
+  if(statusEl) statusEl.textContent = name + ' UTC' + sign + offsetH + ' · сохранено';
+  document.querySelectorAll('#tab-profile .tz-chip').forEach(function(c){ c.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
+  showToast(name + ' UTC' + sign + offsetH + ' · установлен');
+  if(twa) try{ twa.sendData(JSON.stringify({type:'set_user_time', utc_offset_min: offsetMin, tz: resolvedTZ})); }catch(e){}
 }
 
 function loadSettings() {
@@ -1319,9 +1357,9 @@ function loadSettings() {
     const mm = String(Math.abs(offMin%60)).padStart(2,'0');
     const el = document.getElementById('tz-now-status-text');
     if (el) el.textContent = `UTC${sign}${hh}:${mm} · сохранено`;
-    // Подсветить совпадающий пресет
-    const h = Math.round(offMin/60);
-    if(h===3) document.getElementById('tz-msk-btn')?.classList.add('active');
+    var h = Math.round(offMin/60);
+    if(h===3) { var b=document.getElementById('tz-msk-btn'); if(b)b.classList.add('active'); }
+    if(h===-4) { var b2=document.getElementById('tz-nyc-btn'); if(b2)b2.classList.add('active'); }
   }
 }
 
@@ -1517,11 +1555,7 @@ function initWebGLGem(gemDef) {
 }
 
 let _focusShapeInited = false;
-function initFocusShape() {
-  const wrap = document.getElementById('focus-shape-wrap');
-  if(wrap) { wrap.innerHTML = ''; wrap.style.display = 'none'; }
-  if(!_focusShapeInited) { _focusShapeInited = true; initGem(); }
-}
+function initFocusShape() { _focusShapeInited = true; }
 
 function tabBurst(el) {
   const glow = el.querySelector('.tab-glow');
@@ -1736,116 +1770,13 @@ document.getElementById('add-modal').addEventListener('click', function(e) { if(
 // ══ TREE TIMER ══
 let focusDuration=25, focusRunning=false, focusTimer=null, focusStart=0, focusElapsed=0, trunkLen=0;
 
-// ─── Opal-style 3D gem (Three.js Phong — works without env map) ──────────────
-let _gem = null;
-
-function initGem(){
-  const canvas = document.getElementById('gem-3d-canvas');
-  if(!canvas || !window.THREE || _gem) return;
-  const W = 260, H = 280;
-
-  try {
-    const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
-    renderer.setSize(W, H);
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(38, W/H, 0.1, 50);
-    camera.position.z = 4.6;
-
-    // ── Gem: organic elongated stone (like Opal app) ──
-    const geo = new THREE.IcosahedronGeometry(1.08, 4);
-    const pos = geo.attributes.position;
-    for(let i=0; i<pos.count; i++){
-      const x=pos.getX(i), y=pos.getY(i), z=pos.getZ(i);
-      const ny=y*1.36, nx=x*0.87, nz=z*0.91;
-      const w=0.06*(Math.sin(x*7.2+y*4.6)*Math.cos(z*5.1)+Math.sin(y*5.8+z*3.7)*0.55);
-      pos.setXYZ(i, nx*(1+w), ny*(1+w*0.6), nz*(1+w));
-    }
-    pos.needsUpdate=true; geo.computeVertexNormals();
-
-    // ── Phong material — beautiful specular highlights without env map ──
-    const mat = new THREE.MeshPhongMaterial({
-      color:     new THREE.Color(0x8899cc),
-      specular:  new THREE.Color(0xffffff),
-      shininess: 500,
-      emissive:  new THREE.Color(0x110822),
-      emissiveIntensity: 1,
-      transparent: true,
-      opacity: 0.88,
-      side: THREE.DoubleSide,
-    });
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.y = 0.2;
-    scene.add(mesh);
-
-    // ── Pedestal ──
-    const ped = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.46, 0.52, 0.13, 36),
-      new THREE.MeshPhongMaterial({color:0x0a0a12, specular:0x444466, shininess:80})
-    );
-    ped.position.y = -1.55;
-    scene.add(ped);
-
-    // ── Colored orbiting lights → rainbow specular on facets ──
-    const lightDefs = [
-      {color:0x9b59b6, int:12, r:3.0, sp:0.38, ph:0.0},  // violet
-      {color:0x3498db, int:10, r:2.7, sp:0.55, ph:2.1},  // blue
-      {color:0x1abc9c, int:11, r:3.1, sp:0.46, ph:1.2},  // teal
-      {color:0xff6b35, int:13, r:2.5, sp:0.31, ph:3.5},  // orange
-      {color:0xe91e8c, int: 9, r:2.4, sp:0.62, ph:4.8},  // pink
-      {color:0xf9d342, int: 7, r:2.2, sp:0.44, ph:5.6},  // gold
-    ];
-    const orbitLights = lightDefs.map(d=>{
-      const light = new THREE.PointLight(d.color, d.int, 16);
-      scene.add(light);
-      return {...d, angle:d.ph, light};
-    });
-    scene.add(new THREE.AmbientLight(0x1a1a33, 2));
-
-    // Show canvas
-    canvas.style.display='block';
-    const svg=document.getElementById('tree-svg');
-    if(svg) svg.style.display='none';
-
-    let t=0;
-    (function render(){
-      requestAnimationFrame(render);
-      t+=0.007;
-      mesh.rotation.y=t*0.2;
-      mesh.rotation.x=Math.sin(t*0.33)*0.1;
-      mesh.position.y=0.2+Math.sin(t*0.7)*0.1;
-      orbitLights.forEach(ol=>{
-        ol.angle+=ol.sp*0.013;
-        ol.light.position.set(
-          Math.cos(ol.angle)*ol.r,
-          Math.sin(ol.angle*0.5)*1.6,
-          Math.sin(ol.angle)*ol.r*0.65+2.6
-        );
-      });
-      renderer.render(scene, camera);
-    })();
-
-    _gem = {mesh, mat, orbitLights, lightDefs};
-  } catch(e) {
-    console.warn('initGem failed:', e);
-    // Fallback: show SVG orb
-    const svg=document.getElementById('tree-svg');
-    if(svg) svg.style.display='';
-  }
-}
+// ─── Opal gem (pure CSS — driven by --progress custom property) ───────────────
+function initTree(){} // no-op, gem is CSS-only
 
 function gemProgress(pct){
-  if(!_gem) return;
-  const {mat, orbitLights, lightDefs}=_gem;
-  // Gem brightens and shifts toward cool crystalline blue-white
-  mat.shininess = 500 + pct*300;
-  mat.opacity   = 0.88 + pct*0.1;
-  mat.needsUpdate=true;
-  orbitLights.forEach((ol,i)=>{ ol.light.intensity=lightDefs[i].int*(1+pct*1.5); });
+  const gem = document.getElementById('opal-gem');
+  if(gem) gem.style.setProperty('--progress', pct.toFixed(3));
 }
-
-function initTree(){ initGem(); }  // alias
 
 function treeProgress(pct){
   pct=Math.max(0,Math.min(1,pct));
@@ -1911,8 +1842,7 @@ function stopFocus(completed){
     // Плавная анимация возврата кольца
     const ring=document.getElementById('progress-ring-fg');
     if(ring) ring.style.strokeDashoffset='911';
-    // Gem dims back
-    if(_gem){ _gem.orbitLights.forEach((ol,i)=>{ ol.light.intensity = _gem.lightDefs[i].int; }); }
+    gemProgress(0);
     document.getElementById('timer-label').textContent=t('focus_cancelled');
     fetch(BACKEND_URL+'/api/focus_cancel',{method:'POST',headers:NGROK_H,body:'{}'}).catch(()=>{});
     setTimeout(resetTimer,1400);
@@ -1921,11 +1851,7 @@ function stopFocus(completed){
 function resetTimer(){
   const ring=document.getElementById('progress-ring-fg');
   if(ring){ ring.style.strokeDashoffset=''; ring.setAttribute('stroke-dashoffset','911'); }
-  if(_gem){
-    const {mat,lightDefs,orbitLights}=_gem;
-    mat.shininess=500; mat.opacity=0.88; mat.needsUpdate=true;
-    orbitLights.forEach((ol,i)=>{ ol.light.intensity=lightDefs[i].int; });
-  }
+  gemProgress(0);
   document.getElementById('timer-label').textContent=t('focus_ready');
   document.getElementById('timer-digits').textContent=focusDuration+':00';
 }
