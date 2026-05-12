@@ -1781,6 +1781,12 @@ function startFocus(){
   document.getElementById('timer-label').textContent=t('focus_focusing');
   document.getElementById('timer-digits').classList.add('pulsing');
   burstParticles();
+  // Серверный таймер — уведомление придёт в TG даже если закрыть вкладку
+  fetch(BACKEND_URL+'/api/focus_start',{
+    method:'POST',
+    headers:NGROK_H,
+    body:JSON.stringify({duration_min:focusDuration})
+  }).catch(()=>{});
   const totalSec=focusDuration*60;
   focusTimer=setInterval(()=>{
     focusElapsed=Math.floor((Date.now()-focusStart)/1000);
@@ -1806,22 +1812,30 @@ function stopFocus(completed){
     FOCUS.total_minutes=(FOCUS.total_minutes||0)+focusDuration;
     FOCUS.collection.push({type:'amber',date:TODAY,duration:focusDuration});
     renderFocusStats();
+    // Серверный таймер уже отправит уведомление; sendData как fallback если ещё в TG
     if(twa) try{twa.sendData(JSON.stringify({type:'focus_complete',duration:focusDuration}));}catch(e){}
+    // Отменяем серверный таймер (он сработал)
+    fetch(BACKEND_URL+'/api/focus_cancel',{method:'POST',headers:NGROK_H,body:'{}'}).catch(()=>{});
     setTimeout(resetTimer,3500);
   } else {
-    document.querySelectorAll('.tree-leaf').forEach(l=>{
-      l.style.fill='rgba(255,69,58,.4)'; l.style.transition='fill .4s, opacity .6s';
-      setTimeout(()=>l.style.opacity='0',200);
-    });
+    // Плавная анимация возврата кольца к нулю
+    const ring=document.getElementById('progress-ring-fg');
+    if(ring) ring.style.strokeDashoffset='911';
+    // Орб плавно тускнеет
+    const svg=document.getElementById('tree-svg');
+    if(svg){ svg.style.transition='filter 1.2s ease'; svg.style.filter='drop-shadow(0 0 18px rgba(255,159,10,.28)) drop-shadow(0 0 6px rgba(255,210,80,.18))'; }
     document.getElementById('timer-label').textContent=t('focus_cancelled');
-    if(twa&&focusElapsed>60) try{twa.sendData(JSON.stringify({type:'focus_cancel',elapsed_seconds:focusElapsed}));}catch(e){}
+    // Отменяем серверный таймер
+    fetch(BACKEND_URL+'/api/focus_cancel',{method:'POST',headers:NGROK_H,body:'{}'}).catch(()=>{});
     setTimeout(resetTimer,1400);
   }
 }
 function resetTimer(){
   document.querySelectorAll('.tree-leaf').forEach(l=>{ l.style.fill=''; l.style.transition=''; });
   const ring=document.getElementById('progress-ring-fg');
-  if(ring) ring.setAttribute('stroke-dashoffset','911');
+  if(ring){ ring.style.strokeDashoffset=''; ring.setAttribute('stroke-dashoffset','911'); }
+  const svg=document.getElementById('tree-svg');
+  if(svg) svg.style.transition='';
   initTree();
   document.getElementById('timer-label').textContent=t('focus_ready');
   document.getElementById('timer-digits').textContent=focusDuration+':00';
