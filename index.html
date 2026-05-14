@@ -379,15 +379,11 @@ html, body {
   color: var(--ivory);
   text-shadow: 0 0 20px rgba(253,248,240,.2);
 }
-.timer-label {
-  font-size: 12px; color: rgba(253,248,240,.5);
-  letter-spacing: .5px;
-  font-family: 'Inter', sans-serif; font-weight: 300;
-}
+.timer-label { display: none; }
 .tree-container {
   position: relative; width: 260px; height: 280px;
   display: flex; align-items: center; justify-content: center;
-  margin-bottom: 8px;
+  flex-shrink: 0;
 }
 .tree-svg { display: none; }
 .tree-container::after { display: none; }
@@ -451,6 +447,47 @@ html, body {
 .opal-gem .highlight {
   background: radial-gradient(ellipse at 34% 24%,
     rgba(255,255,255,.65) 0%, rgba(255,255,255,.08) 28%, transparent 52%);
+}
+
+/* ── Gem carousel — 3 gems like Opal app ── */
+.gem-scene {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; overflow: hidden;
+  margin-bottom: 8px;
+}
+.opal-gem-side {
+  --progress: 0;
+  position: relative; flex-shrink: 0;
+  width: 72px; height: 98px;
+  border-radius: 44% 56% 48% 52% / 36% 34% 66% 64%;
+  overflow: hidden;
+  opacity: 0.32;
+  filter: blur(1.5px) saturate(0.55);
+  z-index: 0;
+}
+.opal-gem-side.left  { margin-right: -22px; border-radius: 40% 60% 46% 54% / 38% 32% 68% 62%; }
+.opal-gem-side.right { margin-left:  -22px; border-radius: 52% 48% 50% 50% / 34% 38% 62% 66%; }
+.opal-gem-side .layer { position: absolute; inset: 0; border-radius: inherit; }
+.opal-gem-side .base {
+  background: radial-gradient(ellipse at 42% 38%,
+    #9b7fd4 0%, #5e3aaf 28%, #2a1566 62%, #0e0826 100%);
+}
+.opal-gem-side .iris {
+  background: conic-gradient(from 100deg at 48% 42%,
+    #ff6b9d 0%, #e040fb 14%, #7c4dff 28%,
+    #448aff 42%, #18ffff 56%, #69f0ae 70%,
+    #ffab40 84%, #ff6b9d 100%);
+  mix-blend-mode: overlay; opacity: .45;
+}
+.opal-gem-side .fire {
+  background:
+    radial-gradient(ellipse at 30% 25%, rgba(255,170,50,.4) 0%, transparent 42%),
+    radial-gradient(ellipse at 65% 60%, rgba(80,200,255,.35) 0%, transparent 38%);
+  mix-blend-mode: screen; opacity: .45;
+}
+.opal-gem-side .highlight {
+  background: radial-gradient(ellipse at 35% 22%,
+    rgba(255,255,255,.55) 0%, rgba(255,255,255,.06) 28%, transparent 52%);
 }
 
 /* Pedestal: small dark ellipse below gem */
@@ -834,31 +871,49 @@ html, body {
     <!-- FOCUS -->
     <div class="tab-pane" id="tab-focus">
       <div class="focus-wrap">
-        <div class="tree-container">
-          <svg class="progress-ring" viewBox="0 0 300 300">
-            <defs>
-              <linearGradient id="ring-grad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%"   stop-color="#a855f7"/>
-                <stop offset="40%"  stop-color="#38bdf8"/>
-                <stop offset="100%" stop-color="#2dd4bf"/>
-              </linearGradient>
-            </defs>
-            <circle class="ring-bg" cx="150" cy="150" r="145"/>
-            <circle class="ring-fg" id="progress-ring-fg" cx="150" cy="150" r="145"
-              stroke-dasharray="911" stroke-dashoffset="911"/>
-          </svg>
-          <div class="tree-timer-overlay">
-            <div class="timer-digits" id="timer-digits">25:00</div>
-            <div class="timer-label" id="timer-label" data-i18n="focus_ready">READY</div>
-          </div>
-          <!-- CSS Opal Gem -->
-          <div class="opal-gem" id="opal-gem">
+        <div class="gem-scene">
+          <!-- Left side gem -->
+          <div class="opal-gem-side left">
             <div class="layer base"></div>
             <div class="layer iris"></div>
             <div class="layer fire"></div>
             <div class="layer highlight"></div>
           </div>
-          <div class="opal-pedestal"></div>
+
+          <!-- Center: progress ring + timer + main gem -->
+          <div class="tree-container">
+            <svg class="progress-ring" viewBox="0 0 300 300">
+              <defs>
+                <linearGradient id="ring-grad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%"   stop-color="#a855f7"/>
+                  <stop offset="40%"  stop-color="#38bdf8"/>
+                  <stop offset="100%" stop-color="#2dd4bf"/>
+                </linearGradient>
+              </defs>
+              <circle class="ring-bg" cx="150" cy="150" r="145"/>
+              <circle class="ring-fg" id="progress-ring-fg" cx="150" cy="150" r="145"
+                stroke-dasharray="911" stroke-dashoffset="911"/>
+            </svg>
+            <div class="tree-timer-overlay">
+              <div class="timer-digits" id="timer-digits">25:00</div>
+              <div class="timer-label" id="timer-label" data-i18n="focus_ready">READY</div>
+            </div>
+            <div class="opal-gem" id="opal-gem">
+              <div class="layer base"></div>
+              <div class="layer iris"></div>
+              <div class="layer fire"></div>
+              <div class="layer highlight"></div>
+            </div>
+            <div class="opal-pedestal"></div>
+          </div>
+
+          <!-- Right side gem -->
+          <div class="opal-gem-side right">
+            <div class="layer base"></div>
+            <div class="layer iris"></div>
+            <div class="layer fire"></div>
+            <div class="layer highlight"></div>
+          </div>
         </div>
         <div class="dur-row" id="dur-row">
           <button class="dur-chip" data-min="15" onclick="setDuration(15)">15 MIN</button>
@@ -1012,14 +1067,11 @@ html, body {
     </button>
     <button class="tab-item" data-tab="focus" onclick="switchTab('focus');tabBurst(this)">
       <div class="tab-glow"></div>
-      <!-- Target / crosshair (focus) -->
-      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
-        <circle cx="12" cy="12" r="9"/>
-        <circle cx="12" cy="12" r="4"/>
-        <line x1="12" y1="2" x2="12" y2="5.5"/>
-        <line x1="12" y1="18.5" x2="12" y2="22"/>
-        <line x1="2" y1="12" x2="5.5" y2="12"/>
-        <line x1="18.5" y1="12" x2="22" y2="12"/>
+      <!-- Sisyphus: человек толкает камень в гору -->
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="17" cy="6" r="4.5" fill="currentColor" stroke="none"/>
+        <circle cx="5" cy="14" r="1.6" fill="currentColor" stroke="none"/>
+        <path d="M5.5,15.5 L9,12 L13.5,9 M9,12 L8.5,17 L7,21 M8.5,17 L11,21"/>
       </svg>
       <span class="tab-lbl" data-i18n="tab_focus">ФОКУС</span>
     </button>
