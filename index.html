@@ -396,8 +396,23 @@ html, body {
   width: 140px; height: 190px;
   border-radius: 44% 56% 48% 52% / 36% 34% 66% 64%;
   overflow: hidden; z-index: 1;
+  /* hidden by default — revealed as reward on focus completion */
+  opacity: 0;
+  filter: blur(18px);
   /* внешнее свечение тоже меняет цвет */
   animation: gem-float 6s ease-in-out infinite, gem-aura 23s linear infinite;
+}
+/* soft vignette fades the hard border-radius clip into background */
+.opal-gem::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(ellipse 76% 78% at 50% 50%,
+    transparent 0%, transparent 50%,
+    rgba(5,1,15,.3) 64%, rgba(5,1,15,.78) 80%, rgba(5,1,15,1) 100%);
+  z-index: 20;
+  pointer-events: none;
 }
 @keyframes gem-aura {
   /* весь камень плавно меняет тень через весь спектр */
@@ -507,9 +522,22 @@ html, body {
   width: 72px; height: 98px;
   border-radius: 44% 56% 48% 52% / 36% 34% 66% 64%;
   overflow: hidden;
-  opacity: 0.32;
-  filter: blur(1.5px) saturate(0.55);
+  /* hidden by default — revealed together with main gem as reward */
+  opacity: 0;
+  filter: blur(12px);
   z-index: 0;
+}
+/* vignette for side gems too */
+.opal-gem-side::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(ellipse 74% 76% at 50% 50%,
+    transparent 0%, transparent 46%,
+    rgba(5,1,15,.35) 62%, rgba(5,1,15,.82) 80%, rgba(5,1,15,1) 100%);
+  z-index: 20;
+  pointer-events: none;
 }
 .opal-gem-side.left  { margin-right: -22px; border-radius: 40% 60% 46% 54% / 38% 32% 68% 62%; }
 .opal-gem-side.right { margin-left:  -22px; border-radius: 52% 48% 50% 50% / 34% 38% 62% 66%; }
@@ -1918,6 +1946,22 @@ function stopFocus(completed){
     document.getElementById('timer-label').textContent=t('focus_complete');
     document.getElementById('timer-digits').textContent='00:00';
     celebrate();
+    // Reveal gems as reward — spring-in animation
+    requestAnimationFrame(()=>{
+      const mainGem=document.getElementById('opal-gem');
+      const sideGems=document.querySelectorAll('.opal-gem-side');
+      if(mainGem){
+        mainGem.style.transition='opacity 1.6s ease, filter 1.4s ease';
+        mainGem.style.opacity='1';
+        mainGem.style.filter='none';
+      }
+      sideGems.forEach((g,i)=>{
+        const d=(0.25+i*0.15).toFixed(2);
+        g.style.transition=`opacity 1.3s ease ${d}s, filter 1.1s ease ${d}s`;
+        g.style.opacity='0.6';
+        g.style.filter='blur(1px) saturate(0.8)';
+      });
+    });
     FOCUS.today_sessions=(FOCUS.today_sessions||0)+1;
     FOCUS.total_minutes=(FOCUS.total_minutes||0)+focusDuration;
     FOCUS.collection.push({type:'amber',date:TODAY,duration:focusDuration});
@@ -1932,6 +1976,10 @@ function stopFocus(completed){
     const ring=document.getElementById('progress-ring-fg');
     if(ring) ring.style.strokeDashoffset='911';
     gemProgress(0);
+    // Hide gems immediately on cancel
+    const mainGem=document.getElementById('opal-gem');
+    if(mainGem){ mainGem.style.transition='opacity .4s ease, filter .4s ease'; mainGem.style.opacity='0'; mainGem.style.filter='blur(18px)'; }
+    document.querySelectorAll('.opal-gem-side').forEach(g=>{ g.style.transition='opacity .3s ease, filter .3s ease'; g.style.opacity='0'; g.style.filter='blur(12px)'; });
     document.getElementById('timer-label').textContent=t('focus_cancelled');
     fetch(BACKEND_URL+'/api/focus_cancel',{method:'POST',headers:NGROK_H,body:'{}'}).catch(()=>{});
     setTimeout(resetTimer,1400);
@@ -1943,6 +1991,18 @@ function resetTimer(){
   gemProgress(0);
   document.getElementById('timer-label').textContent=t('focus_ready');
   document.getElementById('timer-digits').textContent=focusDuration+':00';
+  // Hide gems (instant — no transition)
+  const mainGem=document.getElementById('opal-gem');
+  if(mainGem){
+    mainGem.style.transition='none';
+    mainGem.style.opacity='0';
+    mainGem.style.filter='blur(18px)';
+  }
+  document.querySelectorAll('.opal-gem-side').forEach(g=>{
+    g.style.transition='none';
+    g.style.opacity='0';
+    g.style.filter='blur(12px)';
+  });
 }
 // Level definitions — based on total completed sessions
 const LEVELS = [
