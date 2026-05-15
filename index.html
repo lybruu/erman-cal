@@ -393,26 +393,29 @@ html, body {
 .opal-gem {
   --progress: 0;
   position: relative;
-  width: 140px; height: 190px;
+  width: 130px; height: 175px;
   border-radius: 44% 56% 48% 52% / 36% 34% 66% 64%;
   overflow: hidden; z-index: 1;
-  /* hidden by default — revealed as reward on focus completion */
-  opacity: 0;
-  filter: blur(18px);
-  /* внешнее свечение тоже меняет цвет */
   animation: gem-float 6s ease-in-out infinite, gem-aura 23s linear infinite;
 }
-/* soft vignette fades the hard border-radius clip into background */
+/* crystal edge highlight — gives cut-glass facet feel */
+.opal-gem::before {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  border: 1.5px solid rgba(255,255,255,.22);
+  background: linear-gradient(140deg, rgba(255,255,255,.11) 0%, transparent 38%, transparent 62%, rgba(255,255,255,.05) 100%);
+  z-index: 15; pointer-events: none;
+}
+/* soft vignette — edge fade into dark background */
 .opal-gem::after {
   content: '';
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   border-radius: inherit;
-  background: radial-gradient(ellipse 76% 78% at 50% 50%,
-    transparent 0%, transparent 50%,
-    rgba(5,1,15,.3) 64%, rgba(5,1,15,.78) 80%, rgba(5,1,15,1) 100%);
-  z-index: 20;
-  pointer-events: none;
+  background: radial-gradient(ellipse 72% 74% at 50% 50%,
+    transparent 0%, transparent 45%,
+    rgba(5,1,15,.32) 60%, rgba(5,1,15,.78) 80%, rgba(5,1,15,1) 100%);
+  z-index: 20; pointer-events: none;
 }
 @keyframes gem-aura {
   /* весь камень плавно меняет тень через весь спектр */
@@ -426,10 +429,13 @@ html, body {
 }
 .opal-gem .layer { position: absolute; inset: 0; border-radius: inherit; }
 
-/* LAYER 1 — base: тёмная глубина, пульсирует цветом */
+/* LAYER 1 — base: тёмное прозрачное стекло, background просвечивает */
 .opal-gem .base {
   background: radial-gradient(ellipse at 38% 33%,
-    #f0d0ff 0%, #9b30ff 18%, #4510a0 45%, #100330 80%, #030009 100%);
+    rgba(190,110,255,.14) 0%,
+    rgba(65,12,145,.22) 38%,
+    rgba(8,2,25,.58) 75%,
+    rgba(2,0,8,.80) 100%);
   animation: base-hue 29s linear infinite;
 }
 @keyframes base-hue {
@@ -437,12 +443,12 @@ html, body {
   to   { filter: hue-rotate(360deg); }
 }
 
-/* LAYER 2 — iris: полный спектр, вращается по часовой */
+/* LAYER 2 — iris: радужные вспышки, вращается */
 .opal-gem .iris {
   background: conic-gradient(from 0deg at 50% 50%,
     #ff0055, #ff5500, #ffcc00, #44ff00, #00ffaa, #0055ff, #aa00ff, #ff0055);
   mix-blend-mode: color-dodge;
-  opacity: calc(.35 + var(--progress)*.3);
+  opacity: calc(.18 + var(--progress)*.22);
   transform-origin: 50% 50%;
   animation: iris-spin 13s linear infinite, iris-sat 7s ease-in-out infinite;
 }
@@ -452,16 +458,16 @@ html, body {
   50%     { filter: saturate(2.2) brightness(1.4); }
 }
 
-/* LAYER 3 — fire: 5 цветных пятен дрейфуют + полный цикл hue каждые 11с */
+/* LAYER 3 — fire: цветные пятна как вспышки в опале */
 .opal-gem .fire {
   background:
-    radial-gradient(ellipse 60% 45% at 20% 18%, #ff7700 0%, transparent 55%),
-    radial-gradient(ellipse 50% 60% at 78% 60%, #00ddff 0%, transparent 50%),
-    radial-gradient(ellipse 48% 55% at 50% 88%, #ff00bb 0%, transparent 48%),
-    radial-gradient(ellipse 42% 38% at 85% 14%, #00ff88 0%, transparent 44%),
-    radial-gradient(ellipse 36% 42% at 10% 68%, #ffee00 0%, transparent 42%);
+    radial-gradient(ellipse 55% 42% at 20% 18%, #ff7700 0%, transparent 52%),
+    radial-gradient(ellipse 48% 56% at 78% 60%, #00ddff 0%, transparent 48%),
+    radial-gradient(ellipse 44% 50% at 50% 88%, #ff00bb 0%, transparent 46%),
+    radial-gradient(ellipse 40% 36% at 85% 14%, #00ff88 0%, transparent 42%),
+    radial-gradient(ellipse 34% 40% at 10% 68%, #ffee00 0%, transparent 40%);
   mix-blend-mode: screen;
-  opacity: calc(.6 + var(--progress)*.3);
+  opacity: calc(.38 + var(--progress)*.28);
   animation: fire-chaos 5s ease-in-out infinite alternate, fire-hue 11s linear infinite;
 }
 @keyframes fire-chaos {
@@ -498,11 +504,12 @@ html, body {
   80%     { opacity: .7;  }
 }
 
-/* LAYER 5 — highlight: две блика медленно дрейфуют */
+/* LAYER 5 — highlight: сильные блики дают эффект стекла */
 .opal-gem .highlight {
   background:
-    radial-gradient(ellipse 26% 17% at 33% 22%, rgba(255,255,255,.92) 0%, transparent 58%),
-    radial-gradient(ellipse 16% 11% at 67% 72%, rgba(255,255,255,.45) 0%, transparent 55%);
+    radial-gradient(ellipse 24% 15% at 30% 20%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.4) 35%, transparent 62%),
+    radial-gradient(ellipse 14% 9% at 66% 74%, rgba(255,255,255,.55) 0%, transparent 52%),
+    radial-gradient(ellipse 70% 30% at 50% 4%, rgba(255,255,255,.06) 0%, transparent 60%);
   animation: hl-drift 17s ease-in-out infinite alternate;
 }
 @keyframes hl-drift {
@@ -510,43 +517,41 @@ html, body {
   100% { transform: translate(-9px,6px); }
 }
 
-/* ── Gem carousel — 3 gems like Opal app ── */
-.gem-scene {
-  display: flex; align-items: center; justify-content: center;
-  width: 100%; overflow: hidden;
-  margin-bottom: 8px;
+/* ── Gem trio — reward area below ring ── */
+.gem-trio {
+  display: flex; align-items: flex-end; justify-content: center;
+  width: 100%; margin-top: 10px; margin-bottom: 2px;
+  /* hidden until focus completes */
+  opacity: 0;
+  transform: translateY(18px);
+  pointer-events: none;
 }
+/* keep .gem-scene as simple passthrough (no longer wraps side gems) */
+.gem-scene { display: contents; }
 .opal-gem-side {
   --progress: 0;
   position: relative; flex-shrink: 0;
-  width: 72px; height: 98px;
+  width: 66px; height: 90px;
   border-radius: 44% 56% 48% 52% / 36% 34% 66% 64%;
   overflow: hidden;
-  /* hidden by default — revealed together with main gem as reward */
-  opacity: 0;
-  filter: blur(12px);
+  opacity: 0.45;
+  filter: blur(0.8px) saturate(0.7);
   z-index: 0;
 }
-/* vignette for side gems too */
+/* vignette for side gems */
 .opal-gem-side::after {
   content: '';
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   border-radius: inherit;
-  background: radial-gradient(ellipse 74% 76% at 50% 50%,
-    transparent 0%, transparent 46%,
-    rgba(5,1,15,.35) 62%, rgba(5,1,15,.82) 80%, rgba(5,1,15,1) 100%);
-  z-index: 20;
-  pointer-events: none;
+  background: radial-gradient(ellipse 72% 74% at 50% 50%,
+    transparent 0%, transparent 42%,
+    rgba(5,1,15,.38) 60%, rgba(5,1,15,.85) 80%, rgba(5,1,15,1) 100%);
+  z-index: 20; pointer-events: none;
 }
 .opal-gem-side.left  { margin-right: -22px; border-radius: 40% 60% 46% 54% / 38% 32% 68% 62%; }
 .opal-gem-side.right { margin-left:  -22px; border-radius: 52% 48% 50% 50% / 34% 38% 62% 66%; }
 .opal-gem-side .layer { position: absolute; inset: 0; border-radius: inherit; }
-.opal-gem-side .base {
-  background: radial-gradient(ellipse at 42% 38%,
-    #9b7fd4 0%, #5e3aaf 28%, #2a1566 62%, #0e0826 100%);
-}
-.opal-gem-side .base    { background: radial-gradient(ellipse at 42% 38%, #c0a0ff 0%, #5030aa 28%, #1a0850 62%, #06020e 100%); animation: base-hue 29s linear infinite; animation-delay: -8s; }
+.opal-gem-side .base    { background: radial-gradient(ellipse at 42% 38%, rgba(160,80,220,.12) 0%, rgba(50,10,110,.20) 40%, rgba(6,1,20,.60) 78%, rgba(2,0,8,.80) 100%); animation: base-hue 29s linear infinite; animation-delay: -8s; }
 .opal-gem-side .iris    { background: conic-gradient(from 60deg at 50% 50%, #ff0055,#ff5500,#ffcc00,#44ff00,#00ffaa,#0055ff,#aa00ff,#ff0055); mix-blend-mode: color-dodge; opacity: .28; animation: iris-spin 17s linear infinite, iris-sat 9s ease-in-out infinite; animation-delay: -5s,-3s; }
 .opal-gem-side .fire    { background: radial-gradient(ellipse 60% 45% at 25% 20%,#ff7700 0%,transparent 55%), radial-gradient(ellipse 50% 60% at 72% 64%,#00ddff 0%,transparent 50%), radial-gradient(ellipse 42% 50% at 48% 85%,#ff00bb 0%,transparent 48%); mix-blend-mode: screen; opacity: .38; animation: fire-chaos 7s ease-in-out infinite alternate, fire-hue 13s linear infinite; animation-delay: -4s,-7s; }
 .opal-gem-side .shimmer { background: conic-gradient(from 80deg at 47% 46%, transparent 0%,rgba(255,200,255,.6) 8%,transparent 16%,rgba(180,255,240,.5) 30%,transparent 38%,rgba(255,255,160,.6) 52%,transparent 62%,rgba(160,210,255,.5) 74%,transparent 82%); mix-blend-mode: soft-light; animation: shimmer-spin 23s linear infinite reverse, shimmer-flash 4.3s ease-in-out infinite; animation-delay: -11s,-2s; }
@@ -933,8 +938,28 @@ html, body {
     <!-- FOCUS -->
     <div class="tab-pane" id="tab-focus">
       <div class="focus-wrap">
-        <div class="gem-scene">
-          <!-- Left side gem -->
+        <!-- Ring + timer — standalone, no gem inside -->
+        <div class="tree-container">
+          <svg class="progress-ring" viewBox="0 0 300 300">
+            <defs>
+              <linearGradient id="ring-grad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%"   stop-color="#a855f7"/>
+                <stop offset="40%"  stop-color="#38bdf8"/>
+                <stop offset="100%" stop-color="#2dd4bf"/>
+              </linearGradient>
+            </defs>
+            <circle class="ring-bg" cx="150" cy="150" r="145"/>
+            <circle class="ring-fg" id="progress-ring-fg" cx="150" cy="150" r="145"
+              stroke-dasharray="911" stroke-dashoffset="911"/>
+          </svg>
+          <div class="tree-timer-overlay">
+            <div class="timer-digits" id="timer-digits">25:00</div>
+            <div class="timer-label" id="timer-label" data-i18n="focus_ready">READY</div>
+          </div>
+        </div>
+
+        <!-- Gem trio — reward area, hidden until focus completes -->
+        <div class="gem-trio" id="gem-trio">
           <div class="opal-gem-side left">
             <div class="layer base"></div>
             <div class="layer iris"></div>
@@ -942,36 +967,13 @@ html, body {
             <div class="layer shimmer"></div>
             <div class="layer highlight"></div>
           </div>
-
-          <!-- Center: progress ring + timer + main gem -->
-          <div class="tree-container">
-            <svg class="progress-ring" viewBox="0 0 300 300">
-              <defs>
-                <linearGradient id="ring-grad" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%"   stop-color="#a855f7"/>
-                  <stop offset="40%"  stop-color="#38bdf8"/>
-                  <stop offset="100%" stop-color="#2dd4bf"/>
-                </linearGradient>
-              </defs>
-              <circle class="ring-bg" cx="150" cy="150" r="145"/>
-              <circle class="ring-fg" id="progress-ring-fg" cx="150" cy="150" r="145"
-                stroke-dasharray="911" stroke-dashoffset="911"/>
-            </svg>
-            <div class="tree-timer-overlay">
-              <div class="timer-digits" id="timer-digits">25:00</div>
-              <div class="timer-label" id="timer-label" data-i18n="focus_ready">READY</div>
-            </div>
-            <div class="opal-gem" id="opal-gem">
-              <div class="layer base"></div>
-              <div class="layer iris"></div>
-              <div class="layer fire"></div>
-              <div class="layer shimmer"></div>
-              <div class="layer highlight"></div>
-            </div>
-            <div class="opal-pedestal"></div>
+          <div class="opal-gem" id="opal-gem">
+            <div class="layer base"></div>
+            <div class="layer iris"></div>
+            <div class="layer fire"></div>
+            <div class="layer shimmer"></div>
+            <div class="layer highlight"></div>
           </div>
-
-          <!-- Right side gem -->
           <div class="opal-gem-side right">
             <div class="layer base"></div>
             <div class="layer iris"></div>
@@ -1946,21 +1948,15 @@ function stopFocus(completed){
     document.getElementById('timer-label').textContent=t('focus_complete');
     document.getElementById('timer-digits').textContent='00:00';
     celebrate();
-    // Reveal gems as reward — spring-in animation
+    // Reveal gem trio as reward
     requestAnimationFrame(()=>{
-      const mainGem=document.getElementById('opal-gem');
-      const sideGems=document.querySelectorAll('.opal-gem-side');
-      if(mainGem){
-        mainGem.style.transition='opacity 1.6s ease, filter 1.4s ease';
-        mainGem.style.opacity='1';
-        mainGem.style.filter='none';
+      const trio=document.getElementById('gem-trio');
+      if(trio){
+        trio.style.transition='opacity 1.8s ease, transform 1.4s cubic-bezier(0.22,1,0.36,1)';
+        trio.style.opacity='1';
+        trio.style.transform='translateY(0)';
+        trio.style.pointerEvents='auto';
       }
-      sideGems.forEach((g,i)=>{
-        const d=(0.25+i*0.15).toFixed(2);
-        g.style.transition=`opacity 1.3s ease ${d}s, filter 1.1s ease ${d}s`;
-        g.style.opacity='0.6';
-        g.style.filter='blur(1px) saturate(0.8)';
-      });
     });
     FOCUS.today_sessions=(FOCUS.today_sessions||0)+1;
     FOCUS.total_minutes=(FOCUS.total_minutes||0)+focusDuration;
@@ -1976,10 +1972,9 @@ function stopFocus(completed){
     const ring=document.getElementById('progress-ring-fg');
     if(ring) ring.style.strokeDashoffset='911';
     gemProgress(0);
-    // Hide gems immediately on cancel
-    const mainGem=document.getElementById('opal-gem');
-    if(mainGem){ mainGem.style.transition='opacity .4s ease, filter .4s ease'; mainGem.style.opacity='0'; mainGem.style.filter='blur(18px)'; }
-    document.querySelectorAll('.opal-gem-side').forEach(g=>{ g.style.transition='opacity .3s ease, filter .3s ease'; g.style.opacity='0'; g.style.filter='blur(12px)'; });
+    // Hide gem trio on cancel
+    const trioC=document.getElementById('gem-trio');
+    if(trioC){ trioC.style.transition='opacity .4s ease, transform .4s ease'; trioC.style.opacity='0'; trioC.style.transform='translateY(12px)'; trioC.style.pointerEvents='none'; }
     document.getElementById('timer-label').textContent=t('focus_cancelled');
     fetch(BACKEND_URL+'/api/focus_cancel',{method:'POST',headers:NGROK_H,body:'{}'}).catch(()=>{});
     setTimeout(resetTimer,1400);
@@ -1991,18 +1986,9 @@ function resetTimer(){
   gemProgress(0);
   document.getElementById('timer-label').textContent=t('focus_ready');
   document.getElementById('timer-digits').textContent=focusDuration+':00';
-  // Hide gems (instant — no transition)
-  const mainGem=document.getElementById('opal-gem');
-  if(mainGem){
-    mainGem.style.transition='none';
-    mainGem.style.opacity='0';
-    mainGem.style.filter='blur(18px)';
-  }
-  document.querySelectorAll('.opal-gem-side').forEach(g=>{
-    g.style.transition='none';
-    g.style.opacity='0';
-    g.style.filter='blur(12px)';
-  });
+  // Hide gem trio instantly on reset
+  const trioR=document.getElementById('gem-trio');
+  if(trioR){ trioR.style.transition='none'; trioR.style.opacity='0'; trioR.style.transform='translateY(18px)'; trioR.style.pointerEvents='none'; }
 }
 // Level definitions — based on total completed sessions
 const LEVELS = [
