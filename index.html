@@ -413,18 +413,18 @@ html, body {
       rgba(0,0,0,.4) 100%) border-box;
   z-index: 15; pointer-events: none;
 }
-/* Тяжёлый vignette — края тают в черноте, нет harsh clip */
+/* Vignette — края тают в черноте */
 .opal-gem::after {
   content: '';
   position: absolute; inset: 0;
   border-radius: inherit;
-  background: radial-gradient(ellipse 68% 70% at 50% 50%,
+  background: radial-gradient(ellipse 70% 72% at 50% 50%,
     transparent 0%,
-    transparent 38%,
-    rgba(0,0,5,.45) 54%,
-    rgba(0,0,5,.82) 72%,
-    rgba(0,0,5,.97) 88%,
-    #000005 100%);
+    transparent 42%,
+    rgba(0,0,8,.30) 58%,
+    rgba(0,0,8,.72) 76%,
+    rgba(0,0,8,.95) 90%,
+    #000008 100%);
   z-index: 20; pointer-events: none;
 }
 @keyframes gem-aura {
@@ -449,9 +449,8 @@ html, body {
   animation: blobs-hue 53s linear infinite;
 }
 @keyframes blobs-hue {
-  /* Медленная смена доминирующего цвета — не радуга, а настроение */
-  0%   { filter: blur(28px) saturate(1.4) hue-rotate(0deg)   brightness(.85); }
-  100% { filter: blur(28px) saturate(1.4) hue-rotate(360deg) brightness(.85); }
+  0%   { filter: blur(22px) saturate(1.8) hue-rotate(0deg); }
+  100% { filter: blur(22px) saturate(1.8) hue-rotate(360deg); }
 }
 
 .blob {
@@ -461,40 +460,40 @@ html, body {
 
 /* 4 блоба — не все сразу, концентрируются в центре с тёмными зонами по краям */
 
-/* Главный — глубокий пурпур, большой, медленный */
+/* Главный — насыщенный пурпур */
 .b1 {
-  width: 100px; height: 115px;
-  left: 8%; top: 15%;
+  width: 105px; height: 118px;
+  left: 5%; top: 10%;
   border-radius: 42% 58% 55% 45% / 48% 44% 56% 52%;
-  background: radial-gradient(ellipse at 45% 42%, #7b00d4 0%, #3a007a 45%, transparent 72%);
-  opacity: .75;
+  background: radial-gradient(ellipse at 45% 42%, #a020f0 0%, #5500b0 42%, transparent 70%);
+  opacity: .82;
   animation: gb1 23s ease-in-out infinite alternate;
 }
-/* Акцент — холодный бирюзовый, средний */
+/* Холодный — яркий бирюзово-синий */
 .b2 {
-  width: 85px; height: 95px;
-  left: 38%; top: 25%;
+  width: 90px; height: 100px;
+  left: 38%; top: 20%;
   border-radius: 55% 45% 38% 62% / 52% 58% 42% 48%;
-  background: radial-gradient(ellipse at 50% 48%, #006a8e 0%, #003050 50%, transparent 74%);
-  opacity: .65;
+  background: radial-gradient(ellipse at 50% 48%, #0096c7 0%, #004080 48%, transparent 72%);
+  opacity: .75;
   animation: gb2 17s ease-in-out infinite alternate;
 }
-/* Тепло — глубокий янтарь, появляется снизу */
+/* Тёплый — янтарно-оранжевый */
 .b3 {
-  width: 90px; height: 80px;
-  left: 12%; top: 52%;
+  width: 95px; height: 85px;
+  left: 8%; top: 50%;
   border-radius: 48% 52% 44% 56% / 55% 45% 55% 45%;
-  background: radial-gradient(ellipse at 48% 45%, #8b4000 0%, #4a1a00 52%, transparent 74%);
-  opacity: .60;
+  background: radial-gradient(ellipse at 48% 45%, #c05000 0%, #6b1f00 50%, transparent 72%);
+  opacity: .70;
   animation: gb3 29s ease-in-out infinite alternate;
 }
-/* Глубина — тёмно-розовый, маленький акцент */
+/* Акцент — малиново-розовый */
 .b4 {
-  width: 70px; height: 80px;
-  left: 50%; top: 50%;
+  width: 80px; height: 88px;
+  left: 48%; top: 48%;
   border-radius: 60% 40% 52% 48% / 44% 56% 44% 56%;
-  background: radial-gradient(ellipse at 45% 42%, #7a0040 0%, #380020 52%, transparent 72%);
-  opacity: .55;
+  background: radial-gradient(ellipse at 45% 42%, #cc0066 0%, #6a0030 50%, transparent 70%);
+  opacity: .68;
   animation: gb4 19s ease-in-out infinite alternate;
 }
 
@@ -1174,11 +1173,17 @@ html, body {
     </button>
     <button class="tab-item" data-tab="focus" onclick="switchTab('focus');tabBurst(this)">
       <div class="tab-glow"></div>
-      <!-- Sisyphus: человек толкает камень в гору -->
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="17" cy="6" r="4.5" fill="currentColor" stroke="none"/>
-        <circle cx="5" cy="14" r="1.6" fill="currentColor" stroke="none"/>
-        <path d="M5.5,15.5 L9,12 L13.5,9 M9,12 L8.5,17 L7,21 M8.5,17 L11,21"/>
+      <!-- Sisyphus: человек толкает камень -->
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+        <!-- камень -->
+        <circle cx="16.5" cy="6.5" r="3.8"/>
+        <!-- голова -->
+        <circle cx="6" cy="12.5" r="1.7"/>
+        <!-- тело + ноги — простые заливки -->
+        <rect x="5.2" y="14.2" width="1.8" height="6" rx="0.9" transform="rotate(-5 6 17)"/>
+        <rect x="7"   y="14.2" width="1.8" height="5" rx="0.9" transform="rotate(10 8 17)"/>
+        <!-- рука тянется к камню -->
+        <rect x="6.5" y="13" width="7" height="1.6" rx="0.8" transform="rotate(-30 6.5 13)"/>
       </svg>
       <span class="tab-lbl" data-i18n="tab_focus">ФОКУС</span>
     </button>
