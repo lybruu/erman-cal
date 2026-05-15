@@ -1173,17 +1173,18 @@ html, body {
     </button>
     <button class="tab-item" data-tab="focus" onclick="switchTab('focus');tabBurst(this)">
       <div class="tab-glow"></div>
-      <!-- Sisyphus: человек толкает камень -->
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-        <!-- камень -->
-        <circle cx="16.5" cy="6.5" r="3.8"/>
-        <!-- голова -->
-        <circle cx="6" cy="12.5" r="1.7"/>
-        <!-- тело + ноги — простые заливки -->
-        <rect x="5.2" y="14.2" width="1.8" height="6" rx="0.9" transform="rotate(-5 6 17)"/>
-        <rect x="7"   y="14.2" width="1.8" height="5" rx="0.9" transform="rotate(10 8 17)"/>
-        <!-- рука тянется к камню -->
-        <rect x="6.5" y="13" width="7" height="1.6" rx="0.8" transform="rotate(-30 6.5 13)"/>
+      <!-- Sisyphus: большой камень, маленький человек толкает снизу -->
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <!-- камень — большой, доминирует -->
+        <circle cx="15" cy="8.5" r="6" fill="currentColor"/>
+        <!-- голова — маленькая, внизу-слева -->
+        <circle cx="4.8" cy="15.5" r="1.7" fill="currentColor"/>
+        <!-- спина/корпус — наклонён к камню -->
+        <line x1="5.5" y1="17.2" x2="11.5" y2="13.2" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+        <!-- передняя нога (шаг вперёд) -->
+        <line x1="7"   y1="18.5" x2="9.5"  y2="23"   stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        <!-- задняя нога (упор) -->
+        <line x1="5.2" y1="18.5" x2="3"    y2="22.5"  stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
       </svg>
       <span class="tab-lbl" data-i18n="tab_focus">ФОКУС</span>
     </button>
