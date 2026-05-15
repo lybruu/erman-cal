@@ -119,7 +119,7 @@ html, body {
   min-width: 0; position: relative;
   overflow: hidden; border-radius: 14px;
 }
-.tab-item svg { transition: opacity .25s, transform .2s; }
+.tab-item svg { transition: opacity .25s, transform .2s; width: 26px; height: 26px; }
 .tab-item .tab-lbl {
   font-size: 9px; letter-spacing: 1.2px; font-family: var(--font-display);
   text-transform: uppercase; opacity: 0; transition: opacity .25s;
@@ -1173,18 +1173,18 @@ html, body {
     </button>
     <button class="tab-item" data-tab="focus" onclick="switchTab('focus');tabBurst(this)">
       <div class="tab-glow"></div>
-      <!-- Sisyphus: большой камень, маленький человек толкает снизу -->
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-        <!-- камень — большой, доминирует -->
-        <circle cx="15" cy="8.5" r="6" fill="currentColor"/>
-        <!-- голова — маленькая, внизу-слева -->
-        <circle cx="4.8" cy="15.5" r="1.7" fill="currentColor"/>
-        <!-- спина/корпус — наклонён к камню -->
-        <line x1="5.5" y1="17.2" x2="11.5" y2="13.2" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
-        <!-- передняя нога (шаг вперёд) -->
-        <line x1="7"   y1="18.5" x2="9.5"  y2="23"   stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-        <!-- задняя нога (упор) -->
-        <line x1="5.2" y1="18.5" x2="3"    y2="22.5"  stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+      <!-- Sisyphus: камень занимает ~70% иконки, человечек снизу -->
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <!-- камень — почти весь viewbox -->
+        <circle cx="14" cy="9" r="8.5" fill="currentColor" opacity="1"/>
+        <!-- голова — крошечная точка -->
+        <circle cx="3.5" cy="18" r="1.4" fill="currentColor"/>
+        <!-- корпус + рука к камню — одна толстая линия -->
+        <line x1="4" y1="19.4" x2="9" y2="16" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        <!-- нога задняя -->
+        <line x1="4.2" y1="19.8" x2="2" y2="23.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- нога передняя -->
+        <line x1="5.5" y1="20" x2="7.5" y2="23.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
       </svg>
       <span class="tab-lbl" data-i18n="tab_focus">ФОКУС</span>
     </button>
