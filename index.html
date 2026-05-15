@@ -619,6 +619,8 @@ html, body {
   background: transparent; color: var(--sub); cursor: pointer; transition: all .2s;
 }
 .dur-chip.active { border-color: var(--accent); color: var(--accent); background: rgba(255,159,10,.06); }
+.gem-preview-btn { opacity: .35; letter-spacing: 0; padding: 8px 14px; }
+.gem-preview-btn:hover { opacity: .7; }
 .focus-btn {
   width: 100%; max-width: 260px; padding: 16px; border: none; border-radius: 20px;
   font-size: 20px; cursor: pointer; letter-spacing: 3px;
@@ -986,6 +988,7 @@ html, body {
           <button class="dur-chip" data-min="15" onclick="setDuration(15)">15 MIN</button>
           <button class="dur-chip active" data-min="25" onclick="setDuration(25)">25 MIN</button>
           <button class="dur-chip" data-min="45" onclick="setDuration(45)">45 MIN</button>
+          <button class="dur-chip gem-preview-btn" onclick="previewGem()" title="preview reward">⚡</button>
         </div>
         <button class="focus-btn start" id="focus-btn" onclick="toggleFocus()" data-i18n="focus_start">Start Focus</button>
         <div class="focus-stats">
@@ -1912,6 +1915,16 @@ function setDuration(min){
   document.getElementById('timer-digits').textContent=min+':00';
 }
 function toggleFocus(){if(focusRunning)stopFocus(false);else startFocus();}
+function previewGem(){
+  // If currently running, stop cleanly first
+  if(focusRunning){ clearInterval(focusTimer); focusRunning=false; }
+  // Fill the progress ring to 100%
+  treeProgress(1);
+  document.getElementById('timer-digits').textContent='00:00';
+  document.getElementById('timer-digits').classList.remove('pulsing');
+  // Trigger completion animation (gems reveal + celebrate)
+  stopFocus(true);
+}
 function startFocus(){
   focusRunning=true; focusStart=Date.now(); focusElapsed=0;
   document.getElementById('dur-row').style.opacity='.3';
