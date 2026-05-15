@@ -398,107 +398,147 @@ html, body {
   overflow: hidden; z-index: 1;
   animation: gem-float 6s ease-in-out infinite, gem-aura 23s linear infinite;
 }
-/* crystal edge highlight — gives cut-glass facet feel */
+/* Rim: тонкий контур — верхний левый ярче, нижний правый темнее */
 .opal-gem::before {
   content: '';
   position: absolute; inset: 0;
   border-radius: inherit;
-  border: 1.5px solid rgba(255,255,255,.22);
-  background: linear-gradient(140deg, rgba(255,255,255,.11) 0%, transparent 38%, transparent 62%, rgba(255,255,255,.05) 100%);
+  border: 1px solid transparent;
+  background:
+    linear-gradient(#000005, #000005) padding-box,
+    linear-gradient(145deg,
+      rgba(255,255,255,.35) 0%,
+      rgba(255,255,255,.12) 30%,
+      rgba(255,255,255,.02) 60%,
+      rgba(0,0,0,.4) 100%) border-box;
   z-index: 15; pointer-events: none;
 }
-/* soft vignette — edge fade into dark background */
+/* Тяжёлый vignette — края тают в черноте, нет harsh clip */
 .opal-gem::after {
   content: '';
   position: absolute; inset: 0;
   border-radius: inherit;
-  background: radial-gradient(ellipse 72% 74% at 50% 50%,
-    transparent 0%, transparent 45%,
-    rgba(5,1,15,.32) 60%, rgba(5,1,15,.78) 80%, rgba(5,1,15,1) 100%);
+  background: radial-gradient(ellipse 68% 70% at 50% 50%,
+    transparent 0%,
+    transparent 38%,
+    rgba(0,0,5,.45) 54%,
+    rgba(0,0,5,.82) 72%,
+    rgba(0,0,5,.97) 88%,
+    #000005 100%);
   z-index: 20; pointer-events: none;
 }
 @keyframes gem-aura {
-  /* весь камень плавно меняет тень через весь спектр */
-  0%   { box-shadow: 0 0 45px rgba(180,60,255,.45),  0 0 90px rgba(60,130,255,.2),  inset 0 0 28px rgba(100,30,180,.4); }
-  16%  { box-shadow: 0 0 45px rgba(255,60,180,.45),  0 0 90px rgba(255,90,60,.2),   inset 0 0 28px rgba(180,30,80,.4); }
-  33%  { box-shadow: 0 0 45px rgba(255,160,30,.45),  0 0 90px rgba(255,210,0,.2),   inset 0 0 28px rgba(180,100,0,.4); }
-  50%  { box-shadow: 0 0 45px rgba(30,220,120,.45),  0 0 90px rgba(0,200,160,.2),   inset 0 0 28px rgba(0,130,80,.4); }
-  66%  { box-shadow: 0 0 45px rgba(0,200,255,.45),   0 0 90px rgba(30,100,255,.2),  inset 0 0 28px rgba(0,80,180,.4); }
-  83%  { box-shadow: 0 0 45px rgba(120,0,255,.45),   0 0 90px rgba(180,0,255,.2),   inset 0 0 28px rgba(80,0,160,.4); }
-  100% { box-shadow: 0 0 45px rgba(180,60,255,.45),  0 0 90px rgba(60,130,255,.2),  inset 0 0 28px rgba(100,30,180,.4); }
+  /* Медленное дыхание — один цвет доминирует, не все сразу */
+  0%   { box-shadow: 0 0 28px rgba(90,0,180,.35),  0 0 60px rgba(50,0,120,.15); }
+  25%  { box-shadow: 0 0 28px rgba(0,60,120,.30),  0 0 60px rgba(0,40,90,.12); }
+  50%  { box-shadow: 0 0 28px rgba(80,20,0,.28),   0 0 60px rgba(50,10,0,.12); }
+  75%  { box-shadow: 0 0 28px rgba(60,0,100,.32),  0 0 60px rgba(40,0,80,.14); }
+  100% { box-shadow: 0 0 28px rgba(90,0,180,.35),  0 0 60px rgba(50,0,120,.15); }
 }
 /* ── MESH GRADIENT BLOBS — правильная техника для органической радужности ── */
 
-/* Тёмная база — цвет фона кристалла */
-.opal-gem { background: #03010d; }
+/* ── PREMIUM GEM — deep dark, single light source, liquid motion ── */
 
-/* Контейнер блобов: большой blur создаёт органику */
+/* Почти чёрная бездна — камень сам является источником света */
+.opal-gem { background: #000005; }
+
+/* Блобы: медленное движение как масло в воде */
 .gem-blobs {
-  position: absolute; inset: -15%;
-  animation: blobs-hue 37s linear infinite;
+  position: absolute; inset: -20%;
+  /* Цикл 53s — достаточно медленно чтобы не замечать петлю */
+  animation: blobs-hue 53s linear infinite;
 }
 @keyframes blobs-hue {
-  from { filter: blur(24px) saturate(2.2) hue-rotate(0deg); }
-  to   { filter: blur(24px) saturate(2.2) hue-rotate(360deg); }
+  /* Медленная смена доминирующего цвета — не радуга, а настроение */
+  0%   { filter: blur(28px) saturate(1.4) hue-rotate(0deg)   brightness(.85); }
+  100% { filter: blur(28px) saturate(1.4) hue-rotate(360deg) brightness(.85); }
 }
 
-/* Каждый blob — одно чистое пятно цвета, mix-blend-mode:screen = свет */
 .blob {
   position: absolute;
-  border-radius: 50%;
   mix-blend-mode: screen;
 }
 
-/* 7 блобов — полный спектр, каждый живёт своей жизнью */
-.b1 { width:90px; height:100px; left:2%;  top:5%;
-  background: radial-gradient(circle, #ff1060 0%, transparent 68%);
-  animation: gb1 11s ease-in-out infinite alternate; }
+/* 4 блоба — не все сразу, концентрируются в центре с тёмными зонами по краям */
 
-.b2 { width:80px; height:90px;  left:45%; top:0%;
-  background: radial-gradient(circle, #ff7700 0%, transparent 68%);
-  animation: gb2 7s ease-in-out infinite alternate; }
+/* Главный — глубокий пурпур, большой, медленный */
+.b1 {
+  width: 100px; height: 115px;
+  left: 8%; top: 15%;
+  border-radius: 42% 58% 55% 45% / 48% 44% 56% 52%;
+  background: radial-gradient(ellipse at 45% 42%, #7b00d4 0%, #3a007a 45%, transparent 72%);
+  opacity: .75;
+  animation: gb1 23s ease-in-out infinite alternate;
+}
+/* Акцент — холодный бирюзовый, средний */
+.b2 {
+  width: 85px; height: 95px;
+  left: 38%; top: 25%;
+  border-radius: 55% 45% 38% 62% / 52% 58% 42% 48%;
+  background: radial-gradient(ellipse at 50% 48%, #006a8e 0%, #003050 50%, transparent 74%);
+  opacity: .65;
+  animation: gb2 17s ease-in-out infinite alternate;
+}
+/* Тепло — глубокий янтарь, появляется снизу */
+.b3 {
+  width: 90px; height: 80px;
+  left: 12%; top: 52%;
+  border-radius: 48% 52% 44% 56% / 55% 45% 55% 45%;
+  background: radial-gradient(ellipse at 48% 45%, #8b4000 0%, #4a1a00 52%, transparent 74%);
+  opacity: .60;
+  animation: gb3 29s ease-in-out infinite alternate;
+}
+/* Глубина — тёмно-розовый, маленький акцент */
+.b4 {
+  width: 70px; height: 80px;
+  left: 50%; top: 50%;
+  border-radius: 60% 40% 52% 48% / 44% 56% 44% 56%;
+  background: radial-gradient(ellipse at 45% 42%, #7a0040 0%, #380020 52%, transparent 72%);
+  opacity: .55;
+  animation: gb4 19s ease-in-out infinite alternate;
+}
 
-.b3 { width:100px; height:85px; left:20%; top:30%;
-  background: radial-gradient(circle, #ffe000 0%, transparent 68%);
-  animation: gb3 13s ease-in-out infinite alternate; }
+/* Движение: медленный дрейф как конвекция в жидкости */
+@keyframes gb1 {
+  0%   { transform: translate(0px,   0px) scale(1.00); }
+  33%  { transform: translate(-14px, 18px) scale(1.12); }
+  66%  { transform: translate(10px,  -8px) scale(0.92); }
+  100% { transform: translate(-6px,  22px) scale(1.08); }
+}
+@keyframes gb2 {
+  0%   { transform: translate(0px,  0px) scale(1.05); }
+  40%  { transform: translate(18px,-15px) scale(0.90); }
+  100% { transform: translate(-8px, 20px) scale(1.15); }
+}
+@keyframes gb3 {
+  0%   { transform: translate(0px,  0px) scale(0.95); }
+  50%  { transform: translate(15px, 12px) scale(1.10); }
+  100% { transform: translate(-12px,-10px) scale(1.00); }
+}
+@keyframes gb4 {
+  0%   { transform: translate(0px,  0px) scale(1.0); }
+  45%  { transform: translate(-16px,14px) scale(1.2); }
+  100% { transform: translate(14px,-12px) scale(0.85); }
+}
 
-.b4 { width:85px; height:95px;  left:55%; top:35%;
-  background: radial-gradient(circle, #00e896 0%, transparent 68%);
-  animation: gb4 9s ease-in-out infinite alternate; }
-
-.b5 { width:95px; height:80px;  left:5%;  top:55%;
-  background: radial-gradient(circle, #00c8ff 0%, transparent 68%);
-  animation: gb5 17s ease-in-out infinite alternate; }
-
-.b6 { width:80px; height:100px; left:40%; top:58%;
-  background: radial-gradient(circle, #3040ff 0%, transparent 68%);
-  animation: gb6 5s ease-in-out infinite alternate; }
-
-.b7 { width:90px; height:90px;  left:22%; top:12%;
-  background: radial-gradient(circle, #cc00ff 0%, transparent 68%);
-  animation: gb7 19s ease-in-out infinite alternate; }
-
-/* Каждый блоб дрейфует в уникальном направлении */
-@keyframes gb1 { from{transform:translate(0,0)   scale(1.0)} to{transform:translate(-18px,25px) scale(1.2)} }
-@keyframes gb2 { from{transform:translate(0,0)   scale(1.1)} to{transform:translate(22px,-18px) scale(0.85)} }
-@keyframes gb3 { from{transform:translate(0,0)   scale(0.9)} to{transform:translate(-12px,-22px)scale(1.15)} }
-@keyframes gb4 { from{transform:translate(0,0)   scale(1.0)} to{transform:translate(16px,20px)  scale(0.9)} }
-@keyframes gb5 { from{transform:translate(0,0)   scale(1.1)} to{transform:translate(20px,-15px) scale(1.2)} }
-@keyframes gb6 { from{transform:translate(0,0)   scale(0.9)} to{transform:translate(-20px,18px) scale(1.1)} }
-@keyframes gb7 { from{transform:translate(0,0)   scale(1.2)} to{transform:translate(15px,20px)  scale(0.9)} }
-
-/* Острые блики поверх размытых блобов (не внутри blur-родителя!) */
+/* ── Highlight: единственный источник света — продаёт 3D-стекло ── */
 .gem-hl {
   position: absolute; inset: 0; z-index: 5; pointer-events: none;
   background:
-    radial-gradient(ellipse 22% 13% at 28% 19%, rgba(255,255,255,.96) 0%, rgba(255,255,255,.3) 40%, transparent 65%),
-    radial-gradient(ellipse 12% 8%  at 65% 75%, rgba(255,255,255,.50) 0%, transparent 55%),
-    radial-gradient(ellipse 60% 22% at 50% 2%,  rgba(255,255,255,.07) 0%, transparent 65%);
-  animation: hl-drift 17s ease-in-out infinite alternate;
-}
-@keyframes hl-drift {
-  from { transform: translate(0,0); }
-  to   { transform: translate(-8px, 5px); }
+    /* Основной блик — острый, яркий, верхний левый */
+    radial-gradient(ellipse 18% 11% at 27% 17%,
+      rgba(255,255,255,1.0) 0%,
+      rgba(255,255,255,.55) 28%,
+      rgba(255,255,255,.1) 55%,
+      transparent 72%),
+    /* Вторичный — едва заметный, нижний правый */
+    radial-gradient(ellipse 10% 6% at 68% 76%,
+      rgba(255,255,255,.38) 0%,
+      transparent 60%),
+    /* Rim glow — тонкий свет по верхней кромке */
+    radial-gradient(ellipse 55% 18% at 50% 0%,
+      rgba(255,255,255,.09) 0%,
+      transparent 70%);
 }
 
 /* ── Gem trio — reward area below ring ── */
@@ -534,22 +574,23 @@ html, body {
 }
 .opal-gem-side.left  { margin-right: -22px; border-radius: 40% 60% 46% 54% / 38% 32% 68% 62%; }
 .opal-gem-side.right { margin-left:  -22px; border-radius: 52% 48% 50% 50% / 34% 38% 62% 66%; }
-/* Side gems — same blob technique, simplified (4 blobs, offset phases) */
-.opal-gem-side { background: #03010d; }
+/* Side gems — тёмные, тихие, 2 блоба */
+.opal-gem-side { background: #000005; }
 .opal-gem-side .gem-blobs {
-  position: absolute; inset: -15%;
-  animation: blobs-hue 37s linear infinite;
-  animation-delay: -14s; /* offset so sides look different from center */
+  position: absolute; inset: -20%;
+  animation: blobs-hue 53s linear infinite;
+  animation-delay: -19s;
 }
 .opal-gem-side .gem-hl {
   position: absolute; inset: 0; z-index: 5; pointer-events: none;
-  background: radial-gradient(ellipse 24% 14% at 30% 20%, rgba(255,255,255,.8) 0%, transparent 60%);
+  background: radial-gradient(ellipse 20% 12% at 28% 18%, rgba(255,255,255,.65) 0%, transparent 60%);
 }
-/* side blobs — smaller, 4 colors, different delays */
-.opal-gem-side .b1 { width:50px;height:55px; left:2%;  top:5%;  animation-delay:-3s;  background:radial-gradient(circle,#ff1060 0%,transparent 68%); }
-.opal-gem-side .b2 { width:45px;height:50px; left:42%; top:2%;  animation-delay:-9s;  background:radial-gradient(circle,#00ccff 0%,transparent 68%); }
-.opal-gem-side .b3 { width:55px;height:48px; left:18%; top:38%; animation-delay:-5s;  background:radial-gradient(circle,#ffe000 0%,transparent 68%); }
-.opal-gem-side .b4 { width:50px;height:55px; left:38%; top:45%; animation-delay:-12s; background:radial-gradient(circle,#9900ff 0%,transparent 68%); }
+.opal-gem-side .b1 { width:48px;height:54px; left:5%;  top:10%; border-radius:50%;
+  background:radial-gradient(ellipse at 45% 42%,#5a009a 0%,#26004a 48%,transparent 72%);
+  opacity:.65; animation:gb1 23s ease-in-out infinite alternate; animation-delay:-7s; }
+.opal-gem-side .b2 { width:44px;height:50px; left:35%; top:35%; border-radius:50%;
+  background:radial-gradient(ellipse at 45% 42%,#003e6a 0%,#001830 50%,transparent 72%);
+  opacity:.55; animation:gb2 17s ease-in-out infinite alternate; animation-delay:-11s; }
 
 /* Pedestal: small dark ellipse below gem */
 .opal-pedestal {
