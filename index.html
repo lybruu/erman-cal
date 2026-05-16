@@ -422,10 +422,10 @@ html, body {
   border-radius: inherit;
   background: radial-gradient(ellipse 70% 72% at 50% 50%,
     transparent 0%,
-    transparent 42%,
-    rgba(0,0,8,.30) 58%,
-    rgba(0,0,8,.72) 76%,
-    rgba(0,0,8,.95) 90%,
+    transparent 55%,
+    rgba(0,0,8,.15) 70%,
+    rgba(0,0,8,.55) 84%,
+    rgba(0,0,8,.85) 96%,
     #000008 100%);
   z-index: 20; pointer-events: none;
 }
@@ -583,8 +583,8 @@ html, body {
   position: absolute; inset: 0;
   border-radius: inherit;
   background: radial-gradient(ellipse 72% 74% at 50% 50%,
-    transparent 0%, transparent 42%,
-    rgba(5,1,15,.38) 60%, rgba(5,1,15,.85) 80%, rgba(5,1,15,1) 100%);
+    transparent 0%, transparent 55%,
+    rgba(5,1,15,.20) 70%, rgba(5,1,15,.65) 88%, rgba(5,1,15,.9) 100%);
   z-index: 20; pointer-events: none;
 }
 .opal-gem-side.left  { margin-right: -22px; border-radius: 40% 60% 46% 54% / 38% 32% 68% 62%; }
@@ -620,6 +620,16 @@ html, body {
 @keyframes gem-float {
   0%,100% { transform: translateY(0); }
   50%     { transform: translateY(-8px); }
+}
+/* SVG faceted gem — hue cycles through full spectrum */
+.gem-svg {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  animation: gem-hue 14s linear infinite;
+}
+@keyframes gem-hue {
+  0%   { filter: hue-rotate(0deg)   brightness(1.05) saturate(1.3); }
+  100% { filter: hue-rotate(360deg) brightness(1.05) saturate(1.3); }
 }
 
 /* Ambient glow behind gem */
@@ -1013,28 +1023,203 @@ html, body {
         <!-- Gem trio — reward area, hidden until focus completes -->
         <div class="gem-trio" id="gem-trio">
           <div class="opal-gem-side left">
-            <div class="gem-blobs">
-              <div class="blob b1"></div><div class="blob b2"></div>
-              <div class="blob b3"></div><div class="blob b4"></div>
-              <div class="blob b5"></div>
-            </div>
-            <div class="gem-hl"></div>
+<svg class="gem-svg" viewBox="0 0 66 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <filter id="gfL" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="2" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="sfL" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="5" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <radialGradient id="sfnL" cx="33" cy="4" r="55" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#ff44ee" stop-opacity="0.9"/><stop offset="100%" stop-color="#ff44ee" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="sfeL" cx="62" cy="45" r="42" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00ddff" stop-opacity="0.9"/><stop offset="100%" stop-color="#00ddff" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="sfsL" cx="33" cy="86" r="55" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#9900ff" stop-opacity="0.85"/><stop offset="100%" stop-color="#9900ff" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="sfwL" cx="4" cy="45" r="42" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#ff99dd" stop-opacity="0.9"/><stop offset="100%" stop-color="#ff99dd" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="sfcL" cx="33" cy="44" r="30" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85"/>
+              <stop offset="40%" stop-color="#cc88ff" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="66" height="90" fill="#02000a"/>
+          <polygon points="33,45 33,4  62,45" fill="url(#sfnL)"/>
+          <polygon points="33,45 62,45 33,86" fill="url(#sfeL)"/>
+          <polygon points="33,45 33,86 4,45"  fill="url(#sfsL)"/>
+          <polygon points="33,45 4,45  33,4"  fill="url(#sfwL)"/>
+          <ellipse cx="33" cy="44" rx="22" ry="27" fill="url(#sfcL)" filter="url(#sfL)"/>
+          <g filter="url(#gfL)">
+            <line x1="33" y1="45" x2="33" y2="4"  stroke="#ffffff" stroke-width="0.6" stroke-opacity="0.6"/>
+            <line x1="33" y1="45" x2="62" y2="45" stroke="#88ccff" stroke-width="0.5" stroke-opacity="0.65"/>
+            <line x1="33" y1="45" x2="33" y2="86" stroke="#aa88ff" stroke-width="0.6" stroke-opacity="0.6"/>
+            <line x1="33" y1="45" x2="4"  y2="45" stroke="#ffaaff" stroke-width="0.5" stroke-opacity="0.65"/>
+            <polyline points="33,4 62,45 33,86 4,45 33,4" fill="none" stroke="#ffffff" stroke-width="0.7" stroke-opacity="0.45">
+              <animate attributeName="stroke-opacity" values="0.45;0.8;0.45" dur="4s" repeatCount="indefinite"/>
+            </polyline>
+          </g>
+          <ellipse cx="22" cy="20" rx="11" ry="6" fill="white" opacity="0.6" filter="url(#sfL)">
+            <animate attributeName="opacity" values="0.6;0.3;0.6" dur="5s" repeatCount="indefinite"/>
+          </ellipse>
+        </svg>
           </div>
           <div class="opal-gem" id="opal-gem">
-            <div class="gem-blobs">
-              <div class="blob b1"></div><div class="blob b2"></div>
-              <div class="blob b3"></div><div class="blob b4"></div>
-              <div class="blob b5"></div>
-            </div>
-            <div class="gem-hl"></div>
+<svg class="gem-svg" viewBox="0 0 130 175" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <filter id="gf" x="-80%" y="-80%" width="260%" height="260%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="2.8" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="sf" x="-60%" y="-60%" width="220%" height="220%">
+        <feGaussianBlur stdDeviation="7" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <!-- Facet gradients: bright outer-edge → transparent at center -->
+      <!-- NE: outer edge midpoint (88,26) → center (65,88) -->
+      <radialGradient id="fne" cx="88" cy="26" r="96" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#ff44ee" stop-opacity="0.95"/>
+        <stop offset="100%" stop-color="#ff44ee" stop-opacity="0"/>
+      </radialGradient>
+      <!-- E: outer edge midpoint (116,67) → center -->
+      <radialGradient id="fe" cx="116" cy="67" r="72" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#00ddff" stop-opacity="0.95"/>
+        <stop offset="100%" stop-color="#00ddff" stop-opacity="0"/>
+      </radialGradient>
+      <!-- SE: outer edge midpoint (116,110) -->
+      <radialGradient id="fse" cx="116" cy="110" r="72" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#ff2299" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#ff2299" stop-opacity="0"/>
+      </radialGradient>
+      <!-- S: outer edge midpoint (88,151) -->
+      <radialGradient id="fs" cx="88" cy="151" r="90" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#9900ff" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#9900ff" stop-opacity="0"/>
+      </radialGradient>
+      <!-- SW: outer edge midpoint (41,151) -->
+      <radialGradient id="fsw" cx="41" cy="151" r="90" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#00ffaa" stop-opacity="0.85"/>
+        <stop offset="100%" stop-color="#00ffaa" stop-opacity="0"/>
+      </radialGradient>
+      <!-- W: outer edge midpoint (14,110) -->
+      <radialGradient id="fw" cx="14" cy="110" r="72" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#4499ff" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#4499ff" stop-opacity="0"/>
+      </radialGradient>
+      <!-- NW: outer edge midpoint (14,67) -->
+      <radialGradient id="fnw" cx="14" cy="67" r="72" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#ff99dd" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#ff99dd" stop-opacity="0"/>
+      </radialGradient>
+      <!-- N: outer edge midpoint (41,26) -->
+      <radialGradient id="fn" cx="41" cy="26" r="96" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#ccddff" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#ccddff" stop-opacity="0"/>
+      </radialGradient>
+      <!-- Core: white center glow -->
+      <radialGradient id="fc" cx="65" cy="84" r="52" gradientUnits="userSpaceOnUse">
+        <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.9"/>
+        <stop offset="22%"  stop-color="#dd88ff" stop-opacity="0.75"/>
+        <stop offset="55%"  stop-color="#6600cc" stop-opacity="0.4"/>
+        <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <!-- Dark void -->
+    <rect width="130" height="175" fill="#02000a"/>
+    <!-- Girdle: (65,6)(112,46)(120,88)(112,132)(65,170)(18,132)(10,88)(18,46) · Center:(65,88) -->
+    <!-- 8 triangular facets -->
+    <polygon points="65,88 65,6   112,46"  fill="url(#fne)"/>
+    <polygon points="65,88 112,46 120,88"  fill="url(#fe)"/>
+    <polygon points="65,88 120,88 112,132" fill="url(#fse)"/>
+    <polygon points="65,88 112,132 65,170" fill="url(#fs)"/>
+    <polygon points="65,88 65,170 18,132"  fill="url(#fsw)"/>
+    <polygon points="65,88 18,132 10,88"   fill="url(#fw)"/>
+    <polygon points="65,88 10,88  18,46"   fill="url(#fnw)"/>
+    <polygon points="65,88 18,46  65,6"    fill="url(#fn)"/>
+    <!-- Core white glow -->
+    <ellipse cx="65" cy="84" rx="44" ry="54" fill="url(#fc)" filter="url(#sf)"/>
+    <!-- Glowing facet edges ("cracks") -->
+    <g filter="url(#gf)">
+      <line x1="65" y1="88" x2="65"  y2="6"   stroke="#ffffff" stroke-width="0.7" stroke-opacity="0.65"/>
+      <line x1="65" y1="88" x2="112" y2="46"  stroke="#dd99ff" stroke-width="0.55" stroke-opacity="0.7"/>
+      <line x1="65" y1="88" x2="120" y2="88"  stroke="#88ddff" stroke-width="0.55" stroke-opacity="0.7"/>
+      <line x1="65" y1="88" x2="112" y2="132" stroke="#ff88cc" stroke-width="0.55" stroke-opacity="0.7"/>
+      <line x1="65" y1="88" x2="65"  y2="170" stroke="#aa88ff" stroke-width="0.7" stroke-opacity="0.65"/>
+      <line x1="65" y1="88" x2="18"  y2="132" stroke="#88ffcc" stroke-width="0.55" stroke-opacity="0.7"/>
+      <line x1="65" y1="88" x2="10"  y2="88"  stroke="#88aaff" stroke-width="0.55" stroke-opacity="0.7"/>
+      <line x1="65" y1="88" x2="18"  y2="46"  stroke="#ffaaff" stroke-width="0.55" stroke-opacity="0.7"/>
+      <!-- Outer girdle -->
+      <polyline points="65,6 112,46 120,88 112,132 65,170 18,132 10,88 18,46 65,6"
+                fill="none" stroke="#ffffff" stroke-width="0.9" stroke-opacity="0.5">
+        <animate attributeName="stroke-opacity" values="0.5;0.85;0.5" dur="3.5s" repeatCount="indefinite"/>
+      </polyline>
+    </g>
+    <!-- Primary specular (top-left light source) -->
+    <ellipse cx="40" cy="35" rx="22" ry="12" fill="white" filter="url(#sf)">
+      <animate attributeName="opacity" values="0.8;0.45;0.8" dur="4.5s" repeatCount="indefinite"/>
+      <animate attributeName="rx" values="22;28;22" dur="4.5s" repeatCount="indefinite"/>
+    </ellipse>
+    <!-- Secondary specular -->
+    <ellipse cx="92" cy="55" rx="9" ry="5" fill="white" opacity="0.4" filter="url(#sf)">
+      <animate attributeName="opacity" values="0.4;0.12;0.4" dur="7s" repeatCount="indefinite"/>
+    </ellipse>
+  </svg>
           </div>
           <div class="opal-gem-side right">
-            <div class="gem-blobs">
-              <div class="blob b1"></div><div class="blob b2"></div>
-              <div class="blob b3"></div><div class="blob b4"></div>
-              <div class="blob b5"></div>
-            </div>
-            <div class="gem-hl"></div>
+<svg class="gem-svg" viewBox="0 0 66 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <filter id="gfR" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="2" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="sfR" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="5" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <radialGradient id="sfnR" cx="33" cy="4" r="55" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#ff44ee" stop-opacity="0.9"/><stop offset="100%" stop-color="#ff44ee" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="sfeR" cx="62" cy="45" r="42" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00ddff" stop-opacity="0.9"/><stop offset="100%" stop-color="#00ddff" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="sfsR" cx="33" cy="86" r="55" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#9900ff" stop-opacity="0.85"/><stop offset="100%" stop-color="#9900ff" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="sfwR" cx="4" cy="45" r="42" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#ff99dd" stop-opacity="0.9"/><stop offset="100%" stop-color="#ff99dd" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="sfcR" cx="33" cy="44" r="30" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85"/>
+              <stop offset="40%" stop-color="#cc88ff" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="66" height="90" fill="#02000a"/>
+          <polygon points="33,45 33,4  62,45" fill="url(#sfnR)"/>
+          <polygon points="33,45 62,45 33,86" fill="url(#sfeR)"/>
+          <polygon points="33,45 33,86 4,45"  fill="url(#sfsR)"/>
+          <polygon points="33,45 4,45  33,4"  fill="url(#sfwR)"/>
+          <ellipse cx="33" cy="44" rx="22" ry="27" fill="url(#sfcR)" filter="url(#sfR)"/>
+          <g filter="url(#gfR)">
+            <line x1="33" y1="45" x2="33" y2="4"  stroke="#ffffff" stroke-width="0.6" stroke-opacity="0.6"/>
+            <line x1="33" y1="45" x2="62" y2="45" stroke="#88ccff" stroke-width="0.5" stroke-opacity="0.65"/>
+            <line x1="33" y1="45" x2="33" y2="86" stroke="#aa88ff" stroke-width="0.6" stroke-opacity="0.6"/>
+            <line x1="33" y1="45" x2="4"  y2="45" stroke="#ffaaff" stroke-width="0.5" stroke-opacity="0.65"/>
+            <polyline points="33,4 62,45 33,86 4,45 33,4" fill="none" stroke="#ffffff" stroke-width="0.7" stroke-opacity="0.45">
+              <animate attributeName="stroke-opacity" values="0.45;0.8;0.45" dur="4s" repeatCount="indefinite"/>
+            </polyline>
+          </g>
+          <ellipse cx="22" cy="20" rx="11" ry="6" fill="white" opacity="0.6" filter="url(#sfR)">
+            <animate attributeName="opacity" values="0.6;0.3;0.6" dur="5s" repeatCount="indefinite"/>
+          </ellipse>
+        </svg>
           </div>
         </div>
         <div class="dur-row" id="dur-row">
