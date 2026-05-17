@@ -407,7 +407,7 @@ html, body {
   border-radius: inherit;
   border: 1px solid transparent;
   background:
-    linear-gradient(#000005, #000005) padding-box,
+    transparent padding-box,
     linear-gradient(145deg,
       rgba(255,255,255,.35) 0%,
       rgba(255,255,255,.12) 30%,
@@ -1081,53 +1081,61 @@ html, body {
         <feGaussianBlur stdDeviation="7" result="b"/>
         <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
       </filter>
-      <!-- Facet gradients: bright outer-edge → transparent at center -->
+      <!-- Facet gradients: bright at outer-edge, semi-bright at center -->
       <!-- NE: outer edge midpoint (88,26) → center (65,88) -->
       <radialGradient id="fne" cx="88" cy="26" r="96" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#ff44ee" stop-opacity="0.95"/>
-        <stop offset="100%" stop-color="#ff44ee" stop-opacity="0"/>
+        <stop offset="0%"  stop-color="#ff55ff" stop-opacity="1.0"/>
+        <stop offset="55%" stop-color="#cc22cc" stop-opacity="0.6"/>
+        <stop offset="100%" stop-color="#660066" stop-opacity="0.15"/>
       </radialGradient>
       <!-- E: outer edge midpoint (116,67) → center -->
       <radialGradient id="fe" cx="116" cy="67" r="72" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#00ddff" stop-opacity="0.95"/>
-        <stop offset="100%" stop-color="#00ddff" stop-opacity="0"/>
+        <stop offset="0%"  stop-color="#00eeff" stop-opacity="1.0"/>
+        <stop offset="55%" stop-color="#0088cc" stop-opacity="0.6"/>
+        <stop offset="100%" stop-color="#003366" stop-opacity="0.15"/>
       </radialGradient>
       <!-- SE: outer edge midpoint (116,110) -->
       <radialGradient id="fse" cx="116" cy="110" r="72" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#ff2299" stop-opacity="0.9"/>
-        <stop offset="100%" stop-color="#ff2299" stop-opacity="0"/>
+        <stop offset="0%"  stop-color="#ff33aa" stop-opacity="1.0"/>
+        <stop offset="55%" stop-color="#cc1166" stop-opacity="0.6"/>
+        <stop offset="100%" stop-color="#660033" stop-opacity="0.15"/>
       </radialGradient>
       <!-- S: outer edge midpoint (88,151) -->
       <radialGradient id="fs" cx="88" cy="151" r="90" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#9900ff" stop-opacity="0.9"/>
-        <stop offset="100%" stop-color="#9900ff" stop-opacity="0"/>
+        <stop offset="0%"  stop-color="#aa00ff" stop-opacity="1.0"/>
+        <stop offset="55%" stop-color="#7700cc" stop-opacity="0.6"/>
+        <stop offset="100%" stop-color="#330066" stop-opacity="0.15"/>
       </radialGradient>
       <!-- SW: outer edge midpoint (41,151) -->
       <radialGradient id="fsw" cx="41" cy="151" r="90" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#00ffaa" stop-opacity="0.85"/>
-        <stop offset="100%" stop-color="#00ffaa" stop-opacity="0"/>
+        <stop offset="0%"  stop-color="#00ffbb" stop-opacity="1.0"/>
+        <stop offset="55%" stop-color="#00cc88" stop-opacity="0.6"/>
+        <stop offset="100%" stop-color="#006644" stop-opacity="0.15"/>
       </radialGradient>
       <!-- W: outer edge midpoint (14,110) -->
       <radialGradient id="fw" cx="14" cy="110" r="72" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#4499ff" stop-opacity="0.9"/>
-        <stop offset="100%" stop-color="#4499ff" stop-opacity="0"/>
+        <stop offset="0%"  stop-color="#5599ff" stop-opacity="1.0"/>
+        <stop offset="55%" stop-color="#2255cc" stop-opacity="0.6"/>
+        <stop offset="100%" stop-color="#002266" stop-opacity="0.15"/>
       </radialGradient>
       <!-- NW: outer edge midpoint (14,67) -->
       <radialGradient id="fnw" cx="14" cy="67" r="72" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#ff99dd" stop-opacity="0.9"/>
-        <stop offset="100%" stop-color="#ff99dd" stop-opacity="0"/>
+        <stop offset="0%"  stop-color="#ffaaee" stop-opacity="1.0"/>
+        <stop offset="55%" stop-color="#cc66bb" stop-opacity="0.6"/>
+        <stop offset="100%" stop-color="#663366" stop-opacity="0.15"/>
       </radialGradient>
       <!-- N: outer edge midpoint (41,26) -->
       <radialGradient id="fn" cx="41" cy="26" r="96" gradientUnits="userSpaceOnUse">
-        <stop offset="0%" stop-color="#ccddff" stop-opacity="0.9"/>
-        <stop offset="100%" stop-color="#ccddff" stop-opacity="0"/>
+        <stop offset="0%"  stop-color="#ddeeff" stop-opacity="1.0"/>
+        <stop offset="55%" stop-color="#88aadd" stop-opacity="0.6"/>
+        <stop offset="100%" stop-color="#334477" stop-opacity="0.15"/>
       </radialGradient>
-      <!-- Core: white center glow -->
+      <!-- Core: vivid white-purple glow from center -->
       <radialGradient id="fc" cx="65" cy="84" r="52" gradientUnits="userSpaceOnUse">
-        <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.9"/>
-        <stop offset="22%"  stop-color="#dd88ff" stop-opacity="0.75"/>
-        <stop offset="55%"  stop-color="#6600cc" stop-opacity="0.4"/>
-        <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+        <stop offset="0%"   stop-color="#ffffff" stop-opacity="1.0"/>
+        <stop offset="18%"  stop-color="#ee99ff" stop-opacity="0.9"/>
+        <stop offset="45%"  stop-color="#8833cc" stop-opacity="0.65"/>
+        <stop offset="100%" stop-color="#330055" stop-opacity="0.1"/>
       </radialGradient>
     </defs>
     <!-- Dark void -->
