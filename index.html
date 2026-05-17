@@ -120,13 +120,16 @@ html, body {
   overflow: hidden; border-radius: 14px;
 }
 .tab-item svg { transition: opacity .25s, transform .2s; width: 26px; height: 26px; }
-.tab-item img.sisy-icon { width: 32px; height: 32px; object-fit: contain; opacity: .42; transition: opacity .25s; image-rendering: -webkit-optimize-contrast; animation: sisy-eternal 3.2s ease-in infinite; }
+.tab-item img.sisy-icon { width: 32px; height: 32px; object-fit: contain; opacity: .42; transition: opacity .25s; image-rendering: -webkit-optimize-contrast; animation: sisy-push 3.6s ease-in-out infinite; transform-origin: 50% 85%; }
 .tab-item.active img.sisy-icon { opacity: 1; filter: drop-shadow(0 0 5px rgba(255,255,255,0.45)); }
-@keyframes sisy-eternal {
-  0%   { transform: translate(0,0) scale(1);    animation-timing-function: ease-in; }
-  68%  { transform: translate(5px,-5px) scale(1); animation-timing-function: steps(1,end); }
-  69%  { transform: translate(0,0) scale(1); }
-  100% { transform: translate(0,0) scale(1); }
+@keyframes sisy-push {
+  0%   { transform: rotate(0deg) translateY(0); }
+  15%  { transform: rotate(-6deg) translateY(-1px); }
+  45%  { transform: rotate(-12deg) translateY(-3px); }
+  55%  { transform: rotate(-12deg) translateY(-3px); }
+  72%  { transform: rotate(3deg) translateY(1px); }
+  85%  { transform: rotate(0deg) translateY(0); }
+  100% { transform: rotate(0deg) translateY(0); }
 }
 .tab-item .tab-lbl {
   font-size: 9px; letter-spacing: 1.2px; font-family: var(--font-display);
@@ -700,6 +703,68 @@ html, body {
 .focus-btn.start:active { transform: scale(.96); }
 .focus-btn.stop { background: rgba(253,248,240,.04); color: var(--danger); border: 1px solid rgba(255,69,58,.15); }
 
+/* ── Chain system ── */
+.chain-progress { width: 100%; max-width: 280px; margin-bottom: 12px; }
+.chain-bar { height: 3px; background: rgba(253,248,240,.06); border-radius: 3px; overflow: hidden; }
+.chain-fill { height: 100%; border-radius: 3px; transition: width .4s ease; background: linear-gradient(90deg, var(--accent), #a78bfa); box-shadow: 0 0 8px var(--glow); }
+.chain-label { font-size: 11px; color: var(--sub); text-align: center; margin-top: 4px; font-family: var(--font-display); letter-spacing: 1px; }
+
+.chain-list { width: 100%; max-width: 280px; display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; max-height: 200px; overflow-y: auto; }
+.chain-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 12px;
+  background: rgba(253,248,240,.03); border: 1px solid rgba(253,248,240,.04);
+  transition: all .25s;
+}
+.chain-item.active { background: rgba(253,248,240,.07); border-color: rgba(253,248,240,.12); }
+.chain-item.done { opacity: .35; }
+.chain-item.current { border-color: var(--accent); box-shadow: 0 0 12px rgba(255,159,10,.15); }
+.chain-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.chain-item-info { flex: 1; min-width: 0; }
+.chain-item-label { font-size: 13px; color: var(--ivory); font-family: var(--font-display); letter-spacing: .5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chain-item-dur { font-size: 11px; color: var(--sub); margin-top: 1px; }
+.chain-item-del { width: 28px; height: 28px; border: none; background: transparent; color: var(--sub); font-size: 16px; cursor: pointer; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .15s; }
+.chain-item-del:active { background: rgba(255,69,58,.15); color: var(--danger); }
+.chain-running .chain-item-del { display: none; }
+.chain-item .chain-check { display: none; width: 14px; height: 14px; flex-shrink: 0; }
+.chain-item.done .chain-check { display: block; }
+.chain-item.done .chain-dot { display: none; }
+
+.chain-add-row { display: flex; gap: 8px; margin-bottom: 14px; width: 100%; max-width: 280px; }
+.chain-add-btn {
+  flex: 1; padding: 10px 0; border-radius: 12px; border: 1px dashed rgba(253,248,240,.08);
+  background: transparent; color: var(--sub); font-size: 13px; font-family: var(--font-display);
+  letter-spacing: 1px; cursor: pointer; transition: all .15s;
+}
+.chain-add-btn:active { background: rgba(253,248,240,.04); border-color: rgba(253,248,240,.15); }
+.chain-add-btn.rest { border-color: rgba(52,211,153,.12); color: rgba(52,211,153,.7); }
+.chain-add-btn.rest:active { background: rgba(52,211,153,.06); }
+.chain-running .chain-add-row { opacity: .3; pointer-events: none; }
+
+/* Color picker (inline) */
+.chain-colors { display: flex; gap: 8px; justify-content: center; margin-bottom: 8px; }
+.chain-color-dot { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: all .15s; }
+.chain-color-dot.active { border-color: var(--ivory); transform: scale(1.15); }
+
+/* Duration quick-pick for chain add */
+.chain-dur-pick { display: flex; gap: 6px; justify-content: center; margin-bottom: 8px; }
+.chain-dur-opt { padding: 6px 14px; border-radius: 14px; border: 1px solid rgba(253,248,240,.08); background: transparent; color: var(--sub); font-size: 12px; font-family: var(--font-display); letter-spacing: 1px; cursor: pointer; transition: all .15s; }
+.chain-dur-opt.active { border-color: var(--accent); color: var(--accent); background: rgba(255,159,10,.06); }
+
+/* Add modal overlay */
+.chain-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: flex-end; justify-content: center; background: rgba(0,0,0,.6); backdrop-filter: blur(8px); opacity: 0; pointer-events: none; transition: opacity .2s; }
+.chain-modal.open { opacity: 1; pointer-events: auto; }
+.chain-modal-body { background: #0e0e14; border-radius: 20px 20px 0 0; padding: 24px 20px 32px; width: 100%; max-width: 360px; transform: translateY(100%); transition: transform .3s cubic-bezier(.22,1,.36,1); }
+.chain-modal.open .chain-modal-body { transform: translateY(0); }
+.chain-modal-title { font-family: var(--font-display); font-size: 16px; color: var(--ivory); letter-spacing: 1px; text-align: center; margin-bottom: 16px; }
+.chain-modal input { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(253,248,240,.08); background: rgba(253,248,240,.03); color: var(--ivory); font-size: 14px; font-family: 'Inter', sans-serif; outline: none; margin-bottom: 12px; box-sizing: border-box; }
+.chain-modal input:focus { border-color: rgba(255,159,10,.3); }
+.chain-modal input::placeholder { color: var(--sub); }
+.chain-modal-actions { display: flex; gap: 8px; margin-top: 8px; }
+.chain-modal-btn { flex: 1; padding: 14px; border-radius: 14px; border: none; font-size: 14px; font-family: var(--font-display); letter-spacing: 1px; cursor: pointer; }
+.chain-modal-btn.cancel { background: rgba(253,248,240,.04); color: var(--sub); }
+.chain-modal-btn.confirm { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #000; }
+
 .focus-stats { display: flex; gap: 36px; margin-top: 18px; margin-bottom: 16px; }
 .focus-stat { display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .focus-stat .val {
@@ -1235,17 +1300,23 @@ html, body {
         </svg>
           </div>
         </div>
-        <div class="dur-row" id="dur-row">
-          <button class="dur-chip" data-min="15" onclick="setDuration(15)">15 MIN</button>
-          <button class="dur-chip active" data-min="25" onclick="setDuration(25)">25 MIN</button>
-          <button class="dur-chip" data-min="45" onclick="setDuration(45)">45 MIN</button>
-          <button class="dur-chip gem-preview-btn" onclick="previewGem()" title="preview reward">⚡</button>
+        <!-- Chain progress -->
+        <div class="chain-progress" id="chain-progress" style="display:none">
+          <div class="chain-bar"><div class="chain-fill" id="chain-fill" style="width:0"></div></div>
+          <div class="chain-label" id="chain-label"></div>
         </div>
-        <button class="focus-btn start" id="focus-btn" onclick="toggleFocus()" data-i18n="focus_start">Start Focus</button>
+        <!-- Chain task list -->
+        <div class="chain-list" id="chain-list"></div>
+        <!-- Add buttons -->
+        <div class="chain-add-row" id="chain-add-row">
+          <button class="chain-add-btn" onclick="openChainModal('work')">+ ЗАДАЧА</button>
+          <button class="chain-add-btn rest" onclick="openChainModal('rest')">+ ОТДЫХ</button>
+        </div>
+        <button class="focus-btn start" id="focus-btn" onclick="toggleFocus()">НАЧАТЬ ЦЕПОЧКУ</button>
         <div class="focus-stats">
-          <div class="focus-stat"><div class="val" id="stat-streak">0</div><div class="lbl" data-i18n="streak">Streak</div></div>
-          <div class="focus-stat"><div class="val" id="stat-crystals">0</div><div class="lbl" data-i18n="gems">Gems</div></div>
-          <div class="focus-stat"><div class="val" id="stat-today">0</div><div class="lbl" data-i18n="today_lbl">Today</div></div>
+          <div class="focus-stat"><div class="val" id="stat-streak">0</div><div class="lbl">стрик</div></div>
+          <div class="focus-stat"><div class="val" id="stat-crystals">0</div><div class="lbl">кристаллы</div></div>
+          <div class="focus-stat"><div class="val" id="stat-today">0</div><div class="lbl">Сегодня</div></div>
         </div>
         <div id="level-name" style="display:none"></div>
         <div id="level-next" style="display:none"></div>
@@ -1253,6 +1324,20 @@ html, body {
         <div class="collection-row" id="collection-row"></div>
       </div>
     </div>
+
+<!-- Chain add modal -->
+<div class="chain-modal" id="chain-modal" onclick="if(event.target===this)closeChainModal()">
+  <div class="chain-modal-body">
+    <div class="chain-modal-title" id="chain-modal-title">НОВАЯ ЗАДАЧА</div>
+    <input type="text" id="chain-modal-input" placeholder="Название задачи" maxlength="40">
+    <div class="chain-colors" id="chain-colors"></div>
+    <div class="chain-dur-pick" id="chain-dur-pick"></div>
+    <div class="chain-modal-actions">
+      <button class="chain-modal-btn cancel" onclick="closeChainModal()">ОТМЕНА</button>
+      <button class="chain-modal-btn confirm" onclick="confirmChainAdd()">ДОБАВИТЬ</button>
+    </div>
+  </div>
+</div>
 
     <!-- CHAT -->
     <div class="tab-pane" id="tab-chat">
@@ -1742,7 +1827,7 @@ function switchTab(name) {
   const btn = document.querySelector('.tab-item[data-tab="'+name+'"]');
   if(btn) btn.classList.add('active');
   document.body.scrollTop = 0; document.documentElement.scrollTop = 0; window.scrollTo(0, 0);
-  if(name === 'focus') initFocusShape();
+  if(name === 'focus'){ initFocusShape(); renderChain(); }
 }
 
 // ── Random CSS gem shapes for Focus tab ──
@@ -2138,157 +2223,306 @@ document.getElementById('add-modal').addEventListener('click', function(e) { if(
 // ══ TREE TIMER ══
 let focusDuration=25, focusRunning=false, focusTimer=null, focusStart=0, focusElapsed=0, trunkLen=0;
 
-// ─── Opal gem (pure CSS — driven by --progress custom property) ───────────────
-function initTree(){} // no-op, gem is CSS-only
+// ─── Chain system ───
+const CHAIN_COLORS=[
+  {name:'Оранжевый',hex:'#ff9f0a'},{name:'Голубой',hex:'#38bdf8'},
+  {name:'Лиловый',hex:'#a78bfa'},{name:'Розовый',hex:'#f472b6'},{name:'Бирюза',hex:'#2dd4bf'},
+];
+const REST_COLOR='#34d399';
+const REST_DURATIONS=[3,5,10,15];
+const WORK_DURATIONS=[15,25,45,60];
 
+let focusChain=[
+  {type:'work',label:'Фокус',duration:25,color:'#ff9f0a'},
+  {type:'rest',label:'Отдых',duration:5,color:REST_COLOR},
+  {type:'work',label:'Фокус',duration:25,color:'#38bdf8'},
+];
+let chainIndex=-1;
+let chainModal={type:'work',color:'#ff9f0a',duration:25};
+
+// ─── Opal gem ───
+function initTree(){}
 function gemProgress(pct){
-  const gem = document.getElementById('opal-gem');
-  if(gem) gem.style.setProperty('--progress', pct.toFixed(3));
+  const gem=document.getElementById('opal-gem');
+  if(gem) gem.style.setProperty('--progress',pct.toFixed(3));
 }
-
 function treeProgress(pct){
   pct=Math.max(0,Math.min(1,pct));
-  // Progress ring
   const ring=document.getElementById('progress-ring-fg');
-  if(ring) ring.setAttribute('stroke-dashoffset', String(911*(1-pct)));
-  // Gem intensity
+  if(ring) ring.setAttribute('stroke-dashoffset',String(911*(1-pct)));
   gemProgress(pct);
 }
 
+// ─── Chain UI ───
+function renderChain(){
+  const list=document.getElementById('chain-list');
+  const wrap=document.querySelector('.focus-wrap');
+  if(focusRunning) wrap?.classList.add('chain-running');
+  else wrap?.classList.remove('chain-running');
+
+  list.innerHTML=focusChain.map((item,i)=>{
+    let cls='chain-item';
+    if(chainIndex>=0&&i<chainIndex) cls+=' done';
+    if(chainIndex>=0&&i===chainIndex) cls+=' current active';
+    if(chainIndex<0&&i===0) cls+=' active';
+    const durLabel=item.duration+' мин';
+    return `<div class="${cls}">
+      <svg class="chain-check" viewBox="0 0 14 14" fill="none" stroke="${item.color}" stroke-width="1.8" stroke-linecap="round"><polyline points="3,7 6,10 11,4"/></svg>
+      <div class="chain-dot" style="background:${item.color}"></div>
+      <div class="chain-item-info">
+        <div class="chain-item-label">${item.label}</div>
+        <div class="chain-item-dur">${durLabel}${item.type==='rest'?' · отдых':''}</div>
+      </div>
+      <button class="chain-item-del" onclick="removeChainItem(${i})">×</button>
+    </div>`;
+  }).join('');
+
+  const prog=document.getElementById('chain-progress');
+  if(focusChain.length>1){
+    prog.style.display='';
+    const totalTime=focusChain.reduce((s,c)=>s+c.duration,0);
+    let elapsed=0;
+    for(let i=0;i<focusChain.length;i++){
+      if(chainIndex>=0&&i<chainIndex) elapsed+=focusChain[i].duration;
+      else if(chainIndex>=0&&i===chainIndex&&focusRunning) elapsed+=Math.min(focusElapsed/60,focusChain[i].duration);
+    }
+    const pct=Math.min(100,(elapsed/totalTime)*100);
+    document.getElementById('chain-fill').style.width=pct+'%';
+    const done=chainIndex>=0?chainIndex:0;
+    document.getElementById('chain-label').textContent=(done+(focusRunning?1:0))+' / '+focusChain.length;
+  } else { prog.style.display='none'; }
+
+  const btn=document.getElementById('focus-btn');
+  if(!focusRunning){
+    btn.className='focus-btn start';
+    btn.textContent=focusChain.length>1?'НАЧАТЬ ЦЕПОЧКУ':'НАЧАТЬ ФОКУС';
+  }
+}
+
+function removeChainItem(i){ if(focusRunning) return; focusChain.splice(i,1); renderChain(); }
+
+// ─── Chain modal ───
+function openChainModal(type){
+  chainModal.type=type;
+  chainModal.color=type==='rest'?REST_COLOR:'#ff9f0a';
+  chainModal.duration=type==='rest'?5:25;
+  const modal=document.getElementById('chain-modal');
+  document.getElementById('chain-modal-title').textContent=type==='rest'?'ДОБАВИТЬ ОТДЫХ':'НОВАЯ ЗАДАЧА';
+  const inp=document.getElementById('chain-modal-input');
+  inp.value='';
+  inp.placeholder=type==='rest'?'Отдых':'Название задачи';
+  inp.style.display=type==='rest'?'none':'';
+
+  const colorsEl=document.getElementById('chain-colors');
+  if(type==='rest'){ colorsEl.style.display='none'; }
+  else {
+    colorsEl.style.display='';
+    colorsEl.innerHTML=CHAIN_COLORS.map(c=>
+      `<div class="chain-color-dot${c.hex===chainModal.color?' active':''}" style="background:${c.hex}" data-hex="${c.hex}" onclick="pickChainColor('${c.hex}')"></div>`
+    ).join('');
+  }
+
+  const durs=type==='rest'?REST_DURATIONS:WORK_DURATIONS;
+  document.getElementById('chain-dur-pick').innerHTML=durs.map(d=>
+    `<button class="chain-dur-opt${d===chainModal.duration?' active':''}" onclick="pickChainDur(${d})">${d} мин</button>`
+  ).join('');
+
+  modal.classList.add('open');
+  if(type!=='rest') setTimeout(()=>inp.focus(),300);
+}
+function closeChainModal(){ document.getElementById('chain-modal').classList.remove('open'); }
+function pickChainColor(hex){
+  chainModal.color=hex;
+  document.querySelectorAll('.chain-color-dot').forEach(d=>d.classList.toggle('active',d.dataset.hex===hex));
+}
+function pickChainDur(d){
+  chainModal.duration=d;
+  document.querySelectorAll('.chain-dur-opt').forEach(b=>b.classList.toggle('active',parseInt(b.textContent)===d));
+}
+function confirmChainAdd(){
+  const inp=document.getElementById('chain-modal-input');
+  const label=chainModal.type==='rest'?'Отдых':(inp.value.trim()||'Фокус');
+  focusChain.push({type:chainModal.type,label:label,duration:chainModal.duration,color:chainModal.color});
+  closeChainModal();
+  renderChain();
+}
+
+// ─── Timer ───
 function setDuration(min){
   if(focusRunning) return; focusDuration=min;
-  document.querySelectorAll('.dur-chip').forEach(c=>c.classList.toggle('active',parseInt(c.dataset.min)===min));
   document.getElementById('timer-digits').textContent=min+':00';
 }
-function toggleFocus(){if(focusRunning)stopFocus(false);else startFocus();}
-function previewGem(){
-  // If currently running, stop cleanly first
-  if(focusRunning){ clearInterval(focusTimer); focusRunning=false; }
-  // Fill the progress ring to 100%
-  treeProgress(1);
-  document.getElementById('timer-digits').textContent='00:00';
-  document.getElementById('timer-digits').classList.remove('pulsing');
-  // Trigger completion animation (gems reveal + celebrate)
-  stopFocus(true);
+
+function toggleFocus(){
+  if(focusRunning){ stopFocus(false); return; }
+  if(focusChain.length===0) return;
+  chainIndex=0;
+  startChainItem();
 }
-function startFocus(){
+
+function startChainItem(){
+  if(chainIndex>=focusChain.length){ finishChain(); return; }
+  const item=focusChain[chainIndex];
+  focusDuration=item.duration;
   focusRunning=true; focusStart=Date.now(); focusElapsed=0;
-  document.getElementById('dur-row').style.opacity='.3';
-  document.getElementById('dur-row').style.pointerEvents='none';
+
+  // Ring color matches task
+  const ringFg=document.getElementById('progress-ring-fg');
+  if(ringFg) ringFg.style.stroke=item.color;
+
+  document.getElementById('timer-digits').textContent=item.duration+':00';
   const btn=document.getElementById('focus-btn');
-  btn.className='focus-btn stop'; btn.textContent=t('focus_stop');
-  document.getElementById('timer-label').textContent=t('focus_focusing');
-  document.getElementById('timer-digits').classList.add('pulsing');
-  burstParticles();
-  // Серверный таймер — уведомление придёт в TG даже если закрыть вкладку
-  fetch(BACKEND_URL+'/api/focus_start',{
-    method:'POST',
-    headers:NGROK_H,
-    body:JSON.stringify({duration_min:focusDuration})
-  }).catch(()=>{});
-  const totalSec=focusDuration*60;
+  btn.className='focus-btn stop'; btn.textContent='СТОП';
+  document.getElementById('timer-label').textContent=item.type==='rest'?'ОТДЫХ':item.label.toUpperCase();
+  if(item.type!=='rest') document.getElementById('timer-digits').classList.add('pulsing');
+  else document.getElementById('timer-digits').classList.remove('pulsing');
+
+  renderChain();
+  if(item.type!=='rest') burstParticles();
+
+  if(item.type!=='rest'){
+    fetch(BACKEND_URL+'/api/focus_start',{method:'POST',headers:NGROK_H,body:JSON.stringify({duration_min:item.duration})}).catch(()=>{});
+  }
+
+  const totalSec=item.duration*60;
   focusTimer=setInterval(()=>{
     focusElapsed=Math.floor((Date.now()-focusStart)/1000);
     const remain=Math.max(0,totalSec-focusElapsed);
-    const m=Math.floor(remain/60), s=remain%60;
-    document.getElementById('timer-digits').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    const m=Math.floor(remain/60),s=remain%60;
+    const timeStr=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+    document.getElementById('timer-digits').textContent=timeStr;
     treeProgress(focusElapsed/totalSec);
-    if(remain<=0) stopFocus(true);
+    renderChain();
+    // Update Mini App title with timer
+    try{ document.title=timeStr+' · '+focusChain[chainIndex].label; }catch(e){}
+    if(remain<=0) completeChainItem();
   },1000);
 }
+
+function completeChainItem(){
+  clearInterval(focusTimer); focusRunning=false;
+  const item=focusChain[chainIndex];
+  document.getElementById('timer-digits').classList.remove('pulsing');
+  treeProgress(1);
+
+  if(item.type!=='rest'){
+    FOCUS.today_sessions=(FOCUS.today_sessions||0)+1;
+    FOCUS.total_minutes=(FOCUS.total_minutes||0)+item.duration;
+    FOCUS.collection.push({type:'amber',date:TODAY,duration:item.duration});
+    renderFocusStats();
+    fetch(BACKEND_URL+'/api/focus_cancel',{method:'POST',headers:NGROK_H,body:'{}'}).catch(()=>{});
+  }
+  try{ if(twa?.HapticFeedback) twa.HapticFeedback.notificationOccurred('success'); }catch(e){}
+
+  chainIndex++;
+  if(chainIndex<focusChain.length){
+    renderChain();
+    document.getElementById('timer-label').textContent='ДАЛЕЕ...';
+    setTimeout(()=>{ treeProgress(0); startChainItem(); },1500);
+  } else { finishChain(); }
+}
+
+function finishChain(){
+  focusRunning=false; chainIndex=-1;
+  celebrate();
+  requestAnimationFrame(()=>{
+    const trio=document.getElementById('gem-trio');
+    if(trio){ trio.style.transition='opacity 1.8s ease, transform 1.4s cubic-bezier(0.22,1,0.36,1)'; trio.style.opacity='1'; trio.style.transform='translateY(0)'; trio.style.pointerEvents='auto'; }
+  });
+  document.getElementById('timer-label').textContent='ЦЕПОЧКА ЗАВЕРШЕНА';
+  document.getElementById('timer-digits').textContent='00:00';
+  if(twa) try{twa.sendData(JSON.stringify({type:'focus_complete',duration:focusDuration}));}catch(e){}
+  document.title='erman.';
+  const btn=document.getElementById('focus-btn');
+  btn.className='focus-btn start'; btn.textContent='НАЧАТЬ ЦЕПОЧКУ';
+  setTimeout(resetTimer,3500);
+  renderChain();
+}
+
 function stopFocus(completed){
   clearInterval(focusTimer); focusRunning=false;
-  document.getElementById('dur-row').style.opacity='';
-  document.getElementById('dur-row').style.pointerEvents='';
-  const btn=document.getElementById('focus-btn');
-  btn.className='focus-btn start'; btn.textContent=t('focus_start');
+  if(completed){ completeChainItem(); return; }
+  chainIndex=-1;
+  const ringFg=document.getElementById('progress-ring-fg');
+  if(ringFg){ ringFg.style.strokeDashoffset='911'; ringFg.style.stroke=''; }
+  gemProgress(0);
+  const trioC=document.getElementById('gem-trio');
+  if(trioC){ trioC.style.transition='opacity .4s ease, transform .4s ease'; trioC.style.opacity='0'; trioC.style.transform='translateY(12px)'; trioC.style.pointerEvents='none'; }
+  document.getElementById('timer-label').textContent='ОТМЕНЕНО';
   document.getElementById('timer-digits').classList.remove('pulsing');
-  if(completed){
-    document.getElementById('timer-label').textContent=t('focus_complete');
-    document.getElementById('timer-digits').textContent='00:00';
-    celebrate();
-    // Reveal gem trio as reward
-    requestAnimationFrame(()=>{
-      const trio=document.getElementById('gem-trio');
-      if(trio){
-        trio.style.transition='opacity 1.8s ease, transform 1.4s cubic-bezier(0.22,1,0.36,1)';
-        trio.style.opacity='1';
-        trio.style.transform='translateY(0)';
-        trio.style.pointerEvents='auto';
-      }
-    });
-    FOCUS.today_sessions=(FOCUS.today_sessions||0)+1;
-    FOCUS.total_minutes=(FOCUS.total_minutes||0)+focusDuration;
-    FOCUS.collection.push({type:'amber',date:TODAY,duration:focusDuration});
-    renderFocusStats();
-    // Серверный таймер уже отправит уведомление; sendData как fallback если ещё в TG
-    if(twa) try{twa.sendData(JSON.stringify({type:'focus_complete',duration:focusDuration}));}catch(e){}
-    // Отменяем серверный таймер (он сработал)
-    fetch(BACKEND_URL+'/api/focus_cancel',{method:'POST',headers:NGROK_H,body:'{}'}).catch(()=>{});
-    setTimeout(resetTimer,3500);
-  } else {
-    // Плавная анимация возврата кольца
-    const ring=document.getElementById('progress-ring-fg');
-    if(ring) ring.style.strokeDashoffset='911';
-    gemProgress(0);
-    // Hide gem trio on cancel
-    const trioC=document.getElementById('gem-trio');
-    if(trioC){ trioC.style.transition='opacity .4s ease, transform .4s ease'; trioC.style.opacity='0'; trioC.style.transform='translateY(12px)'; trioC.style.pointerEvents='none'; }
-    document.getElementById('timer-label').textContent=t('focus_cancelled');
-    fetch(BACKEND_URL+'/api/focus_cancel',{method:'POST',headers:NGROK_H,body:'{}'}).catch(()=>{});
-    setTimeout(resetTimer,1400);
-  }
+  fetch(BACKEND_URL+'/api/focus_cancel',{method:'POST',headers:NGROK_H,body:'{}'}).catch(()=>{});
+  document.title='erman.';
+  setTimeout(resetTimer,1400);
+  renderChain();
 }
+
+function previewGem(){
+  if(focusRunning){ clearInterval(focusTimer); focusRunning=false; chainIndex=-1; }
+  treeProgress(1);
+  document.getElementById('timer-digits').textContent='00:00';
+  document.getElementById('timer-digits').classList.remove('pulsing');
+  celebrate();
+  requestAnimationFrame(()=>{
+    const trio=document.getElementById('gem-trio');
+    if(trio){ trio.style.transition='opacity 1.8s ease, transform 1.4s cubic-bezier(0.22,1,0.36,1)'; trio.style.opacity='1'; trio.style.transform='translateY(0)'; trio.style.pointerEvents='auto'; }
+  });
+  FOCUS.today_sessions=(FOCUS.today_sessions||0)+1;
+  FOCUS.total_minutes=(FOCUS.total_minutes||0)+focusDuration;
+  FOCUS.collection.push({type:'amber',date:TODAY,duration:focusDuration});
+  renderFocusStats();
+  if(twa) try{twa.sendData(JSON.stringify({type:'focus_complete',duration:focusDuration}));}catch(e){}
+  fetch(BACKEND_URL+'/api/focus_cancel',{method:'POST',headers:NGROK_H,body:'{}'}).catch(()=>{});
+  setTimeout(resetTimer,3500);
+}
+
 function resetTimer(){
   const ring=document.getElementById('progress-ring-fg');
-  if(ring){ ring.style.strokeDashoffset=''; ring.setAttribute('stroke-dashoffset','911'); }
+  if(ring){ ring.style.strokeDashoffset=''; ring.setAttribute('stroke-dashoffset','911'); ring.style.stroke=''; }
   gemProgress(0);
-  document.getElementById('timer-label').textContent=t('focus_ready');
-  document.getElementById('timer-digits').textContent=focusDuration+':00';
-  // Hide gem trio instantly on reset
+  document.getElementById('timer-label').textContent='';
+  const first=focusChain[0];
+  document.getElementById('timer-digits').textContent=first?first.duration+':00':'25:00';
   const trioR=document.getElementById('gem-trio');
   if(trioR){ trioR.style.transition='none'; trioR.style.opacity='0'; trioR.style.transform='translateY(18px)'; trioR.style.pointerEvents='none'; }
+  chainIndex=-1;
+  renderChain();
 }
-// Level definitions — based on total completed sessions
-const LEVELS = [
-  {min:0,   name:'Seedling',  next:'Sprout',    color:'#9e99b8'},
-  {min:3,   name:'Sprout',    next:'Sapling',   color:'#34d399'},
-  {min:8,   name:'Sapling',   next:'Tree',      color:'#38bdf8'},
-  {min:16,  name:'Tree',      next:'Grove',     color:'#ff9f0a'},
-  {min:30,  name:'Grove',     next:'Forest',    color:'#a78bfa'},
-  {min:50,  name:'Forest',    next:'Ancient',   color:'#f472b6'},
-  {min:80,  name:'Ancient',   next:'Legend',    color:'#fbbf24'},
-  {min:120, name:'Legend',    next:null,        color:'#fdf8f0'},
+
+// Level definitions
+const LEVELS=[
+  {min:0,name:'Seedling',next:'Sprout',color:'#9e99b8'},
+  {min:3,name:'Sprout',next:'Sapling',color:'#34d399'},
+  {min:8,name:'Sapling',next:'Tree',color:'#38bdf8'},
+  {min:16,name:'Tree',next:'Grove',color:'#ff9f0a'},
+  {min:30,name:'Grove',next:'Forest',color:'#a78bfa'},
+  {min:50,name:'Forest',next:'Ancient',color:'#f472b6'},
+  {min:80,name:'Ancient',next:'Legend',color:'#fbbf24'},
+  {min:120,name:'Legend',next:null,color:'#fdf8f0'},
 ];
-function computeLevel(total) {
-  let lvl = LEVELS[0], nextLvl = LEVELS[1];
-  for(let i=0;i<LEVELS.length;i++) {
-    if(total >= LEVELS[i].min) { lvl=LEVELS[i]; nextLvl=LEVELS[i+1]||null; }
-    else break;
+function computeLevel(total){
+  let lvl=LEVELS[0],nextLvl=LEVELS[1];
+  for(let i=0;i<LEVELS.length;i++){
+    if(total>=LEVELS[i].min){lvl=LEVELS[i];nextLvl=LEVELS[i+1]||null;}else break;
   }
-  const progress = nextLvl ? Math.round(((total-lvl.min)/(nextLvl.min-lvl.min))*100) : 100;
-  return {name:lvl.name, next_name:nextLvl?nextLvl.name:null, color:lvl.color, progress};
+  const progress=nextLvl?Math.round(((total-lvl.min)/(nextLvl.min-lvl.min))*100):100;
+  return{name:lvl.name,next_name:nextLvl?nextLvl.name:null,color:lvl.color,progress};
 }
 function renderFocusStats(){
-  const col = FOCUS.collection||[];
-  const total = col.length;
+  const col=FOCUS.collection||[];
+  const total=col.length;
   document.getElementById('stat-streak').textContent=FOCUS.streak||0;
   document.getElementById('stat-crystals').textContent=total;
   document.getElementById('stat-today').textContent=FOCUS.today_sessions||0;
 
-  // Use server-provided level if available, else compute client-side
-  const lvl = FOCUS.level || computeLevel(total);
-  const lvlColor = lvl.color || 'var(--ivory)';
-  const nameEl = document.getElementById('level-name');
-  nameEl.textContent = lvl.name||'Seedling';
-  nameEl.style.color = lvlColor;
-  if(lvl.next_name) {
-    document.getElementById('level-next').textContent = '→ '+lvl.next_name;
-  }
+  const lvl=FOCUS.level||computeLevel(total);
+  const lvlColor=lvl.color||'var(--ivory)';
+  const nameEl=document.getElementById('level-name');
+  nameEl.textContent=lvl.name||'Seedling';
+  nameEl.style.color=lvlColor;
+  if(lvl.next_name) document.getElementById('level-next').textContent='→ '+lvl.next_name;
   document.getElementById('level-fill').style.width=(lvl.progress||0)+'%';
   document.getElementById('level-fill').style.background='linear-gradient(90deg,'+lvlColor+',rgba(255,159,10,.4))';
 
-  // Crystal symbols (no emojis)
   const syms={amber:'◆',sapphire:'◇',prismatic:'★',emerald:'◈'};
   document.getElementById('collection-row').innerHTML=col.slice(-18).map(c=>
     '<span class="mini-crystal" style="color:'+(c.type==='sapphire'?'#38bdf8':c.type==='prismatic'?'#a78bfa':c.type==='emerald'?'#34d399':'#ff9f0a')+'">'+(syms[c.type]||'◆')+'</span>'
@@ -2457,7 +2691,7 @@ function runSplash() {
 }
 
 // ══ INIT ══
-loadData(); loadSettings(); initCal(); initTree(); renderFocusStats(); renderChat();
+loadData(); loadSettings(); initCal(); initTree(); renderFocusStats(); renderChain(); renderChat();
 if(initTab!=='calendar') switchTab(initTab);
 if(twa){twa.BackButton.show();twa.BackButton.onClick(goBack);}
 runSplash();
