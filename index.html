@@ -391,266 +391,223 @@ html, body {
 .tree-container::after { display: none; }
 #gem-3d-canvas { display: none; }
 
-/* ══════════════════════════════════════════════════════════
-   OPAL GEM — premium liquid crystal, multi-blob mix-blend
-   ══════════════════════════════════════════════════════════ */
+/* ══ OPAL GEM — полный хаос цвета, 5 независимых слоёв ══ */
 .opal-gem {
   --progress: 0;
   position: relative;
   width: 130px; height: 175px;
   border-radius: 44% 56% 48% 52% / 36% 34% 66% 64%;
   overflow: hidden; z-index: 1;
-  background: #04020c;
-  animation: gem-float 6s ease-in-out infinite, gem-rotate 38s linear infinite;
-  box-shadow:
-    0 0 30px rgba(170, 80, 255, .35),
-    0 0 60px rgba(80, 0, 200, .18),
-    inset 0 0 40px rgba(0, 0, 20, .6);
+  animation: gem-float 6s ease-in-out infinite, gem-aura 23s linear infinite;
 }
-/* Ambient aura — глубинная подсветка позади всех слоёв */
-.gem-aura-bg {
-  position: absolute; inset: -15%;
-  border-radius: inherit;
-  background: radial-gradient(ellipse at 40% 35%,
-    rgba(180, 90, 255, .55) 0%,
-    rgba(80, 30, 180, .35) 28%,
-    rgba(20, 0, 60, .15) 55%,
-    transparent 75%);
-  filter: blur(18px);
-  z-index: 1;
-  animation: aura-breathe 7s ease-in-out infinite;
-}
-@keyframes aura-breathe {
-  0%, 100% { opacity: .75; transform: scale(1); }
-  50%      { opacity: 1;   transform: scale(1.08); }
-}
-
-/* Цветные блобы — масло в воде, mix-blend-mode: screen для свечения */
-.gem-blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(18px) saturate(1.4);
-  mix-blend-mode: screen;
-  z-index: 2;
-  will-change: transform, opacity;
-}
-.gb-purple {
-  width: 90px; height: 90px;
-  left: 18%; top: 12%;
-  background: radial-gradient(circle, #c84cff 0%, #6a0fdc 45%, transparent 70%);
-  animation: drift-1 11s ease-in-out infinite;
-}
-.gb-cyan {
-  width: 78px; height: 78px;
-  left: 48%; top: 28%;
-  background: radial-gradient(circle, #4af0ff 0%, #0a78ff 48%, transparent 72%);
-  animation: drift-2 14s ease-in-out infinite;
-}
-.gb-magenta {
-  width: 82px; height: 82px;
-  left: 28%; top: 48%;
-  background: radial-gradient(circle, #ff4cb8 0%, #c20070 48%, transparent 72%);
-  animation: drift-3 17s ease-in-out infinite;
-}
-.gb-amber {
-  width: 70px; height: 70px;
-  left: 50%; top: 58%;
-  background: radial-gradient(circle, #ffb84a 0%, #ff5a14 50%, transparent 72%);
-  animation: drift-4 13s ease-in-out infinite;
-  opacity: .9;
-}
-.gb-emerald {
-  width: 75px; height: 75px;
-  left: 10%; top: 55%;
-  background: radial-gradient(circle, #4cffc8 0%, #0aa078 50%, transparent 72%);
-  animation: drift-5 19s ease-in-out infinite;
-  opacity: .85;
-}
-.gb-rose {
-  width: 68px; height: 68px;
-  left: 55%; top: 14%;
-  background: radial-gradient(circle, #ff8acc 0%, #ff3a8a 50%, transparent 72%);
-  animation: drift-6 23s ease-in-out infinite;
-  opacity: .8;
-}
-
-@keyframes drift-1 {
-  0%,100% { transform: translate(0,0) scale(1); }
-  33%     { transform: translate(18px, 22px)  scale(1.18); }
-  66%     { transform: translate(-14px, 8px)  scale(0.92); }
-}
-@keyframes drift-2 {
-  0%,100% { transform: translate(0,0) scale(1.05); }
-  40%     { transform: translate(-22px, 18px) scale(1.2); }
-  70%     { transform: translate(12px, -10px) scale(0.88); }
-}
-@keyframes drift-3 {
-  0%,100% { transform: translate(0,0) scale(0.95); }
-  30%     { transform: translate(14px, -20px) scale(1.15); }
-  60%     { transform: translate(-18px, 14px) scale(1.05); }
-}
-@keyframes drift-4 {
-  0%,100% { transform: translate(0,0) scale(1); }
-  45%     { transform: translate(-20px, -14px) scale(1.22); }
-  75%     { transform: translate(16px, 10px)   scale(0.9); }
-}
-@keyframes drift-5 {
-  0%,100% { transform: translate(0,0) scale(1.1); }
-  35%     { transform: translate(20px, -16px) scale(0.88); }
-  70%     { transform: translate(-12px, 22px) scale(1.18); }
-}
-@keyframes drift-6 {
-  0%,100% { transform: translate(0,0) scale(1); }
-  50%     { transform: translate(-16px, 24px) scale(1.15); }
-}
-
-/* Светящееся ядро — пульсирующее белое сердце */
-.gem-core {
-  position: absolute;
-  left: 50%; top: 45%;
-  width: 60px; height: 60px;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: radial-gradient(circle,
-    rgba(255,255,255,.85) 0%,
-    rgba(255,240,255,.4) 25%,
-    rgba(200,150,255,.15) 55%,
-    transparent 80%);
-  filter: blur(8px);
-  mix-blend-mode: screen;
-  z-index: 5;
-  animation: core-pulse 4s ease-in-out infinite;
-}
-@keyframes core-pulse {
-  0%,100% { opacity: .85; transform: translate(-50%,-50%) scale(1); }
-  50%     { opacity: 1;   transform: translate(-50%,-50%) scale(1.18); }
-}
-
-/* Specular блик — премиум стеклянный отблеск */
-.gem-specular {
-  position: absolute;
-  left: 22%; top: 14%;
-  width: 32px; height: 18px;
-  border-radius: 50%;
-  background: radial-gradient(ellipse,
-    rgba(255,255,255,.95) 0%,
-    rgba(255,255,255,.4) 40%,
-    transparent 75%);
-  filter: blur(2px);
-  z-index: 8;
-  animation: spec-shift 6s ease-in-out infinite;
-}
-@keyframes spec-shift {
-  0%,100% { opacity: 1;   transform: translate(0,0) scale(1); }
-  50%     { opacity: .55; transform: translate(6px, 4px) scale(1.15); }
-}
-
-/* Rim — тонкий контур камня сверху + лёгкий внутренний vignette */
-.gem-rim {
-  position: absolute; inset: 0;
-  border-radius: inherit;
-  pointer-events: none; z-index: 10;
-  background:
-    /* Top rim — яркий */
-    radial-gradient(ellipse 80% 25% at 50% 0%,
-      rgba(255,255,255,.18) 0%,
-      transparent 65%),
-    /* Внутренний edge vignette — тонкий, не съедает камень */
-    radial-gradient(ellipse 75% 78% at 50% 50%,
-      transparent 0%,
-      transparent 70%,
-      rgba(0,0,15,.45) 92%,
-      rgba(0,0,15,.85) 100%);
-  border: 1px solid transparent;
-  background-clip: padding-box;
-}
-/* Тонкая светящаяся обводка */
+/* Rim: тонкий контур — верхний левый ярче, нижний правый темнее */
 .opal-gem::before {
   content: '';
   position: absolute; inset: 0;
   border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(150deg,
-    rgba(255,180,255,.5) 0%,
-    rgba(150,100,255,.2) 30%,
-    rgba(80,200,255,.15) 55%,
-    rgba(255,100,200,.3) 90%) border-box;
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-  z-index: 12; pointer-events: none;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(#000005, #000005) padding-box,
+    linear-gradient(145deg,
+      rgba(255,255,255,.35) 0%,
+      rgba(255,255,255,.12) 30%,
+      rgba(255,255,255,.02) 60%,
+      rgba(0,0,0,.4) 100%) border-box;
+  z-index: 15; pointer-events: none;
+}
+/* Vignette — края тают в черноте */
+.opal-gem::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(ellipse 70% 72% at 50% 50%,
+    transparent 0%,
+    transparent 55%,
+    rgba(0,0,8,.15) 70%,
+    rgba(0,0,8,.55) 84%,
+    rgba(0,0,8,.85) 96%,
+    #000008 100%);
+  z-index: 20; pointer-events: none;
+}
+@keyframes gem-aura {
+  /* Медленное дыхание — один цвет доминирует, не все сразу */
+  0%   { box-shadow: 0 0 28px rgba(90,0,180,.35),  0 0 60px rgba(50,0,120,.15); }
+  25%  { box-shadow: 0 0 28px rgba(0,60,120,.30),  0 0 60px rgba(0,40,90,.12); }
+  50%  { box-shadow: 0 0 28px rgba(80,20,0,.28),   0 0 60px rgba(50,10,0,.12); }
+  75%  { box-shadow: 0 0 28px rgba(60,0,100,.32),  0 0 60px rgba(40,0,80,.14); }
+  100% { box-shadow: 0 0 28px rgba(90,0,180,.35),  0 0 60px rgba(50,0,120,.15); }
+}
+/* ── MESH GRADIENT BLOBS — правильная техника для органической радужности ── */
+
+/* ── PREMIUM GEM — deep dark, single light source, liquid motion ── */
+
+/* Почти чёрная бездна — камень сам является источником света */
+.opal-gem { background: #000005; }
+
+/* Блобы: медленное движение как масло в воде */
+.gem-blobs {
+  position: absolute; inset: -20%;
+  /* Цикл 53s — достаточно медленно чтобы не замечать петлю */
+  animation: blobs-hue 53s linear infinite;
+}
+@keyframes blobs-hue {
+  0%   { filter: blur(28px) saturate(2.0) hue-rotate(0deg); }
+  100% { filter: blur(28px) saturate(2.0) hue-rotate(360deg); }
 }
 
-@keyframes gem-float {
-  0%,100% { transform: translateY(0); }
-  50%     { transform: translateY(-8px); }
-}
-@keyframes gem-rotate {
-  /* Очень медленное вращение всего камня — добавляет жизни */
-  0%   { filter: hue-rotate(0deg) saturate(1.1) brightness(1.05); }
-  100% { filter: hue-rotate(360deg) saturate(1.1) brightness(1.05); }
+.blob {
+  position: absolute;
+  mix-blend-mode: screen;
 }
 
-/* ═══ Side gems — те же приёмы, но меньше ═══ */
+/* 5 блобов — все сгруппированы в центре, перекрываются, blur их сплавляет */
+
+/* Пурпур — сердце камня */
+.b1 {
+  width: 120px; height: 130px;
+  left: 15%; top: 18%;
+  border-radius: 42% 58% 55% 45% / 48% 44% 56% 52%;
+  background: radial-gradient(ellipse at 48% 45%, #b030ff 0%, #6600cc 45%, transparent 68%);
+  opacity: .78;
+  animation: gb1 23s ease-in-out infinite alternate;
+}
+/* Синий — перекрывается с пурпуром → индиго */
+.b2 {
+  width: 110px; height: 120px;
+  left: 28%; top: 25%;
+  border-radius: 55% 45% 38% 62% / 52% 58% 42% 48%;
+  background: radial-gradient(ellipse at 50% 48%, #0090e0 0%, #003899 50%, transparent 70%);
+  opacity: .70;
+  animation: gb2 17s ease-in-out infinite alternate;
+}
+/* Розовый — тянется снизу */
+.b3 {
+  width: 100px; height: 115px;
+  left: 20%; top: 35%;
+  border-radius: 48% 52% 44% 56% / 55% 45% 55% 45%;
+  background: radial-gradient(ellipse at 48% 45%, #e0206a 0%, #800030 52%, transparent 72%);
+  opacity: .65;
+  animation: gb3 29s ease-in-out infinite alternate;
+}
+/* Бирюза — холодный акцент сверху */
+.b4 {
+  width: 90px; height: 100px;
+  left: 35%; top: 15%;
+  border-radius: 60% 40% 52% 48% / 44% 56% 44% 56%;
+  background: radial-gradient(ellipse at 45% 42%, #00d4c8 0%, #005a88 52%, transparent 70%);
+  opacity: .60;
+  animation: gb4 19s ease-in-out infinite alternate;
+}
+/* Янтарь — тёплое мерцание снизу */
+.b5 {
+  width: 95px; height: 88px;
+  left: 22%; top: 48%;
+  border-radius: 52% 48% 60% 40% / 46% 54% 46% 54%;
+  background: radial-gradient(ellipse at 50% 50%, #ff8800 0%, #7a2a00 50%, transparent 70%);
+  opacity: .55;
+  animation: gb5 31s ease-in-out infinite alternate;
+}
+
+/* Движение: тихое, как масло. Максимум ±8px — блобы не расходятся */
+@keyframes gb1 {
+  0%   { transform: translate(0px,   0px)  scale(1.00); }
+  33%  { transform: translate(-6px,  7px)  scale(1.07); }
+  66%  { transform: translate(5px,  -4px)  scale(0.95); }
+  100% { transform: translate(-3px,  8px)  scale(1.04); }
+}
+@keyframes gb2 {
+  0%   { transform: translate(0px,   0px)  scale(1.03); }
+  40%  { transform: translate(7px,  -6px)  scale(0.94); }
+  100% { transform: translate(-4px,  7px)  scale(1.08); }
+}
+@keyframes gb3 {
+  0%   { transform: translate(0px,   0px)  scale(0.97); }
+  50%  { transform: translate(6px,   5px)  scale(1.06); }
+  100% { transform: translate(-5px, -4px)  scale(1.00); }
+}
+@keyframes gb4 {
+  0%   { transform: translate(0px,   0px)  scale(1.00); }
+  45%  { transform: translate(-7px,  5px)  scale(1.10); }
+  100% { transform: translate(6px,  -5px)  scale(0.90); }
+}
+@keyframes gb5 {
+  0%   { transform: translate(0px,   0px)  scale(1.00); }
+  38%  { transform: translate(5px,  -7px)  scale(1.08); }
+  100% { transform: translate(-6px,  4px)  scale(0.93); }
+}
+
+/* ── Highlight: единственный источник света — продаёт 3D-стекло ── */
+.gem-hl {
+  position: absolute; inset: 0; z-index: 5; pointer-events: none;
+  background:
+    /* Основной блик — острый, яркий, верхний левый */
+    radial-gradient(ellipse 18% 11% at 27% 17%,
+      rgba(255,255,255,1.0) 0%,
+      rgba(255,255,255,.55) 28%,
+      rgba(255,255,255,.1) 55%,
+      transparent 72%),
+    /* Вторичный — едва заметный, нижний правый */
+    radial-gradient(ellipse 10% 6% at 68% 76%,
+      rgba(255,255,255,.38) 0%,
+      transparent 60%),
+    /* Rim glow — тонкий свет по верхней кромке */
+    radial-gradient(ellipse 55% 18% at 50% 0%,
+      rgba(255,255,255,.09) 0%,
+      transparent 70%);
+}
+
+/* ── Gem trio — reward area below ring ── */
+.gem-trio {
+  display: flex; align-items: flex-end; justify-content: center;
+  width: 100%; margin-top: 10px; margin-bottom: 2px;
+  /* hidden until focus completes */
+  opacity: 0;
+  transform: translateY(18px);
+  pointer-events: none;
+}
+/* keep .gem-scene as simple passthrough (no longer wraps side gems) */
+.gem-scene { display: contents; }
 .opal-gem-side {
   --progress: 0;
   position: relative; flex-shrink: 0;
   width: 66px; height: 90px;
   border-radius: 44% 56% 48% 52% / 36% 34% 66% 64%;
   overflow: hidden;
-  background: #04020c;
-  opacity: 0.55;
-  box-shadow:
-    0 0 14px rgba(130, 60, 200, .25),
-    inset 0 0 18px rgba(0, 0, 18, .55);
+  opacity: 0.45;
+  filter: blur(0.8px) saturate(0.7);
   z-index: 0;
+}
+/* vignette for side gems */
+.opal-gem-side::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(ellipse 72% 74% at 50% 50%,
+    transparent 0%, transparent 55%,
+    rgba(5,1,15,.20) 70%, rgba(5,1,15,.65) 88%, rgba(5,1,15,.9) 100%);
+  z-index: 20; pointer-events: none;
 }
 .opal-gem-side.left  { margin-right: -22px; border-radius: 40% 60% 46% 54% / 38% 32% 68% 62%; }
 .opal-gem-side.right { margin-left:  -22px; border-radius: 52% 48% 50% 50% / 34% 38% 62% 66%; }
+/* Side gems — тёмные, тихие, 2 блоба */
+.opal-gem-side { background: #000005; }
+.opal-gem-side .gem-blobs {
+  position: absolute; inset: -20%;
+  animation: blobs-hue 53s linear infinite;
+  animation-delay: -19s;
+}
+.opal-gem-side .gem-hl {
+  position: absolute; inset: 0; z-index: 5; pointer-events: none;
+  background: radial-gradient(ellipse 20% 12% at 28% 18%, rgba(255,255,255,.65) 0%, transparent 60%);
+}
+.opal-gem-side .b1 { width:48px;height:54px; left:5%;  top:10%; border-radius:50%;
+  background:radial-gradient(ellipse at 45% 42%,#5a009a 0%,#26004a 48%,transparent 72%);
+  opacity:.65; animation:gb1 23s ease-in-out infinite alternate; animation-delay:-7s; }
+.opal-gem-side .b2 { width:44px;height:50px; left:35%; top:35%; border-radius:50%;
+  background:radial-gradient(ellipse at 45% 42%,#003e6a 0%,#001830 50%,transparent 72%);
+  opacity:.55; animation:gb2 17s ease-in-out infinite alternate; animation-delay:-11s; }
 
-.gem-blob-s {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(11px) saturate(1.3);
-  mix-blend-mode: screen;
-  z-index: 2;
-}
-.gbs-purple {
-  width: 48px; height: 48px; left: 12%; top: 14%;
-  background: radial-gradient(circle, #b04cff 0%, #5808c8 50%, transparent 75%);
-  animation: drift-1 13s ease-in-out infinite;
-}
-.gbs-cyan {
-  width: 42px; height: 42px; left: 45%; top: 38%;
-  background: radial-gradient(circle, #4ae0ff 0%, #0860d0 50%, transparent 75%);
-  animation: drift-2 16s ease-in-out infinite;
-}
-.gbs-magenta {
-  width: 40px; height: 40px; left: 18%; top: 48%;
-  background: radial-gradient(circle, #ff4cb8 0%, #a40060 50%, transparent 75%);
-  animation: drift-3 19s ease-in-out infinite;
-}
-.gem-core-s {
-  position: absolute; left: 50%; top: 45%;
-  width: 28px; height: 28px;
-  transform: translate(-50%,-50%);
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,.7) 0%, transparent 75%);
-  filter: blur(5px);
-  mix-blend-mode: screen;
-  z-index: 5;
-  animation: core-pulse 5s ease-in-out infinite;
-}
-.gem-specular-s {
-  position: absolute;
-  left: 22%; top: 14%;
-  width: 16px; height: 9px;
-  border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(255,255,255,.85) 0%, transparent 70%);
-  filter: blur(1px);
-  z-index: 8;
-}
-
+/* Pedestal: small dark ellipse below gem */
 .opal-pedestal {
   position: absolute;
   bottom: 20px; left: 50%; transform: translateX(-50%);
@@ -1066,30 +1023,203 @@ html, body {
         <!-- Gem trio — reward area, hidden until focus completes -->
         <div class="gem-trio" id="gem-trio">
           <div class="opal-gem-side left">
-            <div class="gem-blob-s gbs-purple"></div>
-            <div class="gem-blob-s gbs-cyan"></div>
-            <div class="gem-blob-s gbs-magenta"></div>
-            <div class="gem-core-s"></div>
-            <div class="gem-specular-s"></div>
+<svg class="gem-svg" viewBox="0 0 66 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <filter id="gfL" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="2" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="sfL" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="5" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <radialGradient id="sfnL" cx="33" cy="4" r="55" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#ff44ee" stop-opacity="0.9"/><stop offset="100%" stop-color="#ff44ee" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="sfeL" cx="62" cy="45" r="42" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00ddff" stop-opacity="0.9"/><stop offset="100%" stop-color="#00ddff" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="sfsL" cx="33" cy="86" r="55" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#9900ff" stop-opacity="0.85"/><stop offset="100%" stop-color="#9900ff" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="sfwL" cx="4" cy="45" r="42" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#ff99dd" stop-opacity="0.9"/><stop offset="100%" stop-color="#ff99dd" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="sfcL" cx="33" cy="44" r="30" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85"/>
+              <stop offset="40%" stop-color="#cc88ff" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="66" height="90" fill="#02000a"/>
+          <polygon points="33,45 33,4  62,45" fill="url(#sfnL)"/>
+          <polygon points="33,45 62,45 33,86" fill="url(#sfeL)"/>
+          <polygon points="33,45 33,86 4,45"  fill="url(#sfsL)"/>
+          <polygon points="33,45 4,45  33,4"  fill="url(#sfwL)"/>
+          <ellipse cx="33" cy="44" rx="22" ry="27" fill="url(#sfcL)" filter="url(#sfL)"/>
+          <g filter="url(#gfL)">
+            <line x1="33" y1="45" x2="33" y2="4"  stroke="#ffffff" stroke-width="0.6" stroke-opacity="0.6"/>
+            <line x1="33" y1="45" x2="62" y2="45" stroke="#88ccff" stroke-width="0.5" stroke-opacity="0.65"/>
+            <line x1="33" y1="45" x2="33" y2="86" stroke="#aa88ff" stroke-width="0.6" stroke-opacity="0.6"/>
+            <line x1="33" y1="45" x2="4"  y2="45" stroke="#ffaaff" stroke-width="0.5" stroke-opacity="0.65"/>
+            <polyline points="33,4 62,45 33,86 4,45 33,4" fill="none" stroke="#ffffff" stroke-width="0.7" stroke-opacity="0.45">
+              <animate attributeName="stroke-opacity" values="0.45;0.8;0.45" dur="4s" repeatCount="indefinite"/>
+            </polyline>
+          </g>
+          <ellipse cx="22" cy="20" rx="11" ry="6" fill="white" opacity="0.6" filter="url(#sfL)">
+            <animate attributeName="opacity" values="0.6;0.3;0.6" dur="5s" repeatCount="indefinite"/>
+          </ellipse>
+        </svg>
           </div>
           <div class="opal-gem" id="opal-gem">
-            <div class="gem-aura-bg"></div>
-            <div class="gem-blob gb-purple"></div>
-            <div class="gem-blob gb-cyan"></div>
-            <div class="gem-blob gb-magenta"></div>
-            <div class="gem-blob gb-amber"></div>
-            <div class="gem-blob gb-emerald"></div>
-            <div class="gem-blob gb-rose"></div>
-            <div class="gem-core"></div>
-            <div class="gem-specular"></div>
-            <div class="gem-rim"></div>
+<svg class="gem-svg" viewBox="0 0 130 175" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <filter id="gf" x="-80%" y="-80%" width="260%" height="260%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="2.8" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="sf" x="-60%" y="-60%" width="220%" height="220%">
+        <feGaussianBlur stdDeviation="7" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <!-- Facet gradients: bright outer-edge → transparent at center -->
+      <!-- NE: outer edge midpoint (88,26) → center (65,88) -->
+      <radialGradient id="fne" cx="88" cy="26" r="96" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#ff44ee" stop-opacity="0.95"/>
+        <stop offset="100%" stop-color="#ff44ee" stop-opacity="0"/>
+      </radialGradient>
+      <!-- E: outer edge midpoint (116,67) → center -->
+      <radialGradient id="fe" cx="116" cy="67" r="72" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#00ddff" stop-opacity="0.95"/>
+        <stop offset="100%" stop-color="#00ddff" stop-opacity="0"/>
+      </radialGradient>
+      <!-- SE: outer edge midpoint (116,110) -->
+      <radialGradient id="fse" cx="116" cy="110" r="72" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#ff2299" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#ff2299" stop-opacity="0"/>
+      </radialGradient>
+      <!-- S: outer edge midpoint (88,151) -->
+      <radialGradient id="fs" cx="88" cy="151" r="90" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#9900ff" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#9900ff" stop-opacity="0"/>
+      </radialGradient>
+      <!-- SW: outer edge midpoint (41,151) -->
+      <radialGradient id="fsw" cx="41" cy="151" r="90" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#00ffaa" stop-opacity="0.85"/>
+        <stop offset="100%" stop-color="#00ffaa" stop-opacity="0"/>
+      </radialGradient>
+      <!-- W: outer edge midpoint (14,110) -->
+      <radialGradient id="fw" cx="14" cy="110" r="72" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#4499ff" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#4499ff" stop-opacity="0"/>
+      </radialGradient>
+      <!-- NW: outer edge midpoint (14,67) -->
+      <radialGradient id="fnw" cx="14" cy="67" r="72" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#ff99dd" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#ff99dd" stop-opacity="0"/>
+      </radialGradient>
+      <!-- N: outer edge midpoint (41,26) -->
+      <radialGradient id="fn" cx="41" cy="26" r="96" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#ccddff" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#ccddff" stop-opacity="0"/>
+      </radialGradient>
+      <!-- Core: white center glow -->
+      <radialGradient id="fc" cx="65" cy="84" r="52" gradientUnits="userSpaceOnUse">
+        <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.9"/>
+        <stop offset="22%"  stop-color="#dd88ff" stop-opacity="0.75"/>
+        <stop offset="55%"  stop-color="#6600cc" stop-opacity="0.4"/>
+        <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <!-- Dark void -->
+    <rect width="130" height="175" fill="#02000a"/>
+    <!-- Girdle: (65,6)(112,46)(120,88)(112,132)(65,170)(18,132)(10,88)(18,46) · Center:(65,88) -->
+    <!-- 8 triangular facets -->
+    <polygon points="65,88 65,6   112,46"  fill="url(#fne)"/>
+    <polygon points="65,88 112,46 120,88"  fill="url(#fe)"/>
+    <polygon points="65,88 120,88 112,132" fill="url(#fse)"/>
+    <polygon points="65,88 112,132 65,170" fill="url(#fs)"/>
+    <polygon points="65,88 65,170 18,132"  fill="url(#fsw)"/>
+    <polygon points="65,88 18,132 10,88"   fill="url(#fw)"/>
+    <polygon points="65,88 10,88  18,46"   fill="url(#fnw)"/>
+    <polygon points="65,88 18,46  65,6"    fill="url(#fn)"/>
+    <!-- Core white glow -->
+    <ellipse cx="65" cy="84" rx="44" ry="54" fill="url(#fc)" filter="url(#sf)"/>
+    <!-- Glowing facet edges ("cracks") -->
+    <g filter="url(#gf)">
+      <line x1="65" y1="88" x2="65"  y2="6"   stroke="#ffffff" stroke-width="0.7" stroke-opacity="0.65"/>
+      <line x1="65" y1="88" x2="112" y2="46"  stroke="#dd99ff" stroke-width="0.55" stroke-opacity="0.7"/>
+      <line x1="65" y1="88" x2="120" y2="88"  stroke="#88ddff" stroke-width="0.55" stroke-opacity="0.7"/>
+      <line x1="65" y1="88" x2="112" y2="132" stroke="#ff88cc" stroke-width="0.55" stroke-opacity="0.7"/>
+      <line x1="65" y1="88" x2="65"  y2="170" stroke="#aa88ff" stroke-width="0.7" stroke-opacity="0.65"/>
+      <line x1="65" y1="88" x2="18"  y2="132" stroke="#88ffcc" stroke-width="0.55" stroke-opacity="0.7"/>
+      <line x1="65" y1="88" x2="10"  y2="88"  stroke="#88aaff" stroke-width="0.55" stroke-opacity="0.7"/>
+      <line x1="65" y1="88" x2="18"  y2="46"  stroke="#ffaaff" stroke-width="0.55" stroke-opacity="0.7"/>
+      <!-- Outer girdle -->
+      <polyline points="65,6 112,46 120,88 112,132 65,170 18,132 10,88 18,46 65,6"
+                fill="none" stroke="#ffffff" stroke-width="0.9" stroke-opacity="0.5">
+        <animate attributeName="stroke-opacity" values="0.5;0.85;0.5" dur="3.5s" repeatCount="indefinite"/>
+      </polyline>
+    </g>
+    <!-- Primary specular (top-left light source) -->
+    <ellipse cx="40" cy="35" rx="22" ry="12" fill="white" filter="url(#sf)">
+      <animate attributeName="opacity" values="0.8;0.45;0.8" dur="4.5s" repeatCount="indefinite"/>
+      <animate attributeName="rx" values="22;28;22" dur="4.5s" repeatCount="indefinite"/>
+    </ellipse>
+    <!-- Secondary specular -->
+    <ellipse cx="92" cy="55" rx="9" ry="5" fill="white" opacity="0.4" filter="url(#sf)">
+      <animate attributeName="opacity" values="0.4;0.12;0.4" dur="7s" repeatCount="indefinite"/>
+    </ellipse>
+  </svg>
           </div>
           <div class="opal-gem-side right">
-            <div class="gem-blob-s gbs-purple"></div>
-            <div class="gem-blob-s gbs-cyan"></div>
-            <div class="gem-blob-s gbs-magenta"></div>
-            <div class="gem-core-s"></div>
-            <div class="gem-specular-s"></div>
+<svg class="gem-svg" viewBox="0 0 66 90" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <filter id="gfR" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="2" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="sfR" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="5" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <radialGradient id="sfnR" cx="33" cy="4" r="55" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#ff44ee" stop-opacity="0.9"/><stop offset="100%" stop-color="#ff44ee" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="sfeR" cx="62" cy="45" r="42" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00ddff" stop-opacity="0.9"/><stop offset="100%" stop-color="#00ddff" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="sfsR" cx="33" cy="86" r="55" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#9900ff" stop-opacity="0.85"/><stop offset="100%" stop-color="#9900ff" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="sfwR" cx="4" cy="45" r="42" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#ff99dd" stop-opacity="0.9"/><stop offset="100%" stop-color="#ff99dd" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="sfcR" cx="33" cy="44" r="30" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85"/>
+              <stop offset="40%" stop-color="#cc88ff" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect width="66" height="90" fill="#02000a"/>
+          <polygon points="33,45 33,4  62,45" fill="url(#sfnR)"/>
+          <polygon points="33,45 62,45 33,86" fill="url(#sfeR)"/>
+          <polygon points="33,45 33,86 4,45"  fill="url(#sfsR)"/>
+          <polygon points="33,45 4,45  33,4"  fill="url(#sfwR)"/>
+          <ellipse cx="33" cy="44" rx="22" ry="27" fill="url(#sfcR)" filter="url(#sfR)"/>
+          <g filter="url(#gfR)">
+            <line x1="33" y1="45" x2="33" y2="4"  stroke="#ffffff" stroke-width="0.6" stroke-opacity="0.6"/>
+            <line x1="33" y1="45" x2="62" y2="45" stroke="#88ccff" stroke-width="0.5" stroke-opacity="0.65"/>
+            <line x1="33" y1="45" x2="33" y2="86" stroke="#aa88ff" stroke-width="0.6" stroke-opacity="0.6"/>
+            <line x1="33" y1="45" x2="4"  y2="45" stroke="#ffaaff" stroke-width="0.5" stroke-opacity="0.65"/>
+            <polyline points="33,4 62,45 33,86 4,45 33,4" fill="none" stroke="#ffffff" stroke-width="0.7" stroke-opacity="0.45">
+              <animate attributeName="stroke-opacity" values="0.45;0.8;0.45" dur="4s" repeatCount="indefinite"/>
+            </polyline>
+          </g>
+          <ellipse cx="22" cy="20" rx="11" ry="6" fill="white" opacity="0.6" filter="url(#sfR)">
+            <animate attributeName="opacity" values="0.6;0.3;0.6" dur="5s" repeatCount="indefinite"/>
+          </ellipse>
+        </svg>
           </div>
         </div>
         <div class="dur-row" id="dur-row">
