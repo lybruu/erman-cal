@@ -1472,27 +1472,71 @@ svg.sisy-icon .sf4{opacity:0;animation:sfvis 1.2s linear infinite;animation-dela
     <button class="tab-item" data-tab="focus" onclick="switchTab('focus');tabBurst(this)">
       <div class="tab-glow"></div>
       <svg class="sisy-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Focus" style="overflow:hidden">
-      <circle cx="86" cy="36" r="30" fill="currentColor"/>
-      <ellipse cx="44" cy="8" rx="8" ry="7.5" fill="currentColor"/>
-      <path d="M 41 14 Q 44 17 48 19 L 50 16 Q 47 13 44 13 Z" fill="currentColor"/>
-      <path d="M 41 14 C 47 16,58 20,61 27 C 58 30,55 31,54 33 C 50 29,46 27,45 30 L 36 49 L 23 46 C 26 37,30 26,37 19 Z" fill="currentColor"/>
-      <path d="M 60 27 C 64 30,67 33,67 37 C 64 38,61 37,59 34 C 57 31,56 29,55 27 Z" fill="currentColor"/>
-      <path d="M 39 24 C 33 30,24 38,16 46 C 19 48,22 47,24 45 C 29 39,35 32,40 26 Z" fill="currentColor"/>
+
+      <!-- Hill slope line -->
+      <path d="M 0 95 L 100 62" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity="0.5" fill="none"/>
+
+      <!-- BOULDER: huge, r=36, mostly upper-right, clipped at edge -->
+      <circle cx="74" cy="40" r="36" fill="currentColor"/>
+
+      <!-- ── STATIC BODY PARTS ── -->
+
+      <!-- Head: small, at ~boulder midline (cx=27, cy=38) -->
+      <ellipse cx="27" cy="38" rx="6.5" ry="6" fill="currentColor"/>
+
+      <!-- Torso: strongly angled forward (~45°), wide shoulders -->
+      <!-- spine from hip(16,68) to shoulder(30,42) -->
+      <path d="M 14 68
+               C 22 58, 28 48, 34 40
+               C 38 41, 40 44, 38 46
+               C 34 46, 31 47, 28 50
+               L 20 70
+               Z" fill="currentColor"/>
+
+      <!-- Forward arm — both hands pressing boulder -->
+      <path d="M 35 41
+               C 40 41, 43 41, 44 43
+               C 43 46, 40 46, 37 45
+               Z" fill="currentColor"/>
+
+      <!-- Second arm (slightly below) -->
+      <path d="M 34 44
+               C 38 46, 41 48, 41 50
+               C 39 51, 36 50, 34 48
+               Z" fill="currentColor"/>
+
+      <!-- ── ANIMATED LEGS ── -->
+
+      <!-- FRAME 1: right leg forward (uphill), left leg back (downhill) -->
       <g class="sf sf1">
-        <path d="M 37 49 C 40 63,42 76,41 90 C 38 91,34 90,33 89 C 35 75,34 62,30 49 Z" fill="currentColor"/>
-        <path d="M 30 49 C 22 62,15 75,7 97 C 10 99,14 98,15 96 C 21 77,26 63,33 49 Z" fill="currentColor" opacity="0.6"/>
+        <path d="M 22 70 C 26 78,30 84,30 92 C 27 93,23 92,22 91 C 23 83,20 76,17 70 Z"
+              fill="currentColor"/>
+        <path d="M 17 70 C 11 78,6 86,4 96 C 7 98,11 97,12 95 C 14 87,17 79,20 70 Z"
+              fill="currentColor" opacity="0.58"/>
       </g>
+
+      <!-- FRAME 2: legs crossing (mid-stride) -->
       <g class="sf sf2">
-        <path d="M 37 47 C 38 61,37 75,36 90 C 33 91,29 90,29 89 C 31 74,32 60,31 47 Z" fill="currentColor"/>
-        <path d="M 30 47 C 27 61,24 74,22 89 C 25 91,28 91,29 89 C 30 74,31 61,33 47 Z" fill="currentColor" opacity="0.6"/>
+        <path d="M 22 70 C 22 79,21 87,20 94 C 17 95,14 94,13 93 C 15 86,17 78,17 70 Z"
+              fill="currentColor"/>
+        <path d="M 17 70 C 19 79,21 87,23 93 C 26 94,29 93,29 92 C 26 85,22 77,20 70 Z"
+              fill="currentColor" opacity="0.58"/>
       </g>
+
+      <!-- FRAME 3: left leg forward, right leg back -->
       <g class="sf sf3">
-        <path d="M 37 49 C 38 63,38 76,35 90 C 32 91,29 90,28 89 C 31 75,33 62,30 49 Z" fill="currentColor"/>
-        <path d="M 30 49 C 22 62,15 75,7 97 C 10 99,14 98,15 96 C 21 77,26 63,33 49 Z" fill="currentColor" opacity="0.6"/>
+        <path d="M 22 70 C 24 78,26 84,24 92 C 21 93,17 92,17 91 C 18 83,17 76,17 70 Z"
+              fill="currentColor"/>
+        <path d="M 17 70 C 11 78,6 86,4 96 C 7 98,11 97,12 95 C 14 87,17 79,20 70 Z"
+              fill="currentColor" opacity="0.58"/>
       </g>
+
+      <!-- FRAME 4: legs crossing B -->
       <g class="sf sf4">
-        <path d="M 37 47 C 37 61,35 75,32 90 C 29 91,26 90,26 89 C 28 74,30 60,31 47 Z" fill="currentColor"/>
-        <path d="M 30 47 C 30 61,32 74,34 89 C 37 90,40 90,40 88 C 37 73,33 60,33 47 Z" fill="currentColor" opacity="0.6"/>
+        <path d="M 22 70 C 20 79,17 87,15 94 C 12 95,9 94,9 93 C 12 86,16 78,17 70 Z"
+              fill="currentColor"/>
+        <path d="M 17 70 C 20 79,24 87,27 92 C 30 93,33 92,33 91 C 29 84,24 77,20 70 Z"
+              fill="currentColor" opacity="0.58"/>
       </g>
     </svg>
       <span class="tab-lbl" data-i18n="tab_focus">ФОКУС</span>
