@@ -1473,70 +1473,55 @@ svg.sisy-icon .sf4{opacity:0;animation:sfvis 1.2s linear infinite;animation-dela
       <div class="tab-glow"></div>
       <svg class="sisy-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Focus" style="overflow:hidden">
 
-      <!-- Hill slope line -->
-      <path d="M 0 95 L 100 62" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity="0.5" fill="none"/>
+      <!-- Hill slope -->
+      <path d="M 0 93 L 100 66" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.38" fill="none"/>
 
-      <!-- BOULDER: huge, r=36, mostly upper-right, clipped at edge -->
-      <circle cx="74" cy="40" r="36" fill="currentColor"/>
+      <!-- BOULDER: dominant mass, upper-right, clips at edges -->
+      <circle cx="67" cy="37" r="35" fill="currentColor"/>
 
-      <!-- ── STATIC BODY PARTS ── -->
+      <!-- HEAD: small circle, left of boulder, at boulder mid-height -->
+      <circle cx="22" cy="39" r="5.5" fill="currentColor"/>
 
-      <!-- Head: small, at ~boulder midline (cx=27, cy=38) -->
-      <ellipse cx="27" cy="38" rx="6.5" ry="6" fill="currentColor"/>
+      <!-- UPPER BODY: one unified blob — torso + arms merged, no thin parts -->
+      <!-- Spine near-horizontal (heavy forward lean). Arms reach to boulder left edge (x≈32) -->
+      <path d="
+        M 8 78
+        C 12 68, 16 57, 19 49
+        C 21 44, 22 40, 22 36
+        C 22 33, 24 32, 26 33
+        C 28 34, 28 36, 27 38
+        C 29 35, 32 33, 33 35
+        C 32 38, 31 41, 32 43
+        C 33 45, 31 46, 29 47
+        C 26 53, 21 64, 16 76
+        C 12 78, 9 78, 8 78
+        Z" fill="currentColor"/>
 
-      <!-- Torso: strongly angled forward (~45°), wide shoulders -->
-      <!-- spine from hip(16,68) to shoulder(30,42) -->
-      <path d="M 14 68
-               C 22 58, 28 48, 34 40
-               C 38 41, 40 44, 38 46
-               C 34 46, 31 47, 28 50
-               L 20 70
-               Z" fill="currentColor"/>
+      <!-- ── ANIMATED LEGS (4 frames, thick filled paths) ── -->
 
-      <!-- Forward arm — both hands pressing boulder -->
-      <path d="M 35 41
-               C 40 41, 43 41, 44 43
-               C 43 46, 40 46, 37 45
-               Z" fill="currentColor"/>
-
-      <!-- Second arm (slightly below) -->
-      <path d="M 34 44
-               C 38 46, 41 48, 41 50
-               C 39 51, 36 50, 34 48
-               Z" fill="currentColor"/>
-
-      <!-- ── ANIMATED LEGS ── -->
-
-      <!-- FRAME 1: right leg forward (uphill), left leg back (downhill) -->
+      <!-- FRAME 1: near leg forward-uphill, far leg back -->
       <g class="sf sf1">
-        <path d="M 22 70 C 26 78,30 84,30 92 C 27 93,23 92,22 91 C 23 83,20 76,17 70 Z"
-              fill="currentColor"/>
-        <path d="M 17 70 C 11 78,6 86,4 96 C 7 98,11 97,12 95 C 14 87,17 79,20 70 Z"
-              fill="currentColor" opacity="0.58"/>
+        <path d="M 16 77 C 20 84,24 89,25 96 C 22 97,18 96,17 95 C 17 89,14 83,12 77 Z" fill="currentColor"/>
+        <path d="M 11 77 C 7 84,3 90,1 97 C 4 98,8 97,9 96 C 11 90,13 84,14 77 Z" fill="currentColor" opacity="0.52"/>
       </g>
 
-      <!-- FRAME 2: legs crossing (mid-stride) -->
+      <!-- FRAME 2: legs crossing -->
       <g class="sf sf2">
-        <path d="M 22 70 C 22 79,21 87,20 94 C 17 95,14 94,13 93 C 15 86,17 78,17 70 Z"
-              fill="currentColor"/>
-        <path d="M 17 70 C 19 79,21 87,23 93 C 26 94,29 93,29 92 C 26 85,22 77,20 70 Z"
-              fill="currentColor" opacity="0.58"/>
+        <path d="M 16 77 C 16 84,15 91,14 97 C 11 98,8 97,8 96 C 10 90,12 83,13 77 Z" fill="currentColor"/>
+        <path d="M 11 77 C 14 84,18 90,21 96 C 24 97,27 96,27 95 C 23 89,17 83,14 77 Z" fill="currentColor" opacity="0.52"/>
       </g>
 
-      <!-- FRAME 3: left leg forward, right leg back -->
+      <!-- FRAME 3: near leg back, far leg forward -->
       <g class="sf sf3">
-        <path d="M 22 70 C 24 78,26 84,24 92 C 21 93,17 92,17 91 C 18 83,17 76,17 70 Z"
-              fill="currentColor"/>
-        <path d="M 17 70 C 11 78,6 86,4 96 C 7 98,11 97,12 95 C 14 87,17 79,20 70 Z"
-              fill="currentColor" opacity="0.58"/>
+        <path d="M 16 77 C 14 84,11 90,9 96 C 6 97,3 96,3 95 C 6 89,10 83,13 77 Z" fill="currentColor"/>
+        <path d="M 11 77 C 15 84,20 89,23 95 C 26 96,29 95,29 94 C 25 88,19 83,14 77 Z" fill="currentColor" opacity="0.52"/>
       </g>
 
       <!-- FRAME 4: legs crossing B -->
       <g class="sf sf4">
-        <path d="M 22 70 C 20 79,17 87,15 94 C 12 95,9 94,9 93 C 12 86,16 78,17 70 Z"
-              fill="currentColor"/>
-        <path d="M 17 70 C 20 79,24 87,27 92 C 30 93,33 92,33 91 C 29 84,24 77,20 70 Z"
-              fill="currentColor" opacity="0.58"/>
+        <path d="M 16 77 C 18 84,21 90,22 96 C 19 97,15 96,15 95 C 15 89,13 83,13 77 Z" fill="currentColor"/>
+        <path d="M 11 77 C 8 84,4 90,2 97 C 5 98,9 97,10 96 C 12 90,13 84,14 77 Z"
+              fill="currentColor" opacity="0.52"/>
       </g>
     </svg>
       <span class="tab-lbl" data-i18n="tab_focus">ФОКУС</span>
