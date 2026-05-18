@@ -889,6 +889,33 @@ html, body {
   letter-spacing: .5px; margin-top: 6px;
   text-transform: uppercase;
 }
+/* ── SESSION USAGE ── */
+.session-block { margin-top: 14px; display: flex; flex-direction: column; gap: 14px; }
+.session-row { display: flex; flex-direction: column; gap: 6px; }
+.session-row-head { display: flex; justify-content: space-between; align-items: baseline; }
+.session-label { font-size: 11px; letter-spacing: .8px; text-transform: uppercase;
+  font-family: 'Inter', sans-serif; font-weight: 300; color: rgba(253,248,240,.45); }
+.session-meta { font-size: 12px; font-family: var(--font-display); letter-spacing: 1px;
+  color: rgba(253,248,240,.55); }
+.session-bar-wrap { height: 6px; background: rgba(253,248,240,.07);
+  border-radius: 3px; overflow: hidden; }
+.session-bar { height: 100%; border-radius: 3px; width: 0%;
+  transition: width .8s cubic-bezier(.4,0,.2,1); }
+.session-bar.day  { background: linear-gradient(90deg, rgba(255,159,10,.6) 0%, rgba(255,159,10,1) 100%); }
+.session-bar.week { background: linear-gradient(90deg, rgba(100,180,255,.5) 0%, rgba(120,200,255,.9) 100%); }
+.session-bar.warn { background: linear-gradient(90deg, rgba(255,90,60,.6) 0%, rgba(255,90,60,1) 100%); }
+.session-pct { font-size: 28px; font-family: var(--font-display); letter-spacing: 2px;
+  color: var(--ivory); line-height: 1; }
+.session-pct-unit { font-size: 13px; color: rgba(253,248,240,.4); margin-left: 2px; }
+/* mini bars strip */
+.mini-bars { display: flex; gap: 4px; align-items: flex-end; height: 28px; margin-top: 4px; }
+.mini-bar-col { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; }
+.mini-bar-col .bar { width: 100%; border-radius: 2px 2px 0 0;
+  background: rgba(255,159,10,.35); transition: height .5s ease; min-height: 2px; }
+.mini-bar-col .bar.today { background: rgba(255,159,10,.9); }
+.mini-bar-col .day-lbl { font-size: 9px; color: rgba(253,248,240,.3);
+  font-family: 'Inter', sans-serif; letter-spacing: .3px; }
+
 .config-intro {
   font-size: 17px; color: var(--ivory-dim); line-height: 1.5; margin-top: 10px;
   font-family: var(--font-body); font-style: italic;
@@ -1398,6 +1425,42 @@ html, body {
             <div class="stat-card"><div class="val" id="p-mins">0</div><div class="lbl" data-i18n="focus_min">Focus Min</div></div>
             <div class="stat-card"><div class="val" id="p-insights">0</div><div class="lbl" data-i18n="insights">Insights</div></div>
           </div>
+
+          <!-- Session usage -->
+          <div class="session-block" id="session-block" style="opacity:0;transition:opacity .4s">
+            <div class="session-row">
+              <div class="session-row-head">
+                <span class="session-label">Сегодня</span>
+                <span class="session-meta"><span id="s-day-min">—</span> / 300 мин</span>
+              </div>
+              <div class="session-bar-wrap">
+                <div class="session-bar day" id="s-day-bar"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px">
+                <span style="font-size:11px;color:rgba(253,248,240,.3);font-family:'Inter',sans-serif">
+                  <span id="s-day-cnt">—</span> запросов · $<span id="s-day-usd">—</span></span>
+                <span class="session-pct" id="s-day-pct">—<span class="session-pct-unit">%</span></span>
+              </div>
+            </div>
+
+            <div class="session-row">
+              <div class="session-row-head">
+                <span class="session-label">Эта неделя</span>
+                <span class="session-meta"><span id="s-week-min">—</span> / 2100 мин</span>
+              </div>
+              <div class="session-bar-wrap">
+                <div class="session-bar week" id="s-week-bar"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px">
+                <span style="font-size:11px;color:rgba(253,248,240,.3);font-family:'Inter',sans-serif">
+                  <span id="s-week-cnt">—</span> запросов · $<span id="s-week-usd">—</span></span>
+                <span class="session-pct" id="s-week-pct">—<span class="session-pct-unit">%</span></span>
+              </div>
+            </div>
+
+            <!-- Mini bars (7 days) -->
+            <div class="mini-bars" id="s-mini-bars"></div>
+          </div>
         </div>
         <div class="p-divider"></div>
         <div class="profile-section">
@@ -1827,6 +1890,61 @@ function switchTab(name) {
   if(btn) btn.classList.add('active');
   document.body.scrollTop = 0; document.documentElement.scrollTop = 0; window.scrollTo(0, 0);
   if(name === 'focus'){ initFocusShape(); renderChain(); }
+  if(name === 'profile'){ loadStats(); }
+}
+
+// ── Session Usage Stats ──────────────────────────────────────────────────────
+async function loadStats() {
+  const uid = getTgUserId();
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/stats?user_id=${uid}`, { headers: NGROK_H });
+    if(!r.ok) return;
+    const d = await r.json();
+    if(!d.ok) return;
+
+    const block = document.getElementById('session-block');
+
+    // ── Day ──
+    const dayPct = d.day.pct;
+    document.getElementById('s-day-min').textContent = Math.round(d.day.duration_min);
+    document.getElementById('s-day-cnt').textContent = d.day.count;
+    document.getElementById('s-day-usd').textContent = d.day.cost_usd.toFixed(3);
+    document.getElementById('s-day-pct').innerHTML = dayPct + '<span class="session-pct-unit">%</span>';
+    const dayBar = document.getElementById('s-day-bar');
+    dayBar.style.width = '0%';
+    dayBar.className = 'session-bar day' + (dayPct >= 80 ? ' warn' : '');
+    requestAnimationFrame(() => { dayBar.style.width = dayPct + '%'; });
+
+    // ── Week ──
+    const weekPct = d.week.pct;
+    document.getElementById('s-week-min').textContent = Math.round(d.week.duration_min);
+    document.getElementById('s-week-cnt').textContent = d.week.count;
+    document.getElementById('s-week-usd').textContent = d.week.cost_usd.toFixed(3);
+    document.getElementById('s-week-pct').innerHTML = weekPct + '<span class="session-pct-unit">%</span>';
+    const weekBar = document.getElementById('s-week-bar');
+    weekBar.style.width = '0%';
+    weekBar.className = 'session-bar week' + (weekPct >= 80 ? ' warn' : '');
+    requestAnimationFrame(() => { weekBar.style.width = weekPct + '%'; });
+
+    // ── Mini bars (7 days) ──
+    if(d.daily && d.daily.length) {
+      const maxMs = Math.max(...d.daily.map(x => x.duration_ms), 1);
+      const today = new Date().toISOString().slice(0,10);
+      const wrap = document.getElementById('s-mini-bars');
+      wrap.innerHTML = '';
+      d.daily.forEach(day => {
+        const h = Math.round((day.duration_ms / maxMs) * 24);
+        const isToday = day.date === today;
+        const col = document.createElement('div');
+        col.className = 'mini-bar-col';
+        col.innerHTML = `<div class="bar${isToday?' today':''}" style="height:${Math.max(h,2)}px"></div>`
+          + `<span class="day-lbl">${day.day}</span>`;
+        wrap.appendChild(col);
+      });
+    }
+
+    block.style.opacity = '1';
+  } catch(e) { console.warn('loadStats failed', e); }
 }
 
 // ── Random CSS gem shapes for Focus tab ──
