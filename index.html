@@ -2809,8 +2809,9 @@ function runSplash() {
 
 // ══ INIT ══
 loadData(); loadSettings(); initCal(); initTree(); renderFocusStats(); renderChain(); renderChat();
-// Если нет данных из хеша — подтягиваем с бэкенда автоматически
-if (!hasData) fetchEventsFromBackend();
+// Всегда синхронизируем с бэкенда — свежие события + статистика
+fetchEventsFromBackend();
+loadStats();
 if(initTab!=='calendar') switchTab(initTab);
 if(twa){twa.BackButton.show();twa.BackButton.onClick(goBack);}
 runSplash();
