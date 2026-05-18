@@ -976,40 +976,21 @@ html, body {
 .toggle.on::after { transform: translateX(20px); }
 
 /* Timezone picker */
-.tz-chips { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 10px; }
+.tz-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
 .tz-chip {
-  padding: 8px 16px; border-radius: 20px; font-size: 12px;
-  font-family: var(--font-display); letter-spacing: 1.5px;
-  border: 1px solid var(--glass-border);
-  background: var(--glass); color: var(--sub); cursor: pointer; transition: all .2s;
+  padding: 10px 18px; border-radius: 22px; font-size: 13px;
+  font-family: var(--font-display); letter-spacing: 1px;
+  border: 1px solid rgba(253,248,240,.2);
+  background: rgba(253,248,240,.06); color: rgba(253,248,240,.55);
+  cursor: pointer; transition: all .18s; -webkit-tap-highlight-color: transparent;
+  min-height: 44px; display: flex; align-items: center;
 }
-.tz-chip:active { transform: scale(.93); }
+.tz-chip:active { transform: scale(.94); background: rgba(253,248,240,.12); }
 .tz-chip.active {
-  border-color: rgba(253,248,240,.4); color: var(--ivory);
-  background: rgba(253,248,240,.08);
-  box-shadow: 0 0 10px rgba(253,248,240,.12);
+  border-color: var(--accent); color: var(--accent);
+  background: rgba(255,159,10,.12);
+  box-shadow: 0 0 12px rgba(255,159,10,.18);
 }
-/* Custom TZ input */
-.tz-custom-row {
-  display: none; align-items: center; gap: 8px; margin-top: 10px;
-}
-.tz-custom-row.visible { display: flex; }
-.tz-input {
-  flex: 1; background: rgba(253,248,240,.05);
-  border: 1px solid rgba(253,248,240,.15); border-radius: 12px;
-  padding: 9px 14px; font-size: 13px; color: var(--ivory);
-  font-family: 'Inter', sans-serif; outline: none;
-  transition: border-color .2s;
-}
-.tz-input:focus { border-color: rgba(255,159,10,.45); }
-.tz-input::placeholder { color: rgba(253,248,240,.3); }
-.tz-apply-btn {
-  padding: 9px 16px; border-radius: 12px; font-size: 12px;
-  background: rgba(255,159,10,.15); border: 1px solid rgba(255,159,10,.3);
-  color: var(--accent); cursor: pointer; font-family: var(--font-display);
-  letter-spacing: 1px; transition: all .2s; white-space: nowrap;
-}
-.tz-apply-btn:active { transform: scale(.93); }
 </style>
 </head>
 <body>
@@ -1377,25 +1358,19 @@ html, body {
         <div class="p-divider"></div>
         <div class="profile-section">
           <div class="section-header" data-i18n="timezone">Timezone</div>
-          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="tz-chip" id="tz-msk-btn" onclick="applyPresetTZ('МСК',3,this)" style="font-size:12px;padding:6px 14px;">
-              МСК (UTC+3)
+          <div class="tz-chips">
+            <button class="tz-chip" id="tz-auto-btn" onclick="applyPresetTZ('Auto',null,this)">
+              Auto
             </button>
-            <button class="tz-chip" id="tz-nyc-btn" onclick="applyPresetTZ('NYC',-4,this)" style="font-size:12px;padding:6px 14px;">
-              NYC (UTC−4)
+            <button class="tz-chip" id="tz-msk-btn" onclick="applyPresetTZ('МСК',3,this)">
+              МСК · UTC+3
+            </button>
+            <button class="tz-chip" id="tz-nyc-btn" onclick="applyPresetTZ('NYC',-4,this)">
+              NYC · UTC−4
             </button>
           </div>
-          <div style="margin-top:10px;font-size:11px;color:var(--sub);letter-spacing:1px;line-height:1.5;">
-            Или введи своё текущее время:
-          </div>
-          <div class="tz-custom-row visible" style="margin-top:8px;">
-            <input class="tz-input" id="tz-now-input" type="time"
-                   placeholder="20:30" autocomplete="off"
-                   style="flex:1;text-align:center;font-size:18px;letter-spacing:2px;">
-            <button class="tz-apply-btn" onclick="applyMyNow()">OK</button>
-          </div>
-          <div id="tz-now-status" style="margin-top:8px;font-size:11px;color:var(--sub);letter-spacing:1px;">
-            <span id="tz-now-status-text">не задано — используется устройство</span>
+          <div id="tz-now-status" style="margin-top:10px;font-size:11px;color:var(--sub);letter-spacing:1px;">
+            <span id="tz-now-status-text">автоопределение</span>
           </div>
         </div>
         <div class="p-divider"></div>
@@ -1773,6 +1748,20 @@ function applyMyNow() {
 }
 
 function applyPresetTZ(name, offsetH, btn) {
+  document.querySelectorAll('#tab-profile .tz-chip').forEach(function(c){ c.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
+  const statusEl = document.getElementById('tz-now-status-text');
+  if (offsetH === null) {
+    // Auto — сброс на устройство
+    localStorage.removeItem('erman_tz_offset_min');
+    localStorage.removeItem('erman_tz');
+    USER_TZ = 'auto';
+    TODAY = getTodayISO();
+    initCal();
+    if(statusEl) statusEl.textContent = 'автоопределение · устройство';
+    showToast('Timezone: Auto');
+    return;
+  }
   const offsetMin = offsetH * 60;
   localStorage.setItem('erman_tz_offset_min', String(offsetMin));
   const ianaFake = offsetH === 0 ? 'UTC' : 'Etc/GMT' + (offsetH > 0 ? -offsetH : '+'+Math.abs(offsetH));
@@ -1784,11 +1773,8 @@ function applyPresetTZ(name, offsetH, btn) {
   TODAY = getTodayISO();
   initCal();
   const sign = offsetH >= 0 ? '+' : '';
-  const statusEl = document.getElementById('tz-now-status-text');
-  if(statusEl) statusEl.textContent = name + ' UTC' + sign + offsetH + ' · сохранено';
-  document.querySelectorAll('#tab-profile .tz-chip').forEach(function(c){ c.classList.remove('active'); });
-  if(btn) btn.classList.add('active');
-  showToast(name + ' UTC' + sign + offsetH + ' · установлен');
+  if(statusEl) statusEl.textContent = name + ' · UTC' + sign + offsetH + ' · сохранено';
+  showToast(name + ' · UTC' + sign + offsetH);
   if(twa) try{ twa.sendData(JSON.stringify({type:'set_user_time', utc_offset_min: offsetMin, tz: resolvedTZ})); }catch(e){}
 }
 
@@ -1802,13 +1788,13 @@ function loadSettings() {
   if (savedOff !== null) {
     const offMin = parseInt(savedOff);
     const sign = offMin >= 0 ? '+' : '';
-    const hh = String(Math.abs(Math.trunc(offMin/60))).padStart(2,'0');
-    const mm = String(Math.abs(offMin%60)).padStart(2,'0');
+    const h = Math.round(offMin/60);
     const el = document.getElementById('tz-now-status-text');
-    if (el) el.textContent = `UTC${sign}${hh}:${mm} · сохранено`;
-    var h = Math.round(offMin/60);
+    if (el) el.textContent = `UTC${sign}${h} · сохранено`;
     if(h===3) { var b=document.getElementById('tz-msk-btn'); if(b)b.classList.add('active'); }
-    if(h===-4) { var b2=document.getElementById('tz-nyc-btn'); if(b2)b2.classList.add('active'); }
+    else if(h===-4) { var b2=document.getElementById('tz-nyc-btn'); if(b2)b2.classList.add('active'); }
+  } else {
+    var ba=document.getElementById('tz-auto-btn'); if(ba)ba.classList.add('active');
   }
 }
 
