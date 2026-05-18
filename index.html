@@ -1541,6 +1541,23 @@ const BOT_USERNAME = 'erman_tg_bot';
 const BACKEND_URL = 'https://nervy-thickness-tacking.ngrok-free.dev';
 const NGROK_H = {'Content-Type':'application/json','ngrok-skip-browser-warning':'1'};
 
+// Автосинк событий с бэкенда когда нет хеша (открыт напрямую)
+async function fetchEventsFromBackend() {
+  try {
+    const uid = twa && twa.initDataUnsafe && twa.initDataUnsafe.user
+      ? twa.initDataUnsafe.user.id : 1433038211;
+    const r = await fetch(`${BACKEND_URL}/api/events?user_id=${uid}`, {headers: NGROK_H});
+    if (!r.ok) return;
+    const d = await r.json();
+    if (d.ok && Array.isArray(d.events)) {
+      EVENTS = d.events;
+      if (d.today) TODAY = d.today;
+      hasData = true;
+      initCal();
+    }
+  } catch(e) { console.warn('fetchEventsFromBackend:', e); }
+}
+
 // Track poll state — don't overlap polls
 let _pollTimer = null;
 let _lastMsgTs = Date.now() / 1000;
@@ -2674,6 +2691,8 @@ function runSplash() {
 
 // ══ INIT ══
 loadData(); loadSettings(); initCal(); initTree(); renderFocusStats(); renderChain(); renderChat();
+// Если нет данных из хеша — подтягиваем с бэкенда автоматически
+if (!hasData) fetchEventsFromBackend();
 if(initTab!=='calendar') switchTab(initTab);
 if(twa){twa.BackButton.show();twa.BackButton.onClick(goBack);}
 runSplash();
