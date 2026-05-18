@@ -269,8 +269,8 @@ html, body {
   font-family: var(--font-display); opacity: .7;
 }
 .event-item {
-  display: flex; gap: 12px; align-items: flex-start;
-  padding: 12px 14px; margin-bottom: 6px;
+  display: flex; gap: 8px; align-items: flex-start;
+  padding: 8px 12px; margin-bottom: 4px;
   border-radius: var(--radius-sm);
   background: linear-gradient(180deg, rgba(253,248,240,.035) 0%, rgba(253,248,240,.015) 100%);
   border: 1px solid var(--glass-border);
@@ -300,10 +300,15 @@ html, body {
   color: var(--ivory);
   opacity: .85;
 }
-.event-dot { width: 7px; height: 7px; border-radius: 50%; margin-top: 7px; flex-shrink: 0; }
-.event-title { font-size: 18px; color: var(--ivory); font-family: var(--font-body); line-height: 1.3; }
-.event-time { font-size: 13px; color: var(--sub); margin-top: 2px; font-family: var(--font-display); letter-spacing: 1px; }
-.no-events { color: rgba(253,248,240,.45); font-size: 19px; padding: 24px 0; text-align: center; font-family: var(--font-body); font-style: italic; }
+.event-dot { width: 5px; height: 5px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+.event-title { font-size: 14px; color: var(--ivory); font-family: 'Inter', sans-serif; line-height: 1.25; font-weight: 400; }
+.event-time { font-size: 11px; color: var(--sub); margin-top: 1px; font-family: var(--font-display); letter-spacing: 1px; }
+.event-body { flex: 1; min-width: 0; }
+.no-events { color: rgba(253,248,240,.45); font-size: 14px; padding: 12px 0; text-align: center; font-family: var(--font-body); font-style: italic; }
+.event-actions { display: flex; gap: 4px; margin-left: auto; flex-shrink: 0; align-items: center; }
+.ev-btn { width: 28px; height: 28px; border-radius: 8px; border: none; background: rgba(253,248,240,.06); color: rgba(253,248,240,.5); font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; }
+.ev-btn:active { background: rgba(253,248,240,.12); color: var(--ivory); }
+.ev-btn.ev-del:active { background: rgba(255,69,58,.2); color: var(--danger); }
 .empty-state {
   display: none; flex-direction: column; align-items: center;
   padding: 40px 24px; gap: 16px; text-align: center;
@@ -889,24 +894,12 @@ html, body {
   letter-spacing: .5px; margin-top: 6px;
   text-transform: uppercase;
 }
-/* ── SESSION USAGE ── */
-.session-block { margin-top: 14px; display: flex; flex-direction: column; gap: 14px; }
-.session-row { display: flex; flex-direction: column; gap: 6px; }
-.session-row-head { display: flex; justify-content: space-between; align-items: baseline; }
-.session-label { font-size: 11px; letter-spacing: .8px; text-transform: uppercase;
-  font-family: 'Inter', sans-serif; font-weight: 300; color: rgba(253,248,240,.45); }
-.session-meta { font-size: 12px; font-family: var(--font-display); letter-spacing: 1px;
-  color: rgba(253,248,240,.55); }
-.session-bar-wrap { height: 6px; background: rgba(253,248,240,.07);
-  border-radius: 3px; overflow: hidden; }
-.session-bar { height: 100%; border-radius: 3px; width: 0%;
-  transition: width .8s cubic-bezier(.4,0,.2,1); }
-.session-bar.day  { background: linear-gradient(90deg, rgba(255,159,10,.6) 0%, rgba(255,159,10,1) 100%); }
-.session-bar.week { background: linear-gradient(90deg, rgba(100,180,255,.5) 0%, rgba(120,200,255,.9) 100%); }
-.session-bar.warn { background: linear-gradient(90deg, rgba(255,90,60,.6) 0%, rgba(255,90,60,1) 100%); }
-.session-pct { font-size: 28px; font-family: var(--font-display); letter-spacing: 2px;
-  color: var(--ivory); line-height: 1; }
-.session-pct-unit { font-size: 13px; color: rgba(253,248,240,.4); margin-left: 2px; }
+/* ── PRODUCTIVITY STATS ── */
+.stats-productivity { margin-top: 14px; }
+.prod-row { display: flex; gap: 10px; margin-bottom: 10px; }
+.prod-card { flex: 1; background: rgba(253,248,240,.04); border: 1px solid rgba(253,248,240,.08); border-radius: 12px; padding: 14px 12px; text-align: center; }
+.prod-val { font-size: 32px; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; color: #fdf8f0; line-height: 1; }
+.prod-lbl { font-size: 10px; font-family: 'Inter', sans-serif; letter-spacing: 1px; text-transform: uppercase; color: rgba(253,248,240,.4); margin-top: 4px; }
 /* mini bars strip */
 .mini-bars { display: flex; gap: 4px; align-items: flex-end; height: 28px; margin-top: 4px; }
 .mini-bar-col { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; }
@@ -1426,39 +1419,28 @@ html, body {
             <div class="stat-card"><div class="val" id="p-insights">0</div><div class="lbl" data-i18n="insights">Insights</div></div>
           </div>
 
-          <!-- Session usage -->
-          <div class="session-block" id="session-block" style="opacity:0;transition:opacity .4s">
-            <div class="session-row">
-              <div class="session-row-head">
-                <span class="session-label">Сегодня</span>
-                <span class="session-meta"><span id="s-day-min">—</span> / 300 мин</span>
+          <!-- Productivity stats -->
+          <div class="stats-productivity" id="stats-prod" style="opacity:0;transition:opacity .4s">
+            <div class="prod-row">
+              <div class="prod-card">
+                <div class="prod-val" id="sp-tasks-today">—</div>
+                <div class="prod-lbl">задач сегодня</div>
               </div>
-              <div class="session-bar-wrap">
-                <div class="session-bar day" id="s-day-bar"></div>
-              </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px">
-                <span style="font-size:11px;color:rgba(253,248,240,.3);font-family:'Inter',sans-serif">
-                  <span id="s-day-cnt">—</span> запросов · $<span id="s-day-usd">—</span></span>
-                <span class="session-pct" id="s-day-pct">—<span class="session-pct-unit">%</span></span>
+              <div class="prod-card">
+                <div class="prod-val" id="sp-time-saved">—</div>
+                <div class="prod-lbl">мин сэкономлено</div>
               </div>
             </div>
-
-            <div class="session-row">
-              <div class="session-row-head">
-                <span class="session-label">Эта неделя</span>
-                <span class="session-meta"><span id="s-week-min">—</span> / 2100 мин</span>
+            <div class="prod-row">
+              <div class="prod-card">
+                <div class="prod-val" id="sp-tasks-week">—</div>
+                <div class="prod-lbl">за неделю</div>
               </div>
-              <div class="session-bar-wrap">
-                <div class="session-bar week" id="s-week-bar"></div>
-              </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px">
-                <span style="font-size:11px;color:rgba(253,248,240,.3);font-family:'Inter',sans-serif">
-                  <span id="s-week-cnt">—</span> запросов · $<span id="s-week-usd">—</span></span>
-                <span class="session-pct" id="s-week-pct">—<span class="session-pct-unit">%</span></span>
+              <div class="prod-card">
+                <div class="prod-val" id="sp-streak">—</div>
+                <div class="prod-lbl">дней подряд</div>
               </div>
             </div>
-
-            <!-- Mini bars (7 days) -->
             <div class="mini-bars" id="s-mini-bars"></div>
           </div>
         </div>
@@ -1893,7 +1875,7 @@ function switchTab(name) {
   if(name === 'profile'){ loadStats(); }
 }
 
-// ── Session Usage Stats ──────────────────────────────────────────────────────
+// ── Productivity Stats ───────────────────────────────────────────────────────
 async function loadStats() {
   const uid = (twa && twa.initDataUnsafe && twa.initDataUnsafe.user)
     ? twa.initDataUnsafe.user.id : 1433038211;
@@ -1903,38 +1885,23 @@ async function loadStats() {
     const d = await r.json();
     if(!d.ok) return;
 
-    const block = document.getElementById('session-block');
+    document.getElementById('sp-tasks-today').textContent = d.tasks_today;
+    document.getElementById('sp-time-saved').textContent = d.time_saved_today_min;
+    document.getElementById('sp-tasks-week').textContent = d.tasks_week;
+    document.getElementById('sp-streak').textContent = d.streak;
 
-    // ── Day ──
-    const dayPct = d.day.pct;
-    document.getElementById('s-day-min').textContent = Math.round(d.day.duration_min);
-    document.getElementById('s-day-cnt').textContent = d.day.count;
-    document.getElementById('s-day-usd').textContent = d.day.cost_usd.toFixed(3);
-    document.getElementById('s-day-pct').innerHTML = dayPct + '<span class="session-pct-unit">%</span>';
-    const dayBar = document.getElementById('s-day-bar');
-    dayBar.style.width = '0%';
-    dayBar.className = 'session-bar day' + (dayPct >= 80 ? ' warn' : '');
-    requestAnimationFrame(() => { dayBar.style.width = dayPct + '%'; });
+    // Also update the stat cards at top
+    const streakEl = document.getElementById('p-streak');
+    if(streakEl) streakEl.textContent = d.streak;
 
-    // ── Week ──
-    const weekPct = d.week.pct;
-    document.getElementById('s-week-min').textContent = Math.round(d.week.duration_min);
-    document.getElementById('s-week-cnt').textContent = d.week.count;
-    document.getElementById('s-week-usd').textContent = d.week.cost_usd.toFixed(3);
-    document.getElementById('s-week-pct').innerHTML = weekPct + '<span class="session-pct-unit">%</span>';
-    const weekBar = document.getElementById('s-week-bar');
-    weekBar.style.width = '0%';
-    weekBar.className = 'session-bar week' + (weekPct >= 80 ? ' warn' : '');
-    requestAnimationFrame(() => { weekBar.style.width = weekPct + '%'; });
-
-    // ── Mini bars (7 days) ──
+    // Mini bars (7 days) — now show tasks per day
     if(d.daily && d.daily.length) {
-      const maxMs = Math.max(...d.daily.map(x => x.duration_ms), 1);
+      const maxT = Math.max(...d.daily.map(x => x.tasks), 1);
       const today = new Date().toISOString().slice(0,10);
       const wrap = document.getElementById('s-mini-bars');
       wrap.innerHTML = '';
       d.daily.forEach(day => {
-        const h = Math.round((day.duration_ms / maxMs) * 24);
+        const h = Math.round((day.tasks / maxT) * 24);
         const isToday = day.date === today;
         const col = document.createElement('div');
         col.className = 'mini-bar-col';
@@ -1944,7 +1911,7 @@ async function loadStats() {
       });
     }
 
-    block.style.opacity = '1';
+    document.getElementById('stats-prod').style.opacity = '1';
   } catch(e) { console.warn('loadStats failed', e); }
 }
 
@@ -2294,7 +2261,7 @@ function renderEvents(dateStr){
   const label=_dshort()[d.getDay()]+', '+_mshort()[d.getMonth()+1]+' '+d.getDate();
   let html='<div class="events-date">'+label+'</div>';
   if(!evs.length){html+='<div class="no-events">'+t('no_events')+'</div>';}
-  else{[...evs].sort((a,b)=>(a.time||'99').localeCompare(b.time||'99')).forEach(e=>{const col=e.overdue?'var(--danger)':e.source==='erman'?'var(--accent)':'rgba(253,248,240,.3)'; html+='<div class="event-item"><div class="event-dot" style="background:'+col+';'+(e.source==='erman'?'box-shadow:0 0 6px var(--glow)':'')+'"></div><div><div class="event-title">'+esc(e.title)+'</div>'+(e.time?'<div class="event-time">'+e.time+'</div>':'')+'</div></div>';});}
+  else{[...evs].sort((a,b)=>(a.time||'99').localeCompare(b.time||'99')).forEach((e,i)=>{const col=e.overdue?'var(--danger)':e.source==='erman'?'var(--accent)':'rgba(253,248,240,.3)'; html+='<div class="event-item" data-idx="'+i+'"><div class="event-dot" style="background:'+col+';'+(e.source==='erman'?'box-shadow:0 0 6px var(--glow)':'')+'"></div><div class="event-body"><div class="event-title">'+esc(e.title)+'</div>'+(e.time?'<div class="event-time">'+e.time+'</div>':'')+'</div><div class="event-actions"><button class="ev-btn ev-edit" onclick="editEvent('+i+',\''+dateStr+'\')">✎</button><button class="ev-btn ev-del" onclick="deleteEvent('+i+',\''+dateStr+'\')">✕</button></div></div>';});}
   area.innerHTML=html;
 }
 function prevMonth(){curM--;if(curM<0){curM=11;curY--;}renderCal();}
@@ -2316,20 +2283,53 @@ function goToday(){const t=getLocalNow();curY=t.getFullYear();curM=t.getMonth();
 
 // ══ ADD EVENT ══
 function openAddModal() {
+  _editIdx = -1; _editDate = null;
   document.getElementById('add-modal').classList.add('show');
   document.getElementById('modal-title-input').value = '';
   document.getElementById('modal-time-input').value = '';
   setTimeout(() => document.getElementById('modal-title-input').focus(), 300);
 }
 function closeAddModal() { document.getElementById('add-modal').classList.remove('show'); }
+let _editIdx = -1;
+let _editDate = null;
+function editEvent(idx, dateStr) {
+  const evs = evFor(dateStr).sort((a,b)=>(a.time||'99').localeCompare(b.time||'99'));
+  const e = evs[idx];
+  if(!e) return;
+  _editIdx = LOCAL_EVENTS.indexOf(e);
+  _editDate = dateStr;
+  document.getElementById('add-modal').classList.add('show');
+  document.getElementById('modal-title-input').value = e.title || '';
+  document.getElementById('modal-time-input').value = e.time || '';
+  setTimeout(() => document.getElementById('modal-title-input').focus(), 300);
+}
+function deleteEvent(idx, dateStr) {
+  const evs = evFor(dateStr).sort((a,b)=>(a.time||'99').localeCompare(b.time||'99'));
+  const e = evs[idx];
+  if(!e) return;
+  const li = LOCAL_EVENTS.indexOf(e);
+  if(li >= 0) {
+    LOCAL_EVENTS.splice(li, 1);
+    localStorage.setItem('erman_local_events', JSON.stringify(LOCAL_EVENTS));
+  }
+  renderCal();
+  showToast('Удалено');
+  if(twa && twa.HapticFeedback) twa.HapticFeedback.impactOccurred('light');
+}
 function saveEvent() {
   const title = document.getElementById('modal-title-input').value.trim();
   const time = document.getElementById('modal-time-input').value;
   if(!title) { showToast(t('toast_title_req')); return; }
-  const ev = { title, date: selDate, time: time || null, source: 'local' };
-  LOCAL_EVENTS.push(ev);
+  if(_editIdx >= 0 && _editIdx < LOCAL_EVENTS.length) {
+    LOCAL_EVENTS[_editIdx].title = title;
+    LOCAL_EVENTS[_editIdx].time = time || null;
+    _editIdx = -1; _editDate = null;
+  } else {
+    const ev = { title, date: selDate, time: time || null, source: 'local' };
+    LOCAL_EVENTS.push(ev);
+    if(twa) try { twa.sendData(JSON.stringify({type:'cal_request', action:'add', title, date:selDate, time:time||null})); } catch(e) {}
+  }
   localStorage.setItem('erman_local_events', JSON.stringify(LOCAL_EVENTS));
-  if(twa) try { twa.sendData(JSON.stringify({type:'cal_request', action:'add', title, date:selDate, time:time||null})); } catch(e) {}
   closeAddModal();
   document.getElementById('empty-state').classList.remove('show');
   renderCal();
