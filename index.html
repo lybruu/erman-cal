@@ -909,6 +909,19 @@ html, body {
 .mini-bar-col .day-lbl { font-size: 9px; color: rgba(253,248,240,.3);
   font-family: 'Inter', sans-serif; letter-spacing: .3px; }
 
+/* ── TASK LIST ── */
+.task-add-btn { width: 32px; height: 32px; border-radius: 10px; border: 1px solid rgba(253,248,240,.15); background: rgba(253,248,240,.06); color: var(--ivory); font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
+.task-add-btn:active { background: rgba(253,248,240,.12); }
+.task-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(253,248,240,.05); }
+.task-row:last-child { border-bottom: none; }
+.task-check { width: 22px; height: 22px; border-radius: 6px; border: 1.5px solid rgba(253,248,240,.25); background: none; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: transparent; font-size: 13px; transition: all .2s; }
+.task-check.done { background: var(--accent); border-color: var(--accent); color: #000; }
+.task-text { flex: 1; font-size: 14px; font-family: 'Inter', sans-serif; color: var(--ivory); line-height: 1.3; }
+.task-text.done { text-decoration: line-through; opacity: .4; }
+.task-del { width: 24px; height: 24px; border: none; background: none; color: rgba(253,248,240,.25); font-size: 14px; cursor: pointer; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+.task-del:active { color: var(--danger); background: rgba(255,69,58,.15); }
+.task-empty { font-size: 13px; color: rgba(253,248,240,.3); font-family: 'Inter', sans-serif; padding: 12px 0; text-align: center; }
+
 .config-intro {
   font-size: 17px; color: var(--ivory-dim); line-height: 1.5; margin-top: 10px;
   font-family: var(--font-body); font-style: italic;
@@ -1411,38 +1424,46 @@ html, body {
         </div>
         <div class="p-divider"></div>
         <div class="profile-section">
-          <div class="section-header" data-i18n="statistics">Statistics</div>
-          <div class="stats-grid">
-            <div class="stat-card"><div class="val" id="p-streak">0</div><div class="lbl" data-i18n="streak">Streak</div></div>
-            <div class="stat-card"><div class="val" id="p-gems">0</div><div class="lbl" data-i18n="gems">Gems</div></div>
-            <div class="stat-card"><div class="val" id="p-mins">0</div><div class="lbl" data-i18n="focus_min">Focus Min</div></div>
-            <div class="stat-card"><div class="val" id="p-insights">0</div><div class="lbl" data-i18n="insights">Insights</div></div>
-          </div>
-
-          <!-- Productivity stats -->
-          <div class="stats-productivity" id="stats-prod" style="opacity:0;transition:opacity .4s">
+          <div class="section-header">Статистика</div>
+          <div id="stats-prod" style="opacity:0;transition:opacity .4s">
             <div class="prod-row">
               <div class="prod-card">
-                <div class="prod-val" id="sp-tasks-today">—</div>
-                <div class="prod-lbl">задач сегодня</div>
+                <div class="prod-val" id="sp-done-today">0</div>
+                <div class="prod-lbl">выполнено сегодня</div>
               </div>
               <div class="prod-card">
-                <div class="prod-val" id="sp-time-saved">—</div>
-                <div class="prod-lbl">мин сэкономлено</div>
+                <div class="prod-val" id="sp-done-week">0</div>
+                <div class="prod-lbl">за неделю</div>
               </div>
             </div>
             <div class="prod-row">
               <div class="prod-card">
-                <div class="prod-val" id="sp-tasks-week">—</div>
-                <div class="prod-lbl">за неделю</div>
+                <div class="prod-val" id="sp-streak">0</div>
+                <div class="prod-lbl">дней подряд</div>
               </div>
               <div class="prod-card">
-                <div class="prod-val" id="sp-streak">—</div>
-                <div class="prod-lbl">дней подряд</div>
+                <div class="prod-val" id="sp-days-erman">0</div>
+                <div class="prod-lbl">дней с Эрманом</div>
               </div>
             </div>
             <div class="mini-bars" id="s-mini-bars"></div>
           </div>
+        </div>
+        <div class="p-divider"></div>
+        <div class="profile-section">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div class="section-header" style="margin:0">Задачи</div>
+            <button class="task-add-btn" onclick="openTaskInput()">+</button>
+          </div>
+          <div id="task-input-wrap" style="display:none;margin-top:10px">
+            <div style="display:flex;gap:8px">
+              <input id="task-input" type="text" placeholder="Новая задача..."
+                style="flex:1;background:rgba(253,248,240,.06);border:1px solid rgba(253,248,240,.12);border-radius:10px;padding:10px 12px;color:var(--ivory);font-size:14px;font-family:'Inter',sans-serif;outline:none"
+                onkeydown="if(event.key==='Enter'){addTask();}">
+              <button onclick="addTask()" style="background:var(--accent);color:#000;border:none;border-radius:10px;padding:10px 16px;font-family:var(--font-display);letter-spacing:1px;font-size:13px;cursor:pointer">OK</button>
+            </div>
+          </div>
+          <div id="task-list" style="margin-top:10px"></div>
         </div>
         <div class="p-divider"></div>
         <div class="profile-section">
@@ -1872,10 +1893,10 @@ function switchTab(name) {
   if(btn) btn.classList.add('active');
   document.body.scrollTop = 0; document.documentElement.scrollTop = 0; window.scrollTo(0, 0);
   if(name === 'focus'){ initFocusShape(); renderChain(); }
-  if(name === 'profile'){ loadStats(); }
+  if(name === 'profile'){ loadStats(); loadTasks(); }
 }
 
-// ── Productivity Stats ───────────────────────────────────────────────────────
+// ── Stats (only from real completed tasks) ──────────────────────────────────
 async function loadStats() {
   const uid = (twa && twa.initDataUnsafe && twa.initDataUnsafe.user)
     ? twa.initDataUnsafe.user.id : 1433038211;
@@ -1885,16 +1906,12 @@ async function loadStats() {
     const d = await r.json();
     if(!d.ok) return;
 
-    document.getElementById('sp-tasks-today').textContent = d.tasks_today;
-    document.getElementById('sp-time-saved').textContent = d.time_saved_today_min;
-    document.getElementById('sp-tasks-week').textContent = d.tasks_week;
+    document.getElementById('sp-done-today').textContent = d.done_today;
+    document.getElementById('sp-done-week').textContent = d.done_week;
     document.getElementById('sp-streak').textContent = d.streak;
+    document.getElementById('sp-days-erman').textContent = d.days_with_erman;
 
-    // Also update the stat cards at top
-    const streakEl = document.getElementById('p-streak');
-    if(streakEl) streakEl.textContent = d.streak;
-
-    // Mini bars (7 days) — now show tasks per day
+    // Mini bars (7 days)
     if(d.daily && d.daily.length) {
       const maxT = Math.max(...d.daily.map(x => x.tasks), 1);
       const today = new Date().toISOString().slice(0,10);
@@ -1910,9 +1927,78 @@ async function loadStats() {
         wrap.appendChild(col);
       });
     }
-
     document.getElementById('stats-prod').style.opacity = '1';
   } catch(e) { console.warn('loadStats failed', e); }
+}
+
+// ── Task List ───────────────────────────────────────────────────────────────
+function _uid() {
+  return (twa && twa.initDataUnsafe && twa.initDataUnsafe.user)
+    ? twa.initDataUnsafe.user.id : 1433038211;
+}
+
+async function loadTasks() {
+  try {
+    const r = await fetch(`${BACKEND_URL}/api/tasks?user_id=${_uid()}`, { headers: NGROK_H });
+    if(!r.ok) return;
+    const d = await r.json();
+    if(!d.ok) return;
+    renderTasks(d.tasks || []);
+  } catch(e) { console.warn('loadTasks', e); }
+}
+
+function renderTasks(tasks) {
+  const el = document.getElementById('task-list');
+  if(!tasks.length) { el.innerHTML = '<div class="task-empty">Нет задач — добавь первую</div>'; return; }
+  el.innerHTML = tasks.map(t =>
+    `<div class="task-row">` +
+      `<button class="task-check${t.done?' done':''}" onclick="toggleTask(${t.id},${t.done?0:1})">${t.done?'✓':''}</button>` +
+      `<span class="task-text${t.done?' done':''}">${esc(t.title)}</span>` +
+      `<button class="task-del" onclick="delTask(${t.id})">✕</button>` +
+    `</div>`
+  ).join('');
+}
+
+function openTaskInput() {
+  const w = document.getElementById('task-input-wrap');
+  w.style.display = w.style.display === 'none' ? 'block' : 'none';
+  if(w.style.display === 'block') document.getElementById('task-input').focus();
+}
+
+async function addTask() {
+  const inp = document.getElementById('task-input');
+  const title = inp.value.trim();
+  if(!title) return;
+  inp.value = '';
+  try {
+    await fetch(`${BACKEND_URL}/api/tasks/add?user_id=${_uid()}`, {
+      method: 'POST', headers: {...NGROK_H, 'Content-Type':'application/json'},
+      body: JSON.stringify({title})
+    });
+    loadTasks(); loadStats();
+    if(twa && twa.HapticFeedback) twa.HapticFeedback.impactOccurred('light');
+  } catch(e) { console.warn('addTask', e); }
+}
+
+async function toggleTask(id, done) {
+  try {
+    await fetch(`${BACKEND_URL}/api/tasks/done?user_id=${_uid()}`, {
+      method: 'POST', headers: {...NGROK_H, 'Content-Type':'application/json'},
+      body: JSON.stringify({id, done: !!done})
+    });
+    loadTasks(); loadStats();
+    if(twa && twa.HapticFeedback) twa.HapticFeedback.impactOccurred('light');
+  } catch(e) { console.warn('toggleTask', e); }
+}
+
+async function delTask(id) {
+  try {
+    await fetch(`${BACKEND_URL}/api/tasks/delete?user_id=${_uid()}`, {
+      method: 'POST', headers: {...NGROK_H, 'Content-Type':'application/json'},
+      body: JSON.stringify({id})
+    });
+    loadTasks(); loadStats();
+  } catch(e) { console.warn('delTask', e); }
 }
 
 // ── Random CSS gem shapes for Focus tab ──
