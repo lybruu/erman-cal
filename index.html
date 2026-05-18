@@ -1895,7 +1895,8 @@ function switchTab(name) {
 
 // ── Session Usage Stats ──────────────────────────────────────────────────────
 async function loadStats() {
-  const uid = getTgUserId();
+  const uid = (twa && twa.initDataUnsafe && twa.initDataUnsafe.user)
+    ? twa.initDataUnsafe.user.id : 1433038211;
   try {
     const r = await fetch(`${BACKEND_URL}/api/stats?user_id=${uid}`, { headers: NGROK_H });
     if(!r.ok) return;
