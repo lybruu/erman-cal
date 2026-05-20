@@ -2732,10 +2732,10 @@ function renderFocusStats(){
     '<span class="mini-crystal" style="color:'+(c.type==='sapphire'?'#38bdf8':c.type==='prismatic'?'#a78bfa':c.type==='emerald'?'#34d399':'#ff9f0a')+'">'+(syms[c.type]||'◆')+'</span>'
   ).join('');
 
-  document.getElementById('p-streak').textContent=FOCUS.streak||0;
-  document.getElementById('p-gems').textContent=total;
-  document.getElementById('p-mins').textContent=FOCUS.total_minutes||0;
-  document.getElementById('p-insights').textContent=MEMORY.length;
+  const _s=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  _s('p-streak',FOCUS.streak||0); _s('p-gems',total);
+  _s('p-mins',FOCUS.total_minutes||0); _s('p-insights',MEMORY.length);
+  _s('sp-streak',FOCUS.streak||0);
 }
 
 // ══ CHAT ══
@@ -2895,11 +2895,15 @@ function runSplash() {
 }
 
 // ══ INIT ══
-loadData(); loadSettings(); initCal(); initTree(); renderFocusStats(); renderChain(); renderChat();
+const _init=(fn,name)=>{try{fn();}catch(e){console.warn('init:'+name,e);}};
+_init(loadData,'loadData'); _init(loadSettings,'loadSettings');
+_init(initCal,'initCal'); _init(initTree,'initTree');
+_init(renderFocusStats,'renderFocusStats'); _init(renderChain,'renderChain');
+_init(renderChat,'renderChat');
 // Всегда синхронизируем с бэкенда — свежие события + статистика
 fetchEventsFromBackend();
 loadStats();
-if(initTab!=='calendar') switchTab(initTab);
+if(initTab!=='calendar') try{switchTab(initTab);}catch(e){console.warn('switchTab',e);}
 if(twa){twa.BackButton.show();twa.BackButton.onClick(goBack);}
 runSplash();
 </script>
