@@ -2546,9 +2546,17 @@ function pickChainDur(d){
 function confirmChainAdd(){
   const inp=document.getElementById('chain-modal-input');
   const label=chainModal.type==='rest'?'Отдых':(inp.value.trim()||'Фокус');
-  focusChain.push({type:chainModal.type,label:label,duration:chainModal.duration,color:chainModal.color});
+  const item={type:chainModal.type,label:label,duration:chainModal.duration,color:chainModal.color,_task_id:null};
+  focusChain.push(item);
   closeChainModal();
   renderChain();
+  // Сохраняем рабочую задачу в бэкенд — появится в списке задач и статистике
+  if(chainModal.type==='work'){
+    fetch(`${BACKEND_URL}/api/tasks/add?user_id=${_uid()}`,{
+      method:'POST',headers:NGROK_H,
+      body:JSON.stringify({title:label,source:'focus'})
+    }).then(r=>r.json()).then(d=>{ if(d.ok) item._task_id=d.id; }).catch(()=>{});
+  }
 }
 
 // ─── Timer ───
@@ -2585,7 +2593,7 @@ function startChainItem(){
   if(item.type!=='rest') burstParticles();
 
   if(item.type!=='rest'){
-    fetch(BACKEND_URL+'/api/focus_start',{method:'POST',headers:NGROK_H,body:JSON.stringify({duration_min:item.duration})}).catch(()=>{});
+    fetch(BACKEND_URL+'/api/focus_start',{method:'POST',headers:NGROK_H,body:JSON.stringify({duration_min:item.duration,user_id:_uid()})}).catch(()=>{});
   }
 
   const totalSec=item.duration*60;
@@ -2614,7 +2622,14 @@ function completeChainItem(){
     FOCUS.total_minutes=(FOCUS.total_minutes||0)+item.duration;
     FOCUS.collection.push({type:'amber',date:TODAY,duration:item.duration});
     renderFocusStats();
-    fetch(BACKEND_URL+'/api/focus_cancel',{method:'POST',headers:NGROK_H,body:'{}'}).catch(()=>{});
+    fetch(BACKEND_URL+'/api/focus_cancel',{method:'POST',headers:NGROK_H,body:JSON.stringify({user_id:_uid()})}).catch(()=>{});
+    // Отмечаем задачу выполненной в бэкенде → обновляет список и статистику
+    if(item._task_id){
+      fetch(`${BACKEND_URL}/api/tasks/done?user_id=${_uid()}`,{
+        method:'POST',headers:NGROK_H,
+        body:JSON.stringify({id:item._task_id,done:true})
+      }).then(()=>{ loadStats(); }).catch(()=>{});
+    }
   }
   try{ if(twa?.HapticFeedback) twa.HapticFeedback.notificationOccurred('success'); }catch(e){}
 
@@ -2654,7 +2669,7 @@ function stopFocus(completed){
   if(trioC){ trioC.style.transition='opacity .4s ease, transform .4s ease'; trioC.style.opacity='0'; trioC.style.transform='translateY(12px)'; trioC.style.pointerEvents='none'; }
   document.getElementById('timer-label').textContent='ОТМЕНЕНО';
   document.getElementById('timer-digits').classList.remove('pulsing');
-  fetch(BACKEND_URL+'/api/focus_cancel',{method:'POST',headers:NGROK_H,body:'{}'}).catch(()=>{});
+  fetch(BACKEND_URL+'/api/focus_cancel',{method:'POST',headers:NGROK_H,body:JSON.stringify({user_id:_uid()})}).catch(()=>{});
   document.title='erman.';
   setTimeout(resetTimer,1400);
   renderChain();
@@ -2675,7 +2690,7 @@ function previewGem(){
   FOCUS.collection.push({type:'amber',date:TODAY,duration:focusDuration});
   renderFocusStats();
   if(twa) try{twa.sendData(JSON.stringify({type:'focus_complete',duration:focusDuration}));}catch(e){}
-  fetch(BACKEND_URL+'/api/focus_cancel',{method:'POST',headers:NGROK_H,body:'{}'}).catch(()=>{});
+  fetch(BACKEND_URL+'/api/focus_cancel',{method:'POST',headers:NGROK_H,body:JSON.stringify({user_id:_uid()})}).catch(()=>{});
   setTimeout(resetTimer,3500);
 }
 
