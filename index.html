@@ -2448,12 +2448,29 @@ let chainModal={type:'work',color:'#ff9f0a',duration:25};
 function initTree(){}
 function gemProgress(pct){
   const gem=document.getElementById('opal-gem');
-  if(gem) gem.style.setProperty('--progress',pct.toFixed(3));
+  if(!gem) return;
+  gem.style.setProperty('--progress',pct.toFixed(3));
+  // Кристалл раскрывается по мере прогресса: тёмный зародыш → яркий камень
+  if(pct <= 0){
+    gem.style.filter='';
+  } else {
+    const br=(0.06 + pct * 0.94).toFixed(3);
+    const sat=(0.05 + pct * 3.95).toFixed(2);
+    gem.style.filter=`brightness(${br}) saturate(${sat})`;
+  }
 }
 function treeProgress(pct){
   pct=Math.max(0,Math.min(1,pct));
   const ring=document.getElementById('progress-ring-fg');
   if(ring) ring.setAttribute('stroke-dashoffset',String(911*(1-pct)));
+  // Гем-трио растёт снизу вверх вместе с прогрессом
+  const trio=document.getElementById('gem-trio');
+  if(trio && pct > 0){
+    trio.style.opacity=String((0.06 + pct * 0.94).toFixed(3));
+    trio.style.transform=`translateY(${Math.round(18*(1-pct))}px) scale(${(0.6+pct*0.4).toFixed(3)})`;
+    trio.style.transition='opacity .9s ease, transform .9s cubic-bezier(.22,1,.36,1), filter .9s ease';
+    trio.style.pointerEvents='none';
+  }
   gemProgress(pct);
 }
 
@@ -2577,6 +2594,11 @@ function startChainItem(){
   const item=focusChain[chainIndex];
   focusDuration=item.duration;
   focusRunning=true; focusStart=Date.now(); focusElapsed=0;
+
+  // Сбрасываем гем в seed-state при старте каждого элемента цепочки
+  const trioS=document.getElementById('gem-trio');
+  if(trioS){ trioS.style.transition='none'; trioS.style.opacity='0.06'; trioS.style.transform='translateY(18px) scale(0.6)'; }
+  gemProgress(0);
 
   // Ring color matches task
   const ringFg=document.getElementById('progress-ring-fg');
