@@ -2436,11 +2436,24 @@ const REST_COLOR='#34d399';
 const REST_DURATIONS=[3,5,10,15];
 const WORK_DURATIONS=[15,25,45,60];
 
-let focusChain=[
+const _CHAIN_DEFAULT=[
   {type:'work',label:'Фокус',duration:25,color:'#ff9f0a'},
   {type:'rest',label:'Отдых',duration:5,color:REST_COLOR},
   {type:'work',label:'Фокус',duration:25,color:'#38bdf8'},
 ];
+function _saveChain(){
+  // Сохраняем без _task_id (runtime) и без выполненных
+  const toSave=focusChain.map(({_task_id,...rest})=>rest);
+  try{ localStorage.setItem('erman_chain',JSON.stringify(toSave)); }catch(e){}
+}
+function _loadChain(){
+  try{
+    const s=localStorage.getItem('erman_chain');
+    if(s){ const c=JSON.parse(s); if(Array.isArray(c)&&c.length) return c.map(i=>({...i,_task_id:null})); }
+  }catch(e){}
+  return _CHAIN_DEFAULT.map(i=>({...i,_task_id:null}));
+}
+let focusChain=_loadChain();
 let chainIndex=-1;
 let chainModal={type:'work',color:'#ff9f0a',duration:25};
 
@@ -2520,7 +2533,7 @@ function renderChain(){
   }
 }
 
-function removeChainItem(i){ if(focusRunning) return; focusChain.splice(i,1); renderChain(); }
+function removeChainItem(i){ if(focusRunning) return; focusChain.splice(i,1); _saveChain(); renderChain(); }
 
 // ─── Chain modal ───
 function openChainModal(type){
@@ -2565,6 +2578,7 @@ function confirmChainAdd(){
   const label=chainModal.type==='rest'?'Отдых':(inp.value.trim()||'Фокус');
   const item={type:chainModal.type,label:label,duration:chainModal.duration,color:chainModal.color,_task_id:null};
   focusChain.push(item);
+  _saveChain();
   closeChainModal();
   renderChain();
   // Сохраняем рабочую задачу в бэкенд — появится в списке задач и статистике
@@ -2676,7 +2690,8 @@ function finishChain(){
   document.title='erman.';
   const btn=document.getElementById('focus-btn');
   btn.className='focus-btn start'; btn.textContent='НАЧАТЬ ЦЕПОЧКУ';
-  setTimeout(resetTimer,3500);
+  // Сбрасываем цепочку к дефолту после завершения (задачи уже выполнены)
+  setTimeout(()=>{ focusChain=_CHAIN_DEFAULT.map(i=>({...i,_task_id:null})); _saveChain(); resetTimer(); },3500);
   renderChain();
 }
 
