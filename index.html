@@ -2895,6 +2895,10 @@ function runSplash() {
 }
 
 // ══ INIT ══
+// runSplash() запускает таймер на 1800ms — он должен стартовать ДО всего остального,
+// чтобы никакая ошибка в init-функциях не заблокировала закрытие сплеша.
+runSplash();
+
 const _init=(fn,name)=>{try{fn();}catch(e){console.warn('init:'+name,e);}};
 _init(loadData,'loadData'); _init(loadSettings,'loadSettings');
 _init(initCal,'initCal'); _init(initTree,'initTree');
@@ -2905,7 +2909,6 @@ fetchEventsFromBackend();
 loadStats();
 if(initTab!=='calendar') try{switchTab(initTab);}catch(e){console.warn('switchTab',e);}
 if(twa){twa.BackButton.show();twa.BackButton.onClick(goBack);}
-runSplash();
 </script>
 </body>
 </html>
